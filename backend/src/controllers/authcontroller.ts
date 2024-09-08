@@ -35,7 +35,6 @@ export const signup = async (req: Request, res: Response) => {
 		});
 
 		if (newUser) {
-			// generate token in a sec
 			generateToken(newUser.id, newUser.role, res);
 
 			res.status(201).json({

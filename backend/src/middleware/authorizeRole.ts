@@ -6,7 +6,7 @@ const authorizeRole = (allowedRoles: string[]) => {
             return res.status(401).json({ error: "Unauthorized - No user data available" });
         }
 
-        const { role } = req.user;
+        const role = req.user.role;
 
         if (!allowedRoles.includes(role)) {
             return res.status(403).json({ error: "Forbidden - You do not have permission to access this resource" });
