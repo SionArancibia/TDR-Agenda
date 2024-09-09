@@ -72,12 +72,15 @@ export const login = async (req: Request, res: Response) => {
 			id: user.id,
 			fullName: user.fullName,
 			username: user.username,
+			role: user.role,
 		});
+		
 	} catch (error: any) {
 		console.log("Error in login controller", error.message);
 		res.status(500).json({ error: "Internal Server Error" });
 	}
 };
+
 export const logout = async (req: Request, res: Response) => {
 	try {
 		res.cookie("jwt", "", { maxAge: 0 });
@@ -100,6 +103,8 @@ export const getMe = async (req: Request, res: Response) => {
 			id: user.id,
 			fullName: user.fullName,
 			username: user.username,
+			role: user.role,
+			gender: user.gender,
 		});
 	} catch (error: any) {
 		console.log("Error in getMe controller", error.message);
