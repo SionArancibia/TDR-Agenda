@@ -15,7 +15,7 @@ function App() {
       <Toaster />
       <Routes>
         <Route path="/dashboard" element={authUser?.role === "admin" ? <Dashboard/> : <Navigate to={"/login"} />}/>
-        <Route path="/login" element={!authUser && <Login/>}/>
+        <Route path="/login" element={!authUser ? <Login/> : <Navigate to={"/dashboard"}/>}/>
         <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
         <Route path="/signup" element={<Signup/>}/>
       </Routes>
