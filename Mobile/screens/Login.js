@@ -23,17 +23,25 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setRut}
         keyboardType="default"
       />
+            <Text style={styles.label}>Ingrese su Contraseña:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="********"
+        value={rut}
+        onChangeText={setRut}
+        keyboardType="default"
+      />
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
+        <Icon name="sign-in" size={25} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('Register')}>
-        <Icon name="user-plus" size={20} color="#fff" style={styles.icon} />
+        <Icon name="user-plus" size={25} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
 
-    </View>
+    </View> 
   );
 }
 
@@ -47,7 +55,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 22,  // Texto más grande
     color: '#333333',  // Texto oscuro para contraste
-    marginBottom: 20,
+    marginBottom: 15,
     textAlign: 'center',
   },
   input: {
@@ -56,7 +64,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     paddingHorizontal: 15,
-    marginBottom: 20,
+    marginBottom: 5,
     backgroundColor: '#fff',
     fontSize: 18,  // Fuente grande para mayor legibilidad
   },
@@ -69,18 +77,23 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
   },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    marginLeft: 10,
+  },
   registerButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#28a745',
-    paddingVertical: 15,
+    paddingVertical: 10,
     borderRadius: 10,
     marginTop: 20,
   },
   logo: {
     alignSelf: 'center',
-    marginBottom: 30,
+    marginBottom: 20,
     width: 150,
     height: 150,
   },
