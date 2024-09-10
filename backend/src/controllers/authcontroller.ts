@@ -74,6 +74,7 @@ export const login = async (req: Request, res: Response) => {
 			username: user.username,
 			role: user.role,
 		});
+		console.log("Login successful, response sent");
 		
 	} catch (error: any) {
 		console.log("Error in login controller", error.message);
