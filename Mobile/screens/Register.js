@@ -38,6 +38,7 @@ export default function RegisterScreen() {
   return (
     
     <View style={styles.container}>
+      <Icon name="user" size={120} color="#333333" style={styles.userIcon} />
       <Text style={styles.title}>Registro</Text>
       <Text style={styles.label}>Ingrese su RUT:</Text>
       <TextInput
@@ -59,8 +60,8 @@ export default function RegisterScreen() {
 
 
       <TouchableOpacity style={styles.archivoButton} onPress={handleFilePicker}>
-        <Icon name="sign-in" size={25} color="#fff" style={styles.icon} />
-        <Text style={styles.buttonText}>Subir Archivo</Text>
+        <Icon name="file-text-o" size={25} color="#fff" style={styles.icon} />
+        <Text style={styles.buttonTextD}>Subir Archivo</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
@@ -73,6 +74,10 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
+  userIcon: {
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
   title: {
     justifyContent: 'center',
     fontSize: 40,
@@ -133,6 +138,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     marginLeft: 10,
+  },
+  buttonTextD: {
+    color: '#fff',
+    fontSize: 18,
+    marginLeft: 10,
+    paddingVertical:15,
   },
   fileText: {
     fontSize: 16,
