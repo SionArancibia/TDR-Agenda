@@ -3,10 +3,14 @@ import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffe
 
 type AuthUserType = {
 	id: string;
-    username: string;
-	fullName: string;
-    role: string;
+	rut: string;
+	nombres: string;
+	apellidos: string;
+	domicilio: string;
+	edad: number;
+	telefono: number;
 	gender: string;
+	role: string;
 };
 
 const AuthContext = createContext<{

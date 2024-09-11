@@ -12,7 +12,7 @@ const Signup = () => {
         contrasena: '',
         confirmContrasena: '',
         gender: 'male', 
-        role: 'patient', 
+        role: 'professional', 
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
