@@ -5,81 +5,112 @@ import generateToken from "../utils/generateToken";
 
 export const signup = async (req: Request, res: Response) => {
 	try {
-		const { fullName, username, password, confirmPassword, gender, role} = req.body;
+		const {
+			rut,
+			nombres,
+			apellidos,
+			domicilio,
+			edad,
+			telefono,
+			contrasena,
+			confirmContrasena,
+			gender,
+			role
+		} = req.body;
 
-		if (!fullName || !username || !password || !confirmPassword || !gender ||!role) {
-			return res.status(400).json({ error: "Please fill in all fields" });
+		if (
+			!rut ||
+			!nombres ||
+			!apellidos ||
+			!domicilio ||
+			!edad ||
+			!telefono ||
+			!contrasena ||
+			!confirmContrasena ||
+			!gender ||
+			!role
+		) {
+			return res.status(400).json({ error: "Por favor completa todos los campos" });
 		}
 
-		if (password !== confirmPassword) {
-			return res.status(400).json({ error: "Passwords don't match" });
+		if (contrasena !== confirmContrasena) {
+			return res.status(400).json({ error: "Las contraseñas no coinciden" });
 		}
 
-		const user = await prisma.user.findUnique({ where: { username } });
+		const existingUser = await prisma.usuario.findUnique({ where: { rut } });
 
-		if (user) {
-			return res.status(400).json({ error: "Username already exists" });
+		if (existingUser) {
+			return res.status(400).json({ error: "El RUT ya está registrado" });
 		}
 
 		const salt = await bcryptjs.genSalt(10);
-		const hashedPassword = await bcryptjs.hash(password, salt);
+		const hashedPassword = await bcryptjs.hash(contrasena, salt);
 
-		const newUser = await prisma.user.create({
+		const newUser = await prisma.usuario.create({
 			data: {
-				fullName,
-				username,
-				password: hashedPassword,
+				rut,
+				nombres,
+				apellidos,
+				domicilio,
+				edad: Number(edad),
+				telefono: Number(telefono),
+				contrasena: hashedPassword,
 				gender,
-                role,
+				role,
 			},
 		});
 
 		if (newUser) {
 			generateToken(newUser.id, newUser.role, res);
 
-			res.status(201).json({
+			return res.status(201).json({
 				id: newUser.id,
-				fullName: newUser.fullName,
-				username: newUser.username,
+				rut: newUser.rut,
+				nombres: newUser.nombres,
+				apellidos: newUser.apellidos,
+				role: newUser.role
 			});
 		} else {
-			res.status(400).json({ error: "Invalid user data" });
+			return res.status(400).json({ error: "Datos de usuario no válidos" });
 		}
 	} catch (error: any) {
-		console.log("Error in signup controller", error.message);
-		res.status(500).json({ error: "Internal Server Error" });
+		console.error("Error en el controlador de registro:", error.message);
+		return res.status(500).json({ error: "Error interno del servidor" });
 	}
 };
 
+
 export const login = async (req: Request, res: Response) => {
-	try {
-		const { username, password } = req.body;
-		const user = await prisma.user.findUnique({ where: { username } });
+    try {
+        const { rut, contrasena } = req.body;
 
-		if (!user) {
-			return res.status(400).json({ error: "Invalid credentials" });
-		}
-
-		const isPasswordCorrect = await bcryptjs.compare(password, user.password);
-
-		if (!isPasswordCorrect) {
-			return res.status(400).json({ error: "Invalid credentials" });
-		}
-
-		generateToken(user.id, user.role, res);
-
-		res.status(200).json({
-			id: user.id,
-			fullName: user.fullName,
-			username: user.username,
-			role: user.role,
+        const user = await prisma.usuario.findUnique({
+			where: { rut },
 		});
-		console.log("Login successful, response sent");
-		
-	} catch (error: any) {
-		console.log("Error in login controller", error.message);
-		res.status(500).json({ error: "Internal Server Error" });
-	}
+
+        if (!user) {
+            return res.status(400).json({ error: "Credenciales inválidas" });
+        }
+
+        const isPasswordCorrect = await bcryptjs.compare(contrasena, user.contrasena);
+
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ error: "Credenciales inválidas" });
+        }
+
+        generateToken(user.id, user.role, res);
+
+        res.status(200).json({
+            id: user.id,
+            rut: user.rut,
+            nombres: user.nombres,
+            role: user.role,
+        });
+        console.log("Inicio de sesión exitoso, respuesta enviada");
+    } catch (error: any) {
+        console.log("Error en el controlador de inicio de sesión", error.message);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
 };
 
 export const logout = async (req: Request, res: Response) => {
@@ -93,22 +124,22 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const getMe = async (req: Request, res: Response) => {
-	try {
-		const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    try {
+        const user = await prisma.usuario.findUnique({ where: { id: req.user.id } });
 
-		if (!user) {
-			return res.status(404).json({ error: "User not found" });
-		}
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
 
-		res.status(200).json({
-			id: user.id,
-			fullName: user.fullName,
-			username: user.username,
-			role: user.role,
-			gender: user.gender,
-		});
-	} catch (error: any) {
-		console.log("Error in getMe controller", error.message);
-		res.status(500).json({ error: "Internal Server Error" });
-	}
+        res.status(200).json({
+            id: user.id,
+            rut: user.rut,
+            nombres: user.nombres,
+            role: user.role,
+            gender: user.gender,
+        });
+    } catch (error: any) {
+        console.log("Error en el controlador de obtener usuario", error.message);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
 };

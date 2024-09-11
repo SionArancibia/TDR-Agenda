@@ -8,14 +8,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id String @id @default(cuid())
-  username String @unique
-  fullName String
-  password String
-  gender Gender
-  createdAt DateTime @default(now())
-  role Role
+model Usuario {
+  id          String  @id @default(cuid())
+  rut         String  @unique
+  nombres     String
+  apellidos   String
+  domicilio   String
+  edad        Int
+  contrasena  String
+  telefono    Int
+  gender      Gender
+  createAt    DateTime @default(now())
+  role        Role
+}
+
+model Profesional {
+  id         String  @id @default(cuid())
+  nombre     String
+  rut        String
+  pacientes  Paciente[] 
+  citas      Citas[]    
+}
+
+model Paciente {
+  id            String      @id @default(cuid())
+  nombre        String
+  rut           String
+  citas         Citas[]    
+  profesional   Profesional @relation(fields: [profesionalId], references: [id])
+  profesionalId String
+}
+
+model Citas {
+  id             String      @id @default(cuid())
+  fecha          DateTime
+  paciente       Paciente    @relation(fields: [pacienteId], references: [id])
+  pacienteId     String
+  profesional    Profesional @relation(fields: [profesionalId], references: [id])
+  profesionalId  String
+}
+
+
+model Administrador {
+  id_Administrador  String  @id @default(cuid())
+  rut               String  @unique
+  mensajes          String
+  bloquear_agenda   Boolean
+  registro_profesional String
 }
 
 enum Gender {
