@@ -49,114 +49,114 @@ const Signup = () => {
                     <div className="mb-4">
                         <label className="block text-gray-700">RUT</label>
                         <input
-                        type="text"
-                        name="rut"
-                        value={formData.rut}
-                        onChange={handleChange}
-                        required
+                            type="text"
+                            name="rut"
+                            value={formData.rut}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Nombres</label>
                         <input
-                        type="text"
-                        name="nombres"
-                        value={formData.nombres}
-                        onChange={handleChange}
-                        required
+                            type="text"
+                            name="nombres"
+                            value={formData.nombres}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Apellidos</label>
                         <input
-                        type="text"
-                        name="apellidos"
-                        value={formData.apellidos}
-                        onChange={handleChange}
-                        required
+                            type="text"
+                            name="apellidos"
+                            value={formData.apellidos}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Domicilio</label>
                         <input
-                        type="text"
-                        name="domicilio"
-                        value={formData.domicilio}
-                        onChange={handleChange}
+                            type="text"
+                            name="domicilio"
+                            value={formData.domicilio}
+                            onChange={handleChange}
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Edad</label>
                         <input
-                        type="number"
-                        name="edad"
-                        value={formData.edad}
-                        onChange={handleChange}
-                        required
+                            type="number"
+                            name="edad"
+                            value={formData.edad}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Teléfono</label>
                         <input
-                        type="tel"
-                        name="telefono"
-                        value={formData.telefono}
-                        onChange={handleChange}
-                        required
+                            type="tel"
+                            name="telefono"
+                            value={formData.telefono}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Contraseña</label>
                         <input
-                        type="password"
-                        name="contrasena"
-                        value={formData.contrasena}
-                        onChange={handleChange}
-                        required
+                            type="password"
+                            name="contrasena"
+                            value={formData.contrasena}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Confirmar Contraseña</label>
                         <input
-                        type="password"
-                        name="confirmContrasena"
-                        value={formData.confirmContrasena}
-                        onChange={handleChange}
-                        required
+                            type="password"
+                            name="confirmContrasena"
+                            value={formData.confirmContrasena}
+                            onChange={handleChange}
+                            required
                         />
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Género</label>
                         <select
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        required
-                        >
-                        <option value="male">Masculino</option>
-                        <option value="female">Femenino</option>
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            required
+                            >
+                            <option value="male">Masculino</option>
+                            <option value="female">Femenino</option>
                         </select>
                     </div>
 
                     <div className="mb-4">
                         <label className="block text-gray-700">Rol</label>
                         <select
-                        name="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                        required
-                        >
-                        <option value="patient">Paciente</option>
-                        <option value="professional">Profesional</option>
-                        <option value="admin">Administrador</option>
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            required
+                            >
+                            <option value="patient">Paciente</option>
+                            <option value="professional">Profesional</option>
+                            <option value="admin">Administrador</option>
                         </select>
                     </div>
 

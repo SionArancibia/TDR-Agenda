@@ -16,7 +16,8 @@ const Dashboard = () => {
     };
 
     const handleUpdateClick = () => {
-        navigate('/updateUsers');
+        const userId = 'cm0wylj5s0002ayj07zxbjhgu';
+        navigate(`/updateUsers/${userId}`);
     };
 
     return (
