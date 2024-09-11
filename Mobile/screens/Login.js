@@ -11,14 +11,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={require('../assets/muni.png')}
-          style={styles.logoHeader}
-          resizeMode="contain"
-          
-        />
-      </View>
+
       
       <View style={styles.formContainer}>
         <Icon name="user" size={120} color="#007acc" style={styles.userIcon} />
@@ -64,22 +57,12 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 20,
     backgroundColor: '#f2f2f2',
-  },
-  header: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-  },
-  logoHeader: {
-    paddingTop:0,
-    width: 120,
-    height: 150,
   },
   formContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     paddingHorizontal: 20,
   },
   userIcon: {

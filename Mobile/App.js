@@ -6,7 +6,8 @@ import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
 import ForgotPasswordScreen from './screens/Rpassword';
 import MainScreen from './screens/Principal';
-
+import MainScreen2 from './screens/AgendarHora';
+import HorasScreen from './screens/HorasAgendada';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -16,7 +17,16 @@ export default function App() {
         <Stack.Screen 
           name="Login" 
           component={LoginScreen} 
-          options={{ title: 'Iniciar Sesión', headerShown: false }} 
+          options={{
+            headerTitle: () => (
+              <Image
+                source={require('./assets/muni.png')}
+                style={{ width: 100, height: 55 }} // Ajusta el tamaño 
+                resizeMode="contain"
+              />
+            ),
+            headerTitleAlign: 'center', // Centra la imagen en el header
+          }}
         />
         
         <Stack.Screen 
@@ -63,6 +73,21 @@ export default function App() {
             headerTitleAlign: 'center', 
           }}
         />
+        <Stack.Screen 
+          name="GenericScreen"  
+          component={MainScreen2}  
+          options={{
+            headerTitle: () => (
+              <Image
+                source={require('./assets/muni.png')}
+                style={{ width: 100, height: 50 }} // Ajusta el tamaño 
+                resizeMode="contain"
+              />
+            ),
+            headerTitleAlign: 'center', // Centra la imagen en el header
+          }}
+        />
+        <Stack.Screen name="Horas" component={HorasScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

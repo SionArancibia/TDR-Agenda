@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-nati
 export default function MainScreen({ navigation }) {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AgendarHora')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('GenericScreen')}>
                 <Text style={styles.buttonText}>Agendar Hora</Text>
             </TouchableOpacity>
 
