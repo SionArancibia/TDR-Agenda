@@ -8,6 +8,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Citas {
+  idCitas              Int      @id @default(autoincrement())
+  idPaciente           Int
+  idProfesional        Int
+  fecha                DateTime
+  tipoServicio         String
+  centroComunitario    String
+  asiste               Boolean
+  atencionDomiciliaria Boolean
+  observaciones        String
+}
+
 model User {
   id String @id @default(cuid())
   username String @unique
@@ -28,3 +40,4 @@ enum Role {
   professional
   patient
 }
+

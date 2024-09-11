@@ -111,3 +111,29 @@ export const getMe = async (req: Request, res: Response) => {
 		res.status(500).json({ error: "Internal Server Error" });
 	}
 };
+
+export const getCitas = async (req: Request, res: Response) => {
+	const { idProfesional, idPaciente, mes, año } = req.query;
+
+	if (!idProfesional || !idPaciente || !mes || !año) {
+	return res.status(400).json({ error: "Faltan parámetros requeridos" });
+	}
+
+	try {
+	const citas = await prisma.citas.findMany({
+		where: {
+		idProfesional: parseInt(idProfesional as string),
+		idPaciente: parseInt(idPaciente as string),
+		fecha: {
+			gte: new Date(`${año}-${mes}-01`),
+			lt: new Date(`${año}-${parseInt(mes as string) + 1}-01`),
+		},
+		},
+	});
+
+	res.status(200).json(citas);
+	} catch (error: any) {
+	console.log("Error en el controlador getCitas", error.message);
+	res.status(500).json({ error: "Error Interno del Servidor" });
+	}
+};

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 
 interface Appointment {
@@ -12,6 +13,7 @@ interface Appointment {
   attendance: boolean;
 }
 
+
 const Agenda_P: React.FC = () => {
   const currentDate = new Date();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -20,6 +22,7 @@ const Agenda_P: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  //para que se actualice la lista de citas cuando se cambie de mes o año
   useEffect(() => {
     fetchAppointments(selectedMonth, selectedYear);
   }, [selectedMonth, selectedYear]);
@@ -49,7 +52,12 @@ const Agenda_P: React.FC = () => {
     setSelectedAppointment(appointment);
     setIsEditing(true);
   };
-
+  const handleCancelClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setIsEditing(false);
+    toast('Cita cancelada');
+  };
+  //para cambiar de mes, offset es la cantidad de meses que se quiere avanzar o retroceder
   const handleMonthChange = (offset: number) => {
     let newMonth = selectedMonth + offset;
     let newYear = selectedYear;
@@ -70,9 +78,9 @@ const Agenda_P: React.FC = () => {
   const getMonthsToDisplay = () => {
     const months = [];
     for (let i = 0; i < 4; i++) {
-      const month = (selectedMonth + i - 1) % 12 + 1;
+      const month = (selectedMonth + i - 1) % 12 + 1; // 1-12
       months.push(new Date(selectedYear, month - 1).toLocaleString('es-ES', { month: 'long' }));
-    }
+    } //toLocaleString convierte la fecha en un string con el mes en palabras
     return months;
   };
 
@@ -127,10 +135,10 @@ const Agenda_P: React.FC = () => {
         
         {/* Vista en cuadrícula de 4 meses */}
         <div className="grid grid-cols-4 gap-4 w-full max-w-4xl mx-auto">
-          {getMonthsToDisplay().map((month, index) => (
+          {getMonthsToDisplay().map((month, index) => ( // Muestra los meses en la cuadrícula
             <div 
-              key={index}
-              onClick={() => setSelectedMonth(index + 1)} // Cambia el mes pero no mueve las cajas.
+              key={index} // Key para React
+              onClick={() => setSelectedMonth((selectedMonth + index - 1) % 12 + 1)} // Cambiar mes, index es el offset del mes 
               className={`p-4 border border-gray-300 rounded-lg text-center font-semibold text-lg shadow-md cursor-pointer
                 ${selectedMonth === index + 1 ? 'bg-green-500 text-white' : 'bg-green-400 text-white hover:bg-green-500'}`}
             >
@@ -172,10 +180,17 @@ const Agenda_P: React.FC = () => {
               </button>
               <button
                 onClick={() => handleEditClick(appointment)}
-                className="bg-yellow-400 text-white px-4 py-2 rounded-full"
+                className="bg-green-400 text-white px-4 py-2 rounded-full"
               >
                 Editar
               </button>
+              <button
+                onClick={() => handleCancelClick(appointment)}
+                className="bg-red-400 text-white px-4 py-2 rounded-full"
+                >
+                  Cancelar
+              </button>
+
             </div>
           </div>
         ))}
