@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 import generateToken from "../utils/generateToken";
 
 export const signup = async (req: Request, res: Response) => {
+	//console.log(req.body);
 	try {
 		const {
 			rut,
@@ -13,7 +14,7 @@ export const signup = async (req: Request, res: Response) => {
 			edad,
 			telefono,
 			contrasena,
-			confirmContrasena,
+			confirmarContrasena,
 			gender,
 			role
 		} = req.body;
@@ -26,14 +27,14 @@ export const signup = async (req: Request, res: Response) => {
 			!edad ||
 			!telefono ||
 			!contrasena ||
-			!confirmContrasena ||
+			!confirmarContrasena ||
 			!gender ||
 			!role
 		) {
 			return res.status(400).json({ error: "Por favor completa todos los campos" });
 		}
 
-		if (contrasena !== confirmContrasena) {
+		if (contrasena !== confirmarContrasena) {
 			return res.status(400).json({ error: "Las contraseñas no coinciden" });
 		}
 
@@ -52,8 +53,8 @@ export const signup = async (req: Request, res: Response) => {
 				nombres,
 				apellidos,
 				domicilio,
-				edad: Number(edad),
-				telefono: Number(telefono),
+				edad: edad,
+				telefono: telefono,
 				contrasena: hashedPassword,
 				gender,
 				role,
