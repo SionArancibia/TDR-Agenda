@@ -65,9 +65,9 @@ export const UpdateUsers = async (req: Request, res: Response) => {
                 nombres: nombres,
                 apellidos: apellidos,
                 domicilio: domicilio,
-                edad: edad,
+                edad: parseInt(edad),
                 role: role,
-                telefono: telefono,
+                telefono: parseInt(telefono),
                 gender: gender,
             },
         });

@@ -46,8 +46,9 @@ const UpdateUsers = () => {
 
     const handleUpdate = async () => {
         try {
+            console.log(user);
             await api.put(`/adminCrud/updateUsers/${id}`, user);
-            navigate('/getUsers'); 
+            navigate('/Usuarios'); 
         } catch (error) {
             console.error('Error al actualizar el usuario:', error);
         }
