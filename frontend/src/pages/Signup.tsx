@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import useSignup from '../hooks/useSignUp';
+import useSignup from '../hooks/useSignup';
 
 // Definición del esquema de validación con Zod
 const SignupSchema = z.object({
