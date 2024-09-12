@@ -7,8 +7,8 @@ const useLogin = () => {
 	const { setAuthUser } = useAuthContext();
     const navigate = useNavigate();
 
-	const login = async (username: string, password: string) => {
-        await api.post("/auth/login", {username, password})
+	const login = async (username: string, contrasena: string) => {
+        await api.post("/auth/login", {username, contrasena})
         .then(response => {
             console.log(response.data);
             toast('Ingresó con exito');

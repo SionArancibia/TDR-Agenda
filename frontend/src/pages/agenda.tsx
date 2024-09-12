@@ -1,46 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import useAgenda from '../hooks/useAgenda';
 
+// Definir la interfaz de una cita
 interface Appointment {
   id: number;
   name: string;
   rut: string;
-  date: string;
-  time: string;
+  fecha: string;
+  hora: string;
+  tipoServicio: string;
+  centroComunitario: string;
   reducedMobility: boolean;
   chronicDisease: boolean;
   attendance: boolean;
 }
 
-
-const Agenda_P: React.FC = () => {
-  const currentDate = new Date();
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear()); 
+// Formulario de la agenda
+const AgendaForm = () => { 
+  const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
+  const [profesionalId, setProfesionalId] = useState('');
+  const [pacienteId, setPacienteId] = useState('');
+  const [mes, setMes] = useState('');
+  const [año, setAño] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const currentDate = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear()); 
+
   //para que se actualice la lista de citas cuando se cambie de mes o año
   useEffect(() => {
     fetchAppointments(selectedMonth, selectedYear);
-  }, [selectedMonth, selectedYear]);
+  }, [selectedMonth, selectedYear]);  
 
-  const fetchAppointments = (month: number, year: number) => {
-    const dummyAppointments = [
-      {
-        id: 1,
-        name: 'Adrian Cesar Chalque',
-        rut: '112223334',
-        date: `${year}-${month}-15`,
-        time: '11:00-12:00',
-        reducedMobility: true,
-        chronicDisease: false,
-        attendance: false,
-      },
-    ];
-    setAppointments(dummyAppointments);
+  const fetchAppointments = async (month: number, year: number) => {
+    const citasData = await getCitas(profesionalId, pacienteId, month.toString(), year.toString());
+    setAppointments(citasData);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchAppointments(parseInt(mes), parseInt(año));
   };
 
   const handleDetailsClick = (appointment: Appointment) => {
@@ -52,26 +56,24 @@ const Agenda_P: React.FC = () => {
     setSelectedAppointment(appointment);
     setIsEditing(true);
   };
+
   const handleCancelClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setIsEditing(false);
     toast('Cita cancelada');
   };
-  //para cambiar de mes, offset es la cantidad de meses que se quiere avanzar o retroceder
+
   const handleMonthChange = (offset: number) => {
-    let newMonth = selectedMonth + offset;
-    let newYear = selectedYear;
-
+    const newMonth = selectedMonth + offset;
     if (newMonth > 12) {
-      newMonth = 1;
-      newYear += 1;
+      setSelectedMonth(1);
+      setSelectedYear(selectedYear + 1);
     } else if (newMonth < 1) {
-      newMonth = 12;
-      newYear -= 1;
+      setSelectedMonth(12);
+      setSelectedYear(selectedYear - 1);
+    } else {
+      setSelectedMonth(newMonth);
     }
-
-    setSelectedMonth(newMonth);
-    setSelectedYear(newYear);
   };
 
   // Genera un arreglo de los meses a mostrar, simulando una cuadrícula de 4 meses.
@@ -83,6 +85,8 @@ const Agenda_P: React.FC = () => {
     } //toLocaleString convierte la fecha en un string con el mes en palabras
     return months;
   };
+
+
 
   return (
     <div className="min-h-screen w-screen flex flex-col bg-gray-100 p-4">
@@ -169,7 +173,7 @@ const Agenda_P: React.FC = () => {
           >
             <div>
               <h3 className="text-lg font-bold">{appointment.name}</h3>
-              <p>{appointment.date} - {appointment.time}</p>
+              <p>{appointment.fecha} - {appointment.hora}</p>
             </div>
             <div className="space-x-4">
               <button
@@ -241,7 +245,7 @@ const Agenda_P: React.FC = () => {
                     Hora:
                     <input
                       type="text"
-                      value={selectedAppointment.time}
+                      value={selectedAppointment.hora}
                       className="border border-gray-300 rounded p-2 w-full"
                     />
                   </label>
@@ -260,8 +264,8 @@ const Agenda_P: React.FC = () => {
                 <h3 className="text-lg font-bold">Detalles de la Cita</h3>
                 <p>Nombre: {selectedAppointment.name}</p>
                 <p>RUT: {selectedAppointment.rut}</p>
-                <p>Fecha: {selectedAppointment.date}</p>
-                <p>Hora: {selectedAppointment.time}</p>
+                <p>Fecha: {selectedAppointment.fecha}</p>
+                <p>Hora: {selectedAppointment.hora}</p>
                 <p>Movilidad Reducida: {selectedAppointment.reducedMobility ? 'Sí' : 'No'}</p>
                 <p>Enfermedad Crónica: {selectedAppointment.chronicDisease ? 'Sí' : 'No'}</p>
                 <p>Asistencia: {selectedAppointment.attendance ? 'Sí' : 'No'}</p>
@@ -276,8 +280,56 @@ const Agenda_P: React.FC = () => {
           </div>
         </div>
       )}
+
+        <div>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Profesional ID:</label>
+            <input type="text" value={profesionalId} onChange={(e) => setProfesionalId(e.target.value)} required />
+          </div>
+          <div>
+            <label>Paciente ID:</label>
+            <input type="text" value={pacienteId} onChange={(e) => setPacienteId(e.target.value)} required />
+          </div>
+          <div>
+            <label>Mes:</label>
+            <input type="text" value={mes} onChange={(e) => setMes(e.target.value)} required />
+          </div>
+          <div>
+            <label>Año:</label>
+            <input type="text" value={año} onChange={(e) => setAño(e.target.value)} required />
+          </div>
+          <button type="submit">Obtener Citas</button>
+        </form>
+
+        <div>
+          <h2>Citas</h2>
+          {appointments.length > 0 ? (
+            <ul>
+              {appointments.map((appointment) => (
+                <li key={appointment.id}>
+                  {appointment.fecha}: {appointment.tipoServicio} en {appointment.centroComunitario}
+                  <button onClick={() => handleDetailsClick(appointment)}>Detalles</button>
+                  <button onClick={() => handleEditClick(appointment)}>Editar</button>
+                  <button onClick={() => handleCancelClick(appointment)}>Cancelar</button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay citas disponibles.</p>
+          )}
+        </div>
+
+        <div>
+          <button onClick={() => handleMonthChange(-1)}>Mes Anterior</button>
+          <button onClick={() => handleMonthChange(1)}>Mes Siguiente</button>
+        </div>
+    </div>
+  );
+
+
     </div>
   );
 };
 
-export default Agenda_P;
+export default AgendaForm;

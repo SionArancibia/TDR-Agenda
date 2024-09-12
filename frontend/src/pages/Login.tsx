@@ -6,7 +6,7 @@ import useLogin from '../hooks/useLogin';
 
 const SignUpSchema = z.object({
   username: z.string(),
-  password: z.string(),
+  contrasena: z.string(),
 });
 
 type SignUpSchemaType = z.infer<typeof SignUpSchema>;
@@ -22,7 +22,7 @@ const Login = () => {
     
     //API ...
     const onSubmit: SubmitHandler<SignUpSchemaType> = (data) => {
-        login(data.username, data.password);
+        login(data.username, data.contrasena);
     };
 
     return (
@@ -42,7 +42,7 @@ const Login = () => {
                 <div>
                 <label className="text-gray-800 text-sm mb-2 block">Contraseña</label>
                 <div className="relative flex items-center">
-                    <input {...register("password")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                    <input {...register("contrasena")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
                 </div>
                 </div>
 
