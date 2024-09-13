@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../utils/axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, /* useNavigate */ } from 'react-router-dom';
+import { toast } from "sonner";
 
 const UpdateUsers = () => {
     const { id } = useParams(); 
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const [user, setUser] = useState({
         rut: '',
         nombres: '',
@@ -48,7 +49,8 @@ const UpdateUsers = () => {
         try {
             console.log(user);
             await api.put(`/adminCrud/updateUsers/${id}`, user);
-            navigate('/Usuarios'); 
+            toast('Usuario actualizado con éxito');
+            //navigate('/Usuarios'); 
         } catch (error) {
             console.error('Error al actualizar el usuario:', error);
         }
