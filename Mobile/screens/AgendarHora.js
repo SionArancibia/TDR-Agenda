@@ -1,33 +1,32 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function MainScreen2({ navigation }) {
     return (
         <View style={styles.container}>
-            
             <View style={styles.row}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Psicologia' })}>
                     <Text style={styles.buttonText}>Psicologia</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Kinesiologia' })}>
                     <Text style={styles.buttonText}>Kinesiologia</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.row}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Ayuda')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Podologia' })}>
                     <Text style={styles.buttonText}>Podologia</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('OtraOpcion')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Peluqueria' })}>
                     <Text style={styles.buttonText}>Peluqueria</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.row}>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Configuracion')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Atencion Social' })}>
                     <Text style={styles.buttonText}>Atencion Social</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Perfil')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Atencion Juridica' })}>
                     <Text style={styles.buttonText}>Atencion Juridica</Text>
                 </TouchableOpacity>
             </View>
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginVertical: 10,//margin entre botones
+        marginVertical: 10,
     },
     button: {
         backgroundColor: '#49BA98', // Color verde para los botones
