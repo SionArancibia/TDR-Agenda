@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/axios';
+import { toast } from "sonner";
 
 interface User {
     id: string;
@@ -35,6 +36,7 @@ const Usuarios: React.FC = () => {
         try {
             await api.delete(`/adminCrud/deleteUsers/${id}`);
             setUsers(users.filter(user => user.id !== id));
+            toast('Usuario eliminado con éxito');
         } catch (error) {
             console.error('Error al eliminar el usuario:', error);
         }
@@ -45,7 +47,7 @@ const Usuarios: React.FC = () => {
     };
 
     const handleRegisterClick = () => {
-        navigate('/signup');
+        navigate('/createUsers');
     };
 
     return (

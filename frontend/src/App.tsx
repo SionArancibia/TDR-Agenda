@@ -7,6 +7,7 @@ import UpdateUsers from "./pages/updateUsers";
 import PasswordRecovery from "./pages/PasswordRecovery";
 import { Toaster } from "sonner";
 import Usuarios from "./pages/Usuarios";
+import CreateUsers from "./pages/CreateUsers";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -21,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
         <Route path="/signup" element={<Signup/>}/>
+        <Route path="/createUsers" element={<CreateUsers/>}/>
         <Route path="/updateUsers/:id" element={authUser?.role === "admin" ? <UpdateUsers/> : <Navigate to={"/login"} />} />
         <Route path="/usuarios" element={authUser?.role === "admin" ? <Usuarios /> : <Navigate to="/login" />} /> 
       </Routes>
