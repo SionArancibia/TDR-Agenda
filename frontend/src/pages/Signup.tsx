@@ -1,10 +1,18 @@
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { validateRut} from '@fdograph/rut-utilities'; // Librería utilizada para validar el RUT: https://github.com/fdograph/rut-utilities/blob/master/README-es.md
 import useSignup from '../hooks/useSignup';
 
 const SignupSchema = z.object({
-    rut: z.string().min(1, 'El RUT es obligatorio'),
+    rut: z.string()
+        .min(1, 'El RUT es obligatorio')
+        .refine(value => validateRut(value), {
+            message: "RUT inválido",
+        })
+        .refine(value => /^\d{7,8}-[kK0-9]$/.test(value), {
+            message: 'El RUT debe estar en el formato xxxxxxxx-x',
+        }),
     nombres: z.string().min(1, 'El nombre es obligatorio'),
     apellidos: z.string().min(1, 'El apellido es obligatorio'),
     domicilio: z.string().min(1, 'El domicilio es obligatorio'),
@@ -13,7 +21,7 @@ const SignupSchema = z.object({
     contrasena: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
     confirmarContrasena: z.string().min(6, 'Confirme su contraseña'),
     gender: z.enum(['male', 'female']),
-    role: z.enum(['admin', 'professional']),
+    role: z.enum(['professional']),
 }).refine(data => data.contrasena === data.confirmarContrasena, {
     message: "Las contraseñas no coinciden",
     path: ["confirmarContrasena"],
@@ -101,7 +109,6 @@ const Signup = () => {
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Rol</label>
                                 <select {...register('role')} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600">
-                                    <option value="admin">Administrador</option>
                                     <option value="professional">Profesional</option>
                                 </select>
                             </div>

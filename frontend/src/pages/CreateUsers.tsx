@@ -1,10 +1,18 @@
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { validateRut} from '@fdograph/rut-utilities'; // Librería utilizada para validar el RUT: https://github.com/fdograph/rut-utilities/blob/master/README-es.md
 import useCreateUsers from '../hooks/useCreateUsers';
 
 const createUsersSchema = z.object({
-    rut: z.string().min(1, 'El RUT es obligatorio'),
+    rut: z.string()
+        .min(1, 'El RUT es obligatorio')
+        .refine(value => validateRut(value), {
+            message: "RUT inválido",
+        })
+        .refine(value => /^\d{7,8}-[kK0-9]$/.test(value), {
+            message: 'El RUT debe estar en el formato xxxxxxxx-x',
+        }),
     nombres: z.string().min(1, 'El nombre es obligatorio'),
     apellidos: z.string().min(1, 'El apellido es obligatorio'),
     domicilio: z.string().min(1, 'El domicilio es obligatorio'),
@@ -40,7 +48,7 @@ const CreateUsers = () => {
             <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
                 <div className="max-w-md w-full">
                     <div className="p-8 rounded-2xl bg-white shadow">
-                        <h2 className="text-gray-800 text-center text-2xl font-bold">Regístrate</h2>
+                        <h2 className="text-gray-800 text-center text-2xl font-bold">Registrar Usuario</h2>
                         <form className="mt-8 space-y-4" onSubmit={handleSubmit(onSubmit)}>
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">RUT</label>
@@ -107,7 +115,7 @@ const CreateUsers = () => {
                             </div>
 
                             <div className="!mt-8">
-                                <input type="submit" value="Registrarse" className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"/>
+                                <input type="submit" value="Registrar usuario" className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"/>
                             </div>
                         </form>
                     </div>
