@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import useAgenda from '../hooks/useAgenda';
-
+import { useAuthContext } from '../context/AuthContext';
 // Definir la interfaz de una cita
 interface Appointment {
   id: number;
@@ -18,7 +18,8 @@ interface Appointment {
 }
 
 // Formulario de la agenda
-const AgendaForm = () => { 
+const AgendaForm = () => {
+  const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
   const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
   const [profesionalId, setProfesionalId] = useState('');
   const [pacienteId, setPacienteId] = useState('');
@@ -30,21 +31,37 @@ const AgendaForm = () => {
 
   const currentDate = new Date();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear()); 
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
 
-  //para que se actualice la lista de citas cuando se cambie de mes o año
+
+  // Actualizar profesionalId cuando authUser cambie
   useEffect(() => {
-    fetchAppointments(selectedMonth, selectedYear);
-  }, [selectedMonth, selectedYear]);  
+    if (authUser !== null) {
+      setProfesionalId(authUser.id);
+      console.log(authUser);
+    }
+  }, [authUser]);
 
-  const fetchAppointments = async (month: number, year: number) => {
-    const citasData = await getCitas(profesionalId, pacienteId, month.toString(), year.toString());
+  // para que se actualice la lista de citas cuando se cambie de mes o año
+  useEffect(() => {
+    if (mes && año) {
+      fetchAppointments();
+    }
+  }, [mes, año]);
+
+  const fetchAppointments = async () => {
+    if ( !mes || !año) {
+      toast.error('Faltan parámetros requeridos');
+      return;
+    }
+    const citasData = await getCitas(profesionalId, selectedMonth.toString(), selectedYear.toString());
     setAppointments(citasData);
+    console.log(citasData);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    fetchAppointments(parseInt(mes), parseInt(año));
+    fetchAppointments();
   };
 
   const handleDetailsClick = (appointment: Appointment) => {
@@ -63,17 +80,19 @@ const AgendaForm = () => {
     toast('Cita cancelada');
   };
 
+  // Cambiar el mes de la agenda, con un offset de -1 o 1
   const handleMonthChange = (offset: number) => {
-    const newMonth = selectedMonth + offset;
+    const newMonth = parseInt(mes) + offset;
     if (newMonth > 12) {
-      setSelectedMonth(1);
-      setSelectedYear(selectedYear + 1);
+      setMes('1');
+      setAño((prevAño) => (parseInt(prevAño) + 1).toString());
     } else if (newMonth < 1) {
-      setSelectedMonth(12);
-      setSelectedYear(selectedYear - 1);
+      setMes('12');
+      setAño((prevAño) => (parseInt(prevAño) - 1).toString());
     } else {
-      setSelectedMonth(newMonth);
+      setMes(newMonth.toString());
     }
+    fetchAppointments(); // Llamar a fetchAppointments después de actualizar el mes y año
   };
 
   // Genera un arreglo de los meses a mostrar, simulando una cuadrícula de 4 meses.
@@ -136,13 +155,13 @@ const AgendaForm = () => {
         >
           &#8592; {/* Flecha izquierda */}
         </button>
-        
+
         {/* Vista en cuadrícula de 4 meses */}
         <div className="grid grid-cols-4 gap-4 w-full max-w-4xl mx-auto">
           {getMonthsToDisplay().map((month, index) => ( // Muestra los meses en la cuadrícula
-            <div 
+            <div
               key={index} // Key para React
-              onClick={() => setSelectedMonth((selectedMonth + index - 1) % 12 + 1)} // Cambiar mes, index es el offset del mes 
+              onClick={() => setSelectedMonth((selectedMonth + index - 1) % 12 + 1)} // Cambiar mes, index es el offset del mes
               className={`p-4 border border-gray-300 rounded-lg text-center font-semibold text-lg shadow-md cursor-pointer
                 ${selectedMonth === index + 1 ? 'bg-green-500 text-white' : 'bg-green-400 text-white hover:bg-green-500'}`}
             >
@@ -280,7 +299,6 @@ const AgendaForm = () => {
           </div>
         </div>
       )}
-
         <div>
         <form onSubmit={handleSubmit}>
           <div>
@@ -324,10 +342,7 @@ const AgendaForm = () => {
           <button onClick={() => handleMonthChange(-1)}>Mes Anterior</button>
           <button onClick={() => handleMonthChange(1)}>Mes Siguiente</button>
         </div>
-    </div>
-  );
-
-
+      </div>
     </div>
   );
 };

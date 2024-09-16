@@ -4,7 +4,7 @@ import protectRoute from "../middleware/protectRoute";
 import authorizeRole from "../middleware/authorizeRole";
 const router = express.Router();
 
-router.get("/me", protectRoute, authorizeRole(['admin']), getMe);
+router.get("/me", protectRoute, authorizeRole(['admin', 'professional']), getMe);
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);

@@ -125,7 +125,7 @@ export const getMe = async (req: Request, res: Response) => {
 export const getCitas = async (req: Request, res: Response) => {
 	const { profesionalId, pacienteId, mes, año } = req.query;
 
-	if (!profesionalId || !pacienteId || !mes || !año) {
+	if (!profesionalId || !mes || !año) {
 	return res.status(400).json({ error: "Faltan parámetros requeridos" });
 	}
 
@@ -133,7 +133,6 @@ export const getCitas = async (req: Request, res: Response) => {
 	const citas = await prisma.citas.findMany({
 		where: {
 		profesionalId: profesionalId as string,
-		pacienteId: pacienteId as string,
 		fecha: {
 			gte: new Date(`${año}-${mes}-01`),
 			lt: new Date(`${año}-${parseInt(mes as string) + 1}-01`),

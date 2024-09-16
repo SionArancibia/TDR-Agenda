@@ -2,10 +2,10 @@ import { toast } from "sonner";
 import { api } from "../utils/axios";
 
 const useAgenda = () => {
-  const getCitas = async (profesionalId: string, pacienteId: string, mes: string, año: string) => {
+  const getCitas = async (profesionalId: string, mes: string, año: string) => {
     try {
-      const response = await api.get("/citas", {
-        params: { profesionalId, pacienteId, mes, año }
+      const response = await api.get("auth/citas", {
+        params: { profesionalId, mes, año }
       });
       console.log(response.data);
       return response.data;
