@@ -4,7 +4,7 @@ import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffe
 type AuthUserType = {
 	id: string;
     username: string;
-	fullName: string;
+	nombres: string;
     role: string;
 	gender: string;
 };

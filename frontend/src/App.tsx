@@ -9,7 +9,7 @@ import Historial from './pages/historial.tsx';
 import Home from './pages/home.tsx';
 import Navbar from './components/nabvar.tsx'; 
 import Footer  from './components/footer.tsx'; 
-import Agenda_P from './pages/agenda.tsx'; 
+import AgendaForm from './pages/agenda.tsx'; 
 function App() {
   const {authUser} = useAuthContext();
   console.log("authuser: ", authUser);
@@ -27,7 +27,7 @@ function App() {
         <Route path="/signup" element={<Signup/>}/>
         <Route path="/" element={<Home />} />
         <Route path="/historial" element={<Historial />} />
-        <Route path="/agenda" element={<Agenda_P />} />
+        <Route path="/agenda" element={<AgendaForm />} />
 
        
       </Routes>
