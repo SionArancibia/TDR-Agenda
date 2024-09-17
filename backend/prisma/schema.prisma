@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 model Usuario {
   id          String  @id @default(cuid())
   rut         String  @unique
@@ -28,12 +28,50 @@ model Profesional {
   rut        String
   pacientes  Paciente[] 
   citas      Citas[]    
+=======
+model Citas {
+  id                   String      @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
+  pacienteId           String
+  paciente             Paciente    @relation(fields: [pacienteId], references: [id]) //Relación de uno a muchos, un paciente puede tener muchas citas
+  profesionalId        String
+  profesional          Profesional @relation(fields: [profesionalId], references: [id]) //Relación de uno a muchos, un profesional puede tener muchas citas
+  fecha                DateTime
+  tipoServicio         String
+  centroComunitario    String
+  asiste               Boolean
+  atencionDomiciliaria Boolean
+  observaciones        String
+}
+
+model Usuario {
+  id         String   @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
+  rut        String   @unique // El rut es único
+  username   String   @unique // El username es único 
+  nombres    String
+  apellidos  String
+  domicilio  String
+  edad       Int
+  contrasena String
+  telefono   Int
+  gender     Gender // Gender es un enum que definimos más abajo
+  createAt   DateTime @default(now())
+  role       Role     @default(patient) // Role es un enum que definimos más abajo
+}
+
+model Profesional {
+  id        String     @id @default(cuid())
+  nombre    String
+  rut       String
+  pacientes Paciente[] // Relación de uno a muchos, un profesional puede tener muchas 
+  citas     Citas[] // Relación de uno a muchos, un profesional puede tener muchas citas
+>>>>>>> Profesional
 }
 
 model Paciente {
   id            String      @id @default(cuid())
   nombre        String
   rut           String
+<<<<<<< HEAD
   citas         Citas[]    
   profesional   Profesional @relation(fields: [profesionalId], references: [id])
   profesionalId String
@@ -54,6 +92,18 @@ model Administrador {
   rut               String  @unique
   mensajes          String
   bloquear_agenda   Boolean
+=======
+  citas         Citas[] // Relación de uno a muchos, un paciente puede tener muchas citas
+  profesional   Profesional @relation(fields: [profesionalId], references: [id]) //Relación de uno a muchos, un paciente puede tener un profesional asignado
+  profesionalId String
+}
+
+model Administrador {
+  id_Administrador     String  @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
+  rut                  String  @unique
+  mensajes             String
+  bloquear_agenda      Boolean
+>>>>>>> Profesional
   registro_profesional String
 }
 

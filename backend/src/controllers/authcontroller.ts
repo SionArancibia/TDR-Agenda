@@ -61,8 +61,8 @@ export const signup = async (req: Request, res: Response) => {
 			},
 		});
 
-		if (newUser) {
-			generateToken(newUser.id, newUser.role, res);
+        if (newUser) {
+            generateToken(newUser.id, newUser.role, res);
 
 			return res.status(201).json({
 				id: newUser.id,
