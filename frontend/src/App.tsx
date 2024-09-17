@@ -20,6 +20,7 @@ function App() {
   console.log("authuser: ", authUser);
   return (
     <>
+<<<<<<< HEAD
       <div>
         <Toaster />
         <Navbar/>
@@ -38,6 +39,28 @@ function App() {
         </Routes>
         <Footer/>
       </div>
+=======
+    <div>
+
+
+      <Toaster />
+      <Navbar />
+      <Routes>
+        <Route path="/dashboard" element={authUser?.role === "admin" ? <Dashboard/> : <Navigate to={"/login"} />}/>
+        <Route path="/login" element={!authUser ? <Login/> : <Navigate to={"/dashboard"}/>}/>
+        <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
+        <Route path="/signup" element={<Signup/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/historial" element={<Historial />} />
+        <Route path="/agenda" element={<AgendaForm />} />
+        <Route path="/asistencia" element={<RegistroAsistencia />} />
+
+       
+      </Routes>
+      <Footer />
+    </div>
+
+>>>>>>> Profesional
     </>
   )
 }
