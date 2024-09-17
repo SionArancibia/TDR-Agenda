@@ -29,6 +29,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/historial" element={<Historial />} />
         <Route path="/agenda" element={<AgendaForm />} />
+        <Route path="/asistencia" element={<RegistroAsistencia />} />
 
        
       </Routes>
