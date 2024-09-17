@@ -3,24 +3,29 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { useAuthContext } from "./context/AuthContext";
 import Dashboard from "./pages/Dashboard";
+import UpdateUsers from "./pages/updateUsers";
 import PasswordRecovery from "./pages/PasswordRecovery";
 import { Toaster } from "sonner";
+import Usuarios from "./pages/Usuarios";
+import CreateUsers from "./pages/CreateUsers";
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const {authUser} = useAuthContext();
   console.log("authuser: ", authUser);
   return (
     <>
-    <div>
-      <Toaster />
-      <Routes>
-        <Route path="/dashboard" element={authUser?.role === "admin" ? <Dashboard/> : <Navigate to={"/login"} />}/>
-        <Route path="/login" element={!authUser ? <Login/> : <Navigate to={"/dashboard"}/>}/>
-        <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
-        <Route path="/signup" element={<Signup/>}/>
-      </Routes>
-    </div>
-
+        <Toaster />
+        <Routes>
+          <Route path="/dashboardAdmin" element={<AdminDashboard/>}/>
+          <Route path="/dashboardProfessional" element={authUser?.role === "professional" ? <Dashboard/> : <Navigate to={"/login"} />}/>
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
+          <Route path="/signup" element={<Signup/>}/>
+          <Route path="/createUsers" element={<CreateUsers/>}/>
+          <Route path="/updateUsers/:id" element={authUser?.role === "admin" ? <UpdateUsers/> : <Navigate to={"/login"} />} />
+          <Route path="/usuarios" element={authUser?.role === "admin" ? <Usuarios /> : <Navigate to="/login" />} /> 
+        </Routes>
     </>
   )
 }

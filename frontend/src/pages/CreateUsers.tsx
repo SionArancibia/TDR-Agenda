@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { validateRut} from '@fdograph/rut-utilities'; // Librería utilizada para validar el RUT: https://github.com/fdograph/rut-utilities/blob/master/README-es.md
-import useSignup from '../hooks/useSignup';
+import useCreateUsers from '../hooks/useCreateUsers';
 
-const SignupSchema = z.object({
+const createUsersSchema = z.object({
     rut: z.string()
         .min(1, 'El RUT es obligatorio')
         .refine(value => validateRut(value), {
@@ -21,26 +21,26 @@ const SignupSchema = z.object({
     contrasena: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
     confirmarContrasena: z.string().min(6, 'Confirme su contraseña'),
     gender: z.enum(['male', 'female']),
-    role: z.enum(['professional']),
+    role: z.enum(['admin', 'professional']),
 }).refine(data => data.contrasena === data.confirmarContrasena, {
     message: "Las contraseñas no coinciden",
     path: ["confirmarContrasena"],
 });
 
-type SignupSchemaType = z.infer<typeof SignupSchema>;
+type createUsersSchemaType = z.infer<typeof createUsersSchema>;
 
-const Signup = () => {
-    const signup = useSignup(); 
+const CreateUsers = () => {
+    const createUsers = useCreateUsers(); 
 
     const {
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm<SignupSchemaType>({ resolver: zodResolver(SignupSchema) });
+    } = useForm<createUsersSchemaType>({ resolver: zodResolver(createUsersSchema) });
 
-    const onSubmit: SubmitHandler<SignupSchemaType> = (data) => {
+    const onSubmit: SubmitHandler<createUsersSchemaType> = (data) => {
         //console.log(data);
-        signup(data);
+        createUsers(data);
     };
 
     return (
@@ -48,7 +48,7 @@ const Signup = () => {
             <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
                 <div className="max-w-md w-full">
                     <div className="p-8 rounded-2xl bg-white shadow">
-                        <h2 className="text-gray-800 text-center text-2xl font-bold">Regístrate</h2>
+                        <h2 className="text-gray-800 text-center text-2xl font-bold">Registrar Usuario</h2>
                         <form className="mt-8 space-y-4" onSubmit={handleSubmit(onSubmit)}>
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">RUT</label>
@@ -109,12 +109,13 @@ const Signup = () => {
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Rol</label>
                                 <select {...register('role')} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600">
+                                    <option value="admin">Administrador</option>
                                     <option value="professional">Profesional</option>
                                 </select>
                             </div>
 
                             <div className="!mt-8">
-                                <input type="submit" value="Registrarse" className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"/>
+                                <input type="submit" value="Registrar usuario" className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"/>
                             </div>
                         </form>
                     </div>
@@ -124,4 +125,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default CreateUsers;
