@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import PasswordRecovery from "./pages/PasswordRecovery";
 import { Toaster } from "sonner";
 import Historial from './pages/historial.tsx'; 
+import RegistroAsistencia from './pages/asistencia.tsx'
 import Home from './pages/home.tsx';
 import Navbar from './components/nabvar.tsx'; 
 import Footer  from './components/footer.tsx'; 
