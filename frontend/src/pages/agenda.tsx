@@ -17,12 +17,26 @@ interface Appointment {
   attendance: boolean;
 }
 
+const meses = [
+  { nombre: "Enero", valor: "01" },
+  { nombre: "Febrero", valor: "02" },
+  { nombre: "Marzo", valor: "03" },
+  { nombre: "Abril", valor: "04" },
+  { nombre: "Mayo", valor: "05" },
+  { nombre: "Junio", valor: "06" },
+  { nombre: "Julio", valor: "07" },
+  { nombre: "Agosto", valor: "08" },
+  { nombre: "Septiembre", valor: "09" },
+  { nombre: "Octubre", valor: "10" },
+  { nombre: "Noviembre", valor: "11" },
+  { nombre: "Diciembre", valor: "12" },
+];
+
 // Formulario de la agenda
 const AgendaForm = () => {
   const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
   const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
-  const [profesionalId, setProfesionalId] = useState('');
-  const [pacienteId, setPacienteId] = useState('');
+  const [username, setUsername] = useState('');
   const [mes, setMes] = useState('');
   const [año, setAño] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -37,7 +51,7 @@ const AgendaForm = () => {
   // Actualizar profesionalId cuando authUser cambie
   useEffect(() => {
     if (authUser !== null) {
-      setProfesionalId(authUser.id);
+      setUsername(authUser.username);
       console.log(authUser);
     }
   }, [authUser]);
@@ -54,9 +68,14 @@ const AgendaForm = () => {
       toast.error('Faltan parámetros requeridos');
       return;
     }
-    const citasData = await getCitas(profesionalId, selectedMonth.toString(), selectedYear.toString());
-    setAppointments(citasData);
-    console.log(citasData);
+    try {
+      const citasData = await getCitas(username, selectedMonth.toString(), selectedYear.toString());
+      setAppointments(citasData || []); // Asegurarse de que citasData sea un arreglo
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      setAppointments([]); // En caso de error, establecer appointments como un arreglo vacío
+      toast.error('Error al obtener las citas');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -302,12 +321,8 @@ const AgendaForm = () => {
         <div>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Profesional ID:</label>
-            <input type="text" value={profesionalId} onChange={(e) => setProfesionalId(e.target.value)} required />
-          </div>
-          <div>
-            <label>Paciente ID:</label>
-            <input type="text" value={pacienteId} onChange={(e) => setPacienteId(e.target.value)} required />
+            <label>Username:</label>
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
           </div>
           <div>
             <label>Mes:</label>
