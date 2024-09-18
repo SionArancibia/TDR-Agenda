@@ -36,6 +36,7 @@ function App() {
           <Route path="/usuarios" element={authUser?.role === "admin" ? <Usuarios /> : <Navigate to="/login" />} /> 
           <Route path="/historial" element={<Historial />} />
           <Route path="/agenda" element={<AgendaForm />} />
+          <Route path="/asistencia" element={<RegistroAsistencia />} />
         </Routes>
         <Footer/>
       </div>
