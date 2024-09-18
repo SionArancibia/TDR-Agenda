@@ -33,7 +33,7 @@ model Administrador {
 model Profesional {
   id        String     @id @default(cuid())
   nombre    String
-  rut       String
+  rut       String     @unique
   pacientes Paciente[] // Relación de uno a muchos, un profesional puede tener muchas 
   citas     Citas[] // Relación de uno a muchos, un profesional puede tener muchas citas
 }
@@ -41,7 +41,7 @@ model Profesional {
 model Paciente {
   id            String      @id @default(cuid())
   nombre        String
-  rut           String
+  rut           String      @unique
   citas         Citas[]    
   profesional   Profesional @relation(fields: [profesionalId], references: [id])
   profesionalId String
