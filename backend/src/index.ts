@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/adminCrud", adminRoutes);
-app.use("/api", citasRoutes);
+app.use("/api/profesional", citasRoutes);
 
 app.listen(PORT,()=> {
     console.log("Server running on port: ", PORT);
