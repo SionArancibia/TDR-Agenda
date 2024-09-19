@@ -36,7 +36,7 @@ const meses = [
 const AgendaForm = () => {
   const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
   const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
-  const [username, setUsername] = useState('');
+  const [rut, setRut] = useState('');
   const [mes, setMes] = useState('');
   const [año, setAño] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -51,7 +51,7 @@ const AgendaForm = () => {
   // Actualizar profesionalId cuando authUser cambie
   useEffect(() => {
     if (authUser !== null) {
-      setUsername(authUser.username);
+      setRut(authUser.rut);
       console.log(authUser);
     }
   }, [authUser]);
@@ -69,7 +69,7 @@ const AgendaForm = () => {
       return;
     }
     try {
-      const citasData = await getCitas(username, selectedMonth.toString(), selectedYear.toString());
+      const citasData = await getCitas(rut, selectedMonth.toString(), selectedYear.toString());
       setAppointments(citasData || []); // Asegurarse de que citasData sea un arreglo
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -321,8 +321,8 @@ const AgendaForm = () => {
         <div>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Username:</label>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+            <label>Rut:</label>
+            <input type="text" value={rut} onChange={(e) => setRut(e.target.value)} required />
           </div>
           <div>
             <label>Mes:</label>

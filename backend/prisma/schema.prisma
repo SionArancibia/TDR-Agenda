@@ -10,7 +10,6 @@ datasource db {
 model Usuario {
   id         String   @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
   rut        String   @unique // El rut es único
-  username   String   @unique // El username es único 
   nombres    String
   apellidos  String
   domicilio  String
@@ -42,7 +41,7 @@ model Paciente {
   id            String      @id @default(cuid())
   nombre        String
   rut           String      @unique
-  citas         Citas[]    
+  citas         Citas[]
   profesional   Profesional @relation(fields: [profesionalId], references: [id])
   profesionalId String
 }
