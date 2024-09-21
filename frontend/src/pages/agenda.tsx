@@ -3,74 +3,71 @@ import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import useAgenda from '../hooks/useAgenda';
 import { useAuthContext } from '../context/AuthContext';
+import MonthCard from '../components/MonthCard';
+import NavigationButton from '../components/NavigationButton';
+
 // Definir la interfaz de una cita
-interface Appointment {
-  id: number;
-  name: string;
-  rut: string;
-  fecha: string;
-  hora: string;
-  tipoServicio: string;
+export interface Appointment {
+  id: string;
+  pacienteId: string;
+  profesionalId: string;
+  asiste: boolean;
+  atencionDomiciliaria: boolean;
   centroComunitario: string;
-  reducedMobility: boolean;
-  chronicDisease: boolean;
-  attendance: boolean;
+  fecha: string; // Puedes usar Date si prefieres manejar fechas como objetos Date
+  observaciones: string;
+  tipoServicio: string;
 }
 
-const meses = [
-  { nombre: "Enero", valor: "01" },
-  { nombre: "Febrero", valor: "02" },
-  { nombre: "Marzo", valor: "03" },
-  { nombre: "Abril", valor: "04" },
-  { nombre: "Mayo", valor: "05" },
-  { nombre: "Junio", valor: "06" },
-  { nombre: "Julio", valor: "07" },
-  { nombre: "Agosto", valor: "08" },
-  { nombre: "Septiembre", valor: "09" },
-  { nombre: "Octubre", valor: "10" },
-  { nombre: "Noviembre", valor: "11" },
-  { nombre: "Diciembre", valor: "12" },
-];
+  // Genera un arreglo de los meses a mostrar, simulando una cuadrícula de 4 meses.
+  const getMonthsToDisplay = (year: number, month: number) => {
+    const months = [];
+    for (let i = 0; i < 4; i++) {
+      const date = new Date(year, month + i); // Crear una nueva fecha con el año y mes actual + i, +i es para avanzar al siguiente mes
+      const monthName = date.toLocaleString('default', { month: 'long', year: 'numeric'}); 
+      months.push(monthName);
+    }
+    return months;
+  };
+
 
 // Formulario de la agenda
 const AgendaForm = () => {
   const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
   const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
   const [rut, setRut] = useState('');
-  const [mes, setMes] = useState('');
-  const [año, setAño] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
 
-  const currentDate = new Date();
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // Mes actual
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Año actual
+  const [displayedMonths, setDisplayedMonths] = useState(getMonthsToDisplay(selectedYear, selectedMonth)); // Meses a mostrar
+  const [mes, setMes] = useState((selectedMonth + 1).toString());
+  const [año, setAño] = useState(selectedYear.toString());
 
-
-  // Actualizar profesionalId cuando authUser cambie
+  // Obtener el rut del usuario aut
   useEffect(() => {
     if (authUser !== null) {
       setRut(authUser.rut);
-      console.log(authUser);
     }
   }, [authUser]);
 
   // para que se actualice la lista de citas cuando se cambie de mes o año
   useEffect(() => {
-    if (mes && año) {
+    if (mes && año) { // Solo llamar a fetchAppointments si mes y año están definidos
       fetchAppointments();
     }
   }, [mes, año]);
 
+  // Función para obtener las citas
   const fetchAppointments = async () => {
-    if ( !mes || !año) {
+    if (!rut || !mes || !año) {
       toast.error('Faltan parámetros requeridos');
       return;
     }
     try {
-      const citasData = await getCitas(rut, selectedMonth.toString(), selectedYear.toString());
-      setAppointments(citasData || []); // Asegurarse de que citasData sea un arreglo
+      const citasData = await getCitas(rut, mes, año);
+      setAppointments(citasData || []); // Establecer las citas obtenidas en el estado
     } catch (error) {
       console.error("Error fetching appointments:", error);
       setAppointments([]); // En caso de error, establecer appointments como un arreglo vacío
@@ -85,46 +82,38 @@ const AgendaForm = () => {
 
   const handleDetailsClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
-    setIsEditing(false);
-  };
-
-  const handleEditClick = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
-    setIsEditing(true);
   };
 
   const handleCancelClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
-    setIsEditing(false);
     toast('Cita cancelada');
   };
 
-  // Cambiar el mes de la agenda, con un offset de -1 o 1
-  const handleMonthChange = (offset: number) => {
-    const newMonth = parseInt(mes) + offset;
-    if (newMonth > 12) {
-      setMes('1');
-      setAño((prevAño) => (parseInt(prevAño) + 1).toString());
-    } else if (newMonth < 1) {
-      setMes('12');
-      setAño((prevAño) => (parseInt(prevAño) - 1).toString());
-    } else {
-      setMes(newMonth.toString());
+  const handleMonthChange = (newYear: number, newMonth: number) => {
+    setSelectedYear(newYear);
+    setSelectedMonth(newMonth);
+    setDisplayedMonths(getMonthsToDisplay(newYear, newMonth));
+  };
+
+  const handleNextMonth = () => {
+    let newMonth = selectedMonth + 1;
+    let newYear = selectedYear;
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear += 1;
     }
-    fetchAppointments(); // Llamar a fetchAppointments después de actualizar el mes y año
+    handleMonthChange(newYear, newMonth);
   };
 
-  // Genera un arreglo de los meses a mostrar, simulando una cuadrícula de 4 meses.
-  const getMonthsToDisplay = () => {
-    const months = [];
-    for (let i = 0; i < 4; i++) {
-      const month = (selectedMonth + i - 1) % 12 + 1; // 1-12
-      months.push(new Date(selectedYear, month - 1).toLocaleString('es-ES', { month: 'long' }));
-    } //toLocaleString convierte la fecha en un string con el mes en palabras
-    return months;
+  const handlePreviousMonth = () => {
+    let newMonth = selectedMonth - 1;
+    let newYear = selectedYear;
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear -= 1;
+    }
+    handleMonthChange(newYear, newMonth);
   };
-
-
 
   return (
     <div className="min-h-screen w-screen flex flex-col bg-gray-100 p-4">
@@ -167,35 +156,24 @@ const AgendaForm = () => {
       <h2 className="text-2xl text-black font-bold mb-4 text-center">Horas agendadas</h2>
 
       {/* Selector de meses con navegación */}
-      <div className="flex justify-center items-center space-x-4 mb-2">
-        <button
-          onClick={() => handleMonthChange(-1)} // Retroceder un mes
-          className="px-4 py-2 rounded-full bg-green-400 hover:bg-green-500 text-white"
-        >
-          &#8592; {/* Flecha izquierda */}
-        </button>
-
-        {/* Vista en cuadrícula de 4 meses */}
-        <div className="grid grid-cols-4 gap-4 w-full max-w-4xl mx-auto">
-          {getMonthsToDisplay().map((month, index) => ( // Muestra los meses en la cuadrícula
-            <div
-              key={index} // Key para React
-              onClick={() => setSelectedMonth((selectedMonth + index - 1) % 12 + 1)} // Cambiar mes, index es el offset del mes
-              className={`p-4 border border-gray-300 rounded-lg text-center font-semibold text-lg shadow-md cursor-pointer
-                ${selectedMonth === index + 1 ? 'bg-green-500 text-white' : 'bg-green-400 text-white hover:bg-green-500'}`}
-            >
-              {month}
-            </div>
-          ))}
-        </div>
-
-        <button
-          onClick={() => handleMonthChange(1)} // Avanzar un mes
-          className="px-4 py-2 rounded-full bg-green-400 hover:bg-green-500 text-white"
-        >
-          &#8594; {/* Flecha derecha */}
-        </button>
+    <div className='flex justify-center items-center space-x-4 mb-2'>
+      <NavigationButton direction="left" onClick={handlePreviousMonth} />
+      <div className="grid grid-cols-4 gap-4 w-full max-w-4xl mx-auto">
+        {displayedMonths.map((month, index) => (
+          <MonthCard
+            key={index}
+            month={month}
+            index={index}
+            selectedMonth={selectedMonth}
+            selectedYear={selectedYear}
+            handleMonthChange={handleMonthChange}
+            setMes={setMes}
+            setAño={setAño}
+          />
+        ))}
       </div>
+      <NavigationButton direction="right" onClick={handleNextMonth} />
+    </div>
 
       {/* Mostrar el año debajo */}
       <div className="text-center text-gray-500 mb-4">
@@ -210,8 +188,8 @@ const AgendaForm = () => {
             className="bg-white p-4 rounded shadow-md flex justify-between items-center"
           >
             <div>
-              <h3 className="text-lg font-bold">{appointment.name}</h3>
-              <p>{appointment.fecha} - {appointment.hora}</p>
+              <h3 className="text-lg font-bold">{appointment.asiste}</h3>
+              <p>{appointment.fecha} - {appointment.centroComunitario}</p>
             </div>
             <div className="space-x-4">
               <button
@@ -219,12 +197,6 @@ const AgendaForm = () => {
                 className="bg-green-400 text-white px-4 py-2 rounded-full"
               >
                 Detalles
-              </button>
-              <button
-                onClick={() => handleEditClick(appointment)}
-                className="bg-green-400 text-white px-4 py-2 rounded-full"
-              >
-                Editar
               </button>
               <button
                 onClick={() => handleCancelClick(appointment)}
@@ -256,59 +228,20 @@ const AgendaForm = () => {
       </div>
 
       {/* Modal de detalles o edición */}
-      {selectedAppointment && (
+      {selectedAppointment && ( // Si selectedAppointment es verdadero, mostrar el modal
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-md">
-            {isEditing ? (
-              <div>
-                <h3 className="text-lg font-bold">Editar Cita</h3>
-                <form>
-                  <label className="block mb-2">
-                    Nombre:
-                    <input
-                      type="text"
-                      value={selectedAppointment.name}
-                      className="border border-gray-300 rounded p-2 w-full"
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    RUT:
-                    <input
-                      type="text"
-                      value={selectedAppointment.rut}
-                      className="border border-gray-300 rounded p-2 w-full"
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Hora:
-                    <input
-                      type="text"
-                      value={selectedAppointment.hora}
-                      className="border border-gray-300 rounded p-2 w-full"
-                    />
-                  </label>
-                  <label className="block mb-2">
-                    Asistencia:
-                    <input
-                      type="checkbox"
-                      checked={selectedAppointment.attendance}
-                      className="border border-gray-300 rounded p-2"
-                    />
-                  </label>
-                </form>
-              </div>
-            ) : (
+            {
               <div>
                 <h3 className="text-lg font-bold">Detalles de la Cita</h3>
-                <p>Nombre: {selectedAppointment.name}</p>
-                <p>RUT: {selectedAppointment.rut}</p>
+                <p>Id: {selectedAppointment.id}</p>
                 <p>Fecha: {selectedAppointment.fecha}</p>
-                <p>Hora: {selectedAppointment.hora}</p>
-                <p>Movilidad Reducida: {selectedAppointment.reducedMobility ? 'Sí' : 'No'}</p>
-                <p>Enfermedad Crónica: {selectedAppointment.chronicDisease ? 'Sí' : 'No'}</p>
-                <p>Asistencia: {selectedAppointment.attendance ? 'Sí' : 'No'}</p>
+                <p>Observaciones: {selectedAppointment.observaciones}</p>
+                <p>Atencion Domiciliaria: {selectedAppointment.atencionDomiciliaria ? 'Sí' : 'No'}</p>
+                <p>Centro Comunitario: {selectedAppointment.centroComunitario}</p>
+                <p>Asistencia: {selectedAppointment.asiste ? 'Sí' : 'No'}</p>
               </div>
-            )}
+            }
             <button
               onClick={() => setSelectedAppointment(null)}
               className="mt-4 bg-red-400 text-white px-4 py-2 rounded-full"
@@ -318,46 +251,6 @@ const AgendaForm = () => {
           </div>
         </div>
       )}
-        <div>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Rut:</label>
-            <input type="text" value={rut} onChange={(e) => setRut(e.target.value)} required />
-          </div>
-          <div>
-            <label>Mes:</label>
-            <input type="text" value={mes} onChange={(e) => setMes(e.target.value)} required />
-          </div>
-          <div>
-            <label>Año:</label>
-            <input type="text" value={año} onChange={(e) => setAño(e.target.value)} required />
-          </div>
-          <button type="submit">Obtener Citas</button>
-        </form>
-
-        <div>
-          <h2>Citas</h2>
-          {appointments.length > 0 ? (
-            <ul>
-              {appointments.map((appointment) => (
-                <li key={appointment.id}>
-                  {appointment.fecha}: {appointment.tipoServicio} en {appointment.centroComunitario}
-                  <button onClick={() => handleDetailsClick(appointment)}>Detalles</button>
-                  <button onClick={() => handleEditClick(appointment)}>Editar</button>
-                  <button onClick={() => handleCancelClick(appointment)}>Cancelar</button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No hay citas disponibles.</p>
-          )}
-        </div>
-
-        <div>
-          <button onClick={() => handleMonthChange(-1)}>Mes Anterior</button>
-          <button onClick={() => handleMonthChange(1)}>Mes Siguiente</button>
-        </div>
-      </div>
     </div>
   );
 };
