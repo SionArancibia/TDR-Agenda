@@ -6,7 +6,7 @@
     id: string;
     nombre: string;
     rut: string;
-    domicilio: string;
+    
   }
 
   const Historial: React.FC = () => {
@@ -17,17 +17,14 @@
     useEffect(() => {
       const fetchPacientes = async () => {
         try {
-        
-          const response = await fetch('/api/pacientes');
+          const response = await fetch('http://localhost:3000/api/pacientes');
           const data = await response.json();
-      
           setPacientes(data);
         } catch (error) {
           console.error('Error al obtener pacientes:', error);
         }
       };
-
-      fetchPacientes(); 
+      fetchPacientes();
     }, []);
 
     return (
@@ -79,7 +76,7 @@
                 <div>
                     <p className="font-semibold text-gray-600 text-lg">{paciente.nombre}</p>
                     <p className="text-gray-600">RUT: {paciente.rut}</p>
-                    <p className="text-gray-600">Ubicación: {paciente.domicilio}</p>
+                   
                   </div>
                   <button className="bg-green-300 text-white px-4 py-2 rounded-full shadow-md hover:bg-green-600 transition duration-300">
                     Ver historial

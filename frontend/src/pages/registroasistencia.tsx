@@ -9,7 +9,7 @@ interface Paciente {
   
 }
 
-const Asistencia: React.FC = () => {
+const Historial: React.FC = () => {
 
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
 
@@ -30,7 +30,7 @@ const Asistencia: React.FC = () => {
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-4xl">
-        <h2 className="text-black text-3xl font-bold mb-4">Asistencia</h2>
+        <h2 className="text-black text-3xl font-bold mb-4">Historial</h2>
 
         <div className="flex items-center bg-white rounded-full shadow-md p-4 w-full mb-6">
           <button className="p-2">
@@ -79,7 +79,7 @@ const Asistencia: React.FC = () => {
                  
                 </div>
                 <button className="bg-green-300 text-white px-4 py-2 rounded-full shadow-md hover:bg-green-600 transition duration-300">
-                  Ver Registro de Asistencia
+                  Ver historial
                 </button>  
               </div>
             ))
@@ -111,4 +111,4 @@ const Asistencia: React.FC = () => {
   );
 };
 
-export default Asistencia;
+export default Historial;
