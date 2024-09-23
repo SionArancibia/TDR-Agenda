@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import useAgenda from '../hooks/useAgenda';
@@ -73,11 +73,6 @@ const AgendaForm = () => {
       setAppointments([]); // En caso de error, establecer appointments como un arreglo vacío
       toast.error('Error al obtener las citas');
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchAppointments();
   };
 
   const handleDetailsClick = (appointment: Appointment) => {
