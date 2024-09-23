@@ -15,6 +15,7 @@ import Home from './pages/home.tsx';
 import Navbar from './components/nabvar.tsx'; 
 import Footer  from './components/footer.tsx'; 
 import AgendaForm from './pages/agenda.tsx';
+import Mensajes from './pages/mensajes.tsx';
  
 function App() {
   const {authUser} = useAuthContext();
@@ -36,6 +37,7 @@ function App() {
           <Route path="/usuarios" element={authUser?.role === "admin" ? <Usuarios /> : <Navigate to="/login" />} /> 
           <Route path="/historial" element={<Historial />} />
           <Route path="/agenda" element={<AgendaForm />} />
+          <Route path="/mensajes" element={<Mensajes />} />
         </Routes>
         <Footer/>
       </div>

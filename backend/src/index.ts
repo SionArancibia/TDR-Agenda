@@ -1,10 +1,10 @@
 import express from "express";
 import authRoutes from "./routes/auth"
-import citasRoutes from "./routes/citas"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import adminRoutes from "./routes/admin.router"
+import uploadRoutes from './routes/upload'; 
+import mensajesRouter from './routes/mensajes';
 
 dotenv.config();
 
@@ -17,9 +17,9 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/adminCrud", adminRoutes);
-app.use("/api", citasRoutes);
-
+app.use('/uploads', express.static('uploads'));
+app.use('/api', uploadRoutes);
+app.use('/api', mensajesRouter)
 app.listen(PORT,()=> {
     console.log("Server running on port: ", PORT);
 });

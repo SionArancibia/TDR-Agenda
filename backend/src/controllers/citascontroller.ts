@@ -2,20 +2,20 @@ import { Request, Response } from "express";
 import prisma from "../db/prisma";
 
 export const getCitas = async (req: Request, res: Response) => {
-  const { username, mes, año } = req.query;
+  const { rut, mes, año } = req.query;
 
-  if (!username || !mes || !año) {
+  if (!rut || !mes || !año) {
     return res.status(400).json({ error: "Faltan parámetros requeridos" });
   }
 
   try {
-    // Paso 1: Obtener el rut del usuario dado su username
+    // Paso 1: Obtener el rut del usuario directamente
     const usuario = await prisma.usuario.findUnique({
       where: {
-        username: username as string,
+        rut: rut as string, // Ahora estamos usando `rut` en lugar de `username`
       },
       select: {
-        rut: true,
+        rut: true, // Seleccionamos el `rut` que ya recibimos
       },
     });
 
@@ -26,7 +26,7 @@ export const getCitas = async (req: Request, res: Response) => {
     // Paso 2: Obtener el id del profesional usando el rut del usuario
     const profesional = await prisma.profesional.findFirst({
       where: {
-        rut: usuario.rut,
+        rut: usuario.rut, // Ya tenemos el rut del usuario
       },
       select: {
         id: true,

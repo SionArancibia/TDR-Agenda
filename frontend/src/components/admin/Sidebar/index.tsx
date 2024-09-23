@@ -50,6 +50,14 @@ const Sidebar = () => {
                 Estadisticas
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                to="/mensajes"
+                className="group relative flex items-center gap-4 rounded-lg px-6 py-3 font-semibold text-white text-lg duration-300 ease-in-out hover:bg-opacity-75 hover:bg-gray-600"
+              >
+                Mensajes
+              </NavLink>
+            </li>
           </ul>
         </nav>
       </div>

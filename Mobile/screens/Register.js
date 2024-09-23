@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert,TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 
 export default function RegisterScreen() {
   const [rut, setRut] = useState('');
   const [file, setFile] = useState(null);
-  const [Password, setPassword] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!rut) {
       Alert.alert('Error', 'Por favor ingrese su RUT.');
       return;
     }
-    if (!Password) {
+    if (!password) {
       Alert.alert('Error', 'Por favor ingrese una Contraseña.');
       return;
     }
@@ -23,7 +24,33 @@ export default function RegisterScreen() {
       return;
     }
 
-    Alert.alert('Registro Exitoso', `RUT: ${rut}\nArchivo: ${file.name}\ncontraseña: ${Password}`);
+
+    const formData = new FormData();
+    formData.append('rut', rut);
+    formData.append('password', password);
+    formData.append('file', {
+      uri: file.uri,
+      name: file.name,
+      type: file.mimeType,  
+    });
+
+    try {
+
+      const response = await axios.post('http://3000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Registro Exitoso', `Archivo subido con éxito: ${file.name}`);
+      } else {
+        Alert.alert('Error', 'No se pudo completar el registro.');
+      }
+    } catch (error) {
+      console.error('Error al subir el archivo:', error);
+      Alert.alert('Error', 'Hubo un problema al registrar la información.');
+    }
   };
 
   const handleFilePicker = async () => {
@@ -36,7 +63,6 @@ export default function RegisterScreen() {
   };
 
   return (
-    
     <View style={styles.container}>
       <Icon name="user" size={120} color="#333333" style={styles.userIcon} />
       <Text style={styles.title}>Registro</Text>
@@ -49,15 +75,12 @@ export default function RegisterScreen() {
         keyboardType="default"
       />
       <TextInput
-      style={styles.input}
-      placeholder='Contraseña'
-      value={Password}
-      onChangeText={setPassword}   
-      keyboardType='default'
-      >
-      </TextInput>
-
-
+        style={styles.input}
+        placeholder="Contraseña"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={true}
+      />
 
       <TouchableOpacity style={styles.archivoButton} onPress={handleFilePicker}>
         <Icon name="file-text-o" size={25} color="#fff" style={styles.icon} />
@@ -66,9 +89,8 @@ export default function RegisterScreen() {
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Icon name="sign-in" size={25} color="#fff" style={styles.icon} />
-        <Text style={styles.buttonText}>Registrase</Text>
+        <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
-
     </View>
   );
 }
@@ -88,17 +110,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 30,
     justifyContent: 'center',
-    backgroundColor: '#f2f2f2',  // Fondo suave
+    backgroundColor: '#f2f2f2',
   },
   label: {
     fontSize: 22,
-    color: '#333333',  // Texto oscuro para mejor contraste
+    color: '#333333',
     marginBottom: 20,
     textAlign: 'center',
   },
   input: {
     height: 50,
-    borderColor: '#007acc',  // Azul accesible para bordes
+    borderColor: '#007acc',
     borderWidth: 2,
     borderRadius: 10,
     paddingHorizontal: 15,
@@ -107,7 +129,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   archivoButton: {
-    backgroundColor: '$fff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -125,15 +146,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
   },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#007acc',
-    paddingVertical: 20,
-    borderRadius: 10,
-    marginTop: 20,
-  },
   buttonText: {
     color: '#fff',
     fontSize: 18,
@@ -143,14 +155,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     marginLeft: 10,
-    paddingVertical:15,
-  },
-  fileText: {
-    fontSize: 16,
-    color: '#333333',  // Texto oscuro
-    marginTop: 10,
-  },
-  buttonContainer: {
-    marginTop: 30,
+    paddingVertical: 15,
   },
 });

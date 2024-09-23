@@ -8,18 +8,18 @@ datasource db {
 }
 
 model Usuario {
-  id         String   @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
-  rut        String   @unique // El rut es único
-  username   String   @unique // El username es único 
+  id         String   @id @default(cuid())
+  rut        String   @unique
   nombres    String
   apellidos  String
   domicilio  String
   edad       Int
   contrasena String
   telefono   Int
-  gender     Gender // Gender es un enum que definimos más abajo
-  createAt   DateTime @default(now())
-  role       Role     @default(patient) // Role es un enum que definimos más abajo
+  gender     Gender
+  createdAt  DateTime @default(now())
+  role       Role     @default(patient)
+  filePath   String?  // Campo para almacenar la ruta del archivo, opcional
 }
 
 model Administrador {
