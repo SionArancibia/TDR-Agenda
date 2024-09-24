@@ -92,7 +92,7 @@ const Asistencia: React.FC = () => {
 
       <div className="w-full flex justify-center mt-8">
         <Link
-          to="/"
+          to="/dashboardProfessional"
           className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200 w-auto"
         >
           <svg

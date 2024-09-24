@@ -15,8 +15,13 @@ const useLogin = () => {
             setAuthUser(response.data);
             
             if (response.data.role === "admin") {
-                navigate("/dashboard");
+                navigate("/dashboardAdmin");
             }
+
+            if (response.data.role === "professional") {
+                navigate("/dashboardProfessional");
+            }
+
         })
         .catch(error => {
             console.log(error.response.data);

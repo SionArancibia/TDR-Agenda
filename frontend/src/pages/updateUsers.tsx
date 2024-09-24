@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../utils/axios';
-import { useParams, /* useNavigate */ } from 'react-router-dom';
+import { Link, useParams, /* useNavigate */ } from 'react-router-dom';
 import { toast } from "sonner";
 
 const UpdateUsers = () => {
@@ -143,6 +143,23 @@ const UpdateUsers = () => {
                 >
                     Actualizar Usuario
                 </button>
+            </div>
+            <div className="w-full flex justify-center mt-10 mb-10">
+                <Link
+                    to="/usuarios"
+                    className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200 w-auto"
+                >
+                    <svg
+                    className="w-6 h-6 mr-2"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Atrás
+                </Link>
             </div>
         </div>
     );

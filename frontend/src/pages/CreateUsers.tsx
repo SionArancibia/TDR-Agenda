@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { validateRut} from '@fdograph/rut-utilities'; // Librería utilizada para validar el RUT: https://github.com/fdograph/rut-utilities/blob/master/README-es.md
 import useCreateUsers from '../hooks/useCreateUsers';
+import { Link } from 'react-router-dom';
 
 const createUsersSchema = z.object({
     rut: z.string()
@@ -120,6 +121,23 @@ const CreateUsers = () => {
                         </form>
                     </div>
                 </div>
+            </div>
+            <div className="w-full flex justify-center mt-10 mb-10">
+                <Link
+                    to="/usuarios"
+                    className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200 w-auto"
+                >
+                    <svg
+                    className="w-6 h-6 mr-2"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Atrás
+                </Link>
             </div>
         </div>
     );

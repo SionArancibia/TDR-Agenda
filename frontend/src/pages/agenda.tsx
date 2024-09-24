@@ -207,7 +207,7 @@ const AgendaForm = () => {
 
       {/* Botón Atrás */}
       <div className="w-full flex justify-center mt-8">
-        <Link to="/" className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200">
+        <Link to="/dashboardProfessional" className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200">
           <svg
             className="w-6 h-6 mr-2"
             fill="none"

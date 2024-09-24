@@ -25,18 +25,18 @@ function App() {
         <Toaster />
         <Navbar/>
         <Routes>
-          <Route path="/dashboardAdmin" element={<AdminDashboard/>}/>
-          <Route path="/dashboardProfessional" element={authUser?.role === "professional" ? <Dashboard/> : <Navigate to={"/login"} />}/>
-          <Route path="/login" element={!authUser ? <Login/> : <Navigate to={"/dashboard"}/>}/>
-          <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
+          <Route path="/dashboardAdmin" element={authUser?.role === "admin" ? <AdminDashboard/> : <Navigate to={"/login"} />}/>
+          <Route path="/dashboardProfessional" element={authUser?.role === "professional" ? <Home/> : <Navigate to={"/login"} />}/>
+          <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
-          <Route path="/" element={<Home />} />
-          <Route path="/createUsers" element={<CreateUsers/>}/>
-          <Route path="/updateUsers/:id" element={authUser?.role === "admin" ? <UpdateUsers/> : <Navigate to={"/login"} />} />
-          <Route path="/usuarios" element={authUser?.role === "admin" ? <Usuarios /> : <Navigate to="/login" />} /> 
           <Route path="/historial" element={<Historial />} />
           <Route path="/agenda" element={<AgendaForm />} />
           <Route path="/asistencia" element={<RegistroAsistencia />} />
+          <Route path="/usuarios" element={authUser?.role === "admin" ? <Usuarios /> : <Navigate to="/login" />} />
+          <Route path="/createUsers" element={<CreateUsers/>}/>
+          <Route path="/updateUsers/:id" element={authUser?.role === "admin" ? <UpdateUsers/> : <Navigate to={"/login"} />} />
+          <Route path="/passwordRecovery" element={<PasswordRecovery/>}/> 
+
         </Routes>
         <Footer/>
       </div>

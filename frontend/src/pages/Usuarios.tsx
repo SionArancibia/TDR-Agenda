@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../utils/axios';
 import { toast } from "sonner";
 
@@ -51,6 +51,7 @@ const Usuarios: React.FC = () => {
     };
 
     return (
+        
         <div className="min-h-screen bg-gray-100 flex items-center justify-center">
             <div className="container mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-6">
@@ -61,6 +62,21 @@ const Usuarios: React.FC = () => {
                     >
                         Registrar Usuario
                     </button>
+                    <Link
+                        to="/dashboardAdmin"
+                        className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200 w-auto"
+                    >
+                        <svg
+                        className="w-6 h-6 mr-2"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth="2"
+                        xmlns="http://www.w3.org/2000/svg"
+                        >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Atrás
+                    </Link>
                 </div>
                 <table className="min-w-full bg-white border-collapse">
                     <thead>
