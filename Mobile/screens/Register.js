@@ -74,6 +74,7 @@ export default function RegisterScreen() {
         onChangeText={setRut}
         keyboardType="default"
       />
+      <Text style={styles.label}>Ingrese su Contraseña:</Text>
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
