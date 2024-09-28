@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, ScrollView, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 
@@ -9,6 +9,8 @@ export default function HorasAgendada({ route }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [fechas, setFechas] = useState([]);
   const [horas, setHoras] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedHora, setSelectedHora] = useState(null);
 
   useEffect(() => {
     axios.get(`http://localhost:3000/fechas?seccion=${seccion}`)
@@ -33,37 +35,78 @@ export default function HorasAgendada({ route }) {
     }
   }, [selectedDate, seccion]);
 
+  const openModal = (hora) => {
+    setSelectedHora(hora);
+    setModalVisible(true);
+  };
+
+  const confirmBooking = () => {
+    // Aquí puedes agregar la lógica para confirmar la reserva (API call, etc.)
+    console.log(`Reserva confirmada para ${selectedHora.nombre} el ${selectedHora.fecha} a las ${selectedHora.hora}`);
+    setModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{title}</Text>
-      
-      {/* Sección de Fechas */}
-      <View style={styles.dateContainer}>
+
+      {/* Sección de Fechas con Scroll Horizontal */}
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
         {fechas.map((fecha, index) => (
-          <TouchableOpacity key={index} onPress={() => setSelectedDate(fecha)} style={styles.dateButton}>
-            <Text style={[styles.dateText, selectedDate === fecha && styles.selectedDate]}>{fecha}</Text>
+          <TouchableOpacity key={index} onPress={() => setSelectedDate(fecha)} style={[
+            styles.dateButton, selectedDate === fecha && styles.selectedDateButton]}>
+            <Text style={[styles.dateText, selectedDate === fecha && styles.selectedDateText]}>{fecha}</Text>
           </TouchableOpacity>
         ))}
-      </View>
-      
+      </ScrollView>
+
       {/* Lista de Psicólogos */}
       <FlatList
         data={horas.filter(hora => hora.fecha === selectedDate)}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.item}>
+          <View style={styles.card}>
             <Image source={{ uri: item.imagen }} style={styles.image} />
             <View style={styles.infoContainer}>
               <Text style={styles.name}>{item.nombre}</Text>
               <Text style={styles.time}>{item.hora}</Text>
             </View>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => openModal(item)}>
               <Text style={styles.buttonText}>Agendar</Text>
               <Icon name="schedule" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
         )}
       />
+
+      {/* Modal para confirmar la hora */}
+      {selectedHora && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalHeader}>Confirmar Cita</Text>
+              <Text style={styles.modalText}>Fecha: {selectedHora.fecha}</Text>
+              <Text style={styles.modalText}>Hora: {selectedHora.hora}</Text>
+              <Text style={styles.modalText}>Profesional: {selectedHora.nombre}</Text>
+
+              {/* Botones de Confirmar y Cerrar */}
+              <View style={styles.modalButtonContainer}>
+                <TouchableOpacity style={styles.confirmButton} onPress={confirmBooking}>
+                  <Text style={styles.confirmButtonText}>Confirmar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                  <Text style={styles.closeButtonText}>Cerrar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 }
@@ -71,51 +114,54 @@ export default function HorasAgendada({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#f9f9f9',
     padding: 10,
   },
   header: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
     color: '#49BA98',
   },
-  dateContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  dateScroll: {
     marginBottom: 20,
+    paddingHorizontal: 5,
   },
   dateButton: {
     padding: 10,
     borderRadius: 20,
+    backgroundColor: '#E0F7EF',
+    marginHorizontal: 5,
+  },
+  selectedDateButton: {
     backgroundColor: '#49BA98',
   },
   dateText: {
-    color: '#fff',
+    color: '#49BA98',
     fontSize: 14,
   },
-  selectedDate: {
+  selectedDateText: {
+    color: '#fff',
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
   },
-  item: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    marginVertical: 8,
+    marginVertical: 10,
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
     shadowRadius: 5,
-    elevation: 3,
+    elevation: 4,
   },
   image: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     marginRight: 15,
   },
   infoContainer: {
@@ -123,7 +169,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#333',
   },
   time: {
@@ -134,12 +180,61 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#49BA98',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 8,
   },
   buttonText: {
     color: '#fff',
+    fontSize: 14,
     marginRight: 5,
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    width: 300,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#49BA98',
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  confirmButton: {
+    backgroundColor: '#49BA98',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  confirmButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  closeButton: {
+    backgroundColor: '#ccc',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
