@@ -1,33 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Asegúrate de tener instalada esta librería con 'npm install react-native-vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from 'axios';
 
-const horas = [
-  {
-    id: '1',
-    nombre: 'Mateo Vargas León',
-    hora: '15:30-16:30',
-    imagen: '', // Aquí backend
-  },
-  {
-    id: '2',
-    nombre: 'Sebastián Bravo Contreras',
-    hora: '15:30-16:30',
-    imagen: '',
-  },
-  {
-    id: '3',
-    nombre: 'Valeria Gómez Rivas',
-    hora: '18:30-19:30',
-    imagen: 'https://example.com/valeria.jpg',
-  },
-];
-
-const fechas = ['Agosto 23', 'Agosto 24', 'Agosto 25', 'Agosto 26'];//ejemplos
-
-export default function HorasScreen({ route }) {
+export default function HorasAgendada({ route }) {
   const { title } = route.params;
-  const [selectedDate, setSelectedDate] = useState(fechas[0]);
+  const seccion = title; // Usar el título como la sección
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [fechas, setFechas] = useState([]);
+  const [horas, setHoras] = useState([]);
+
+  useEffect(() => {
+    axios.get(`http://localhost:3000/fechas?seccion=${seccion}`)
+      .then(response => {
+        setFechas(response.data);
+        setSelectedDate(response.data[0]); // Selecciona la primera fecha por defecto
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, [seccion]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      axios.get(`http://localhost:3000/horas?seccion=${seccion}`)
+        .then(response => {
+          setHoras(response.data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  }, [selectedDate, seccion]);
 
   return (
     <View style={styles.container}>
@@ -44,8 +48,8 @@ export default function HorasScreen({ route }) {
       
       {/* Lista de Psicólogos */}
       <FlatList
-        data={horas}
-        keyExtractor={(item) => item.id}
+        data={horas.filter(hora => hora.fecha === selectedDate)}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <Image source={{ uri: item.imagen }} style={styles.image} />

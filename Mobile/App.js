@@ -7,7 +7,7 @@ import RegisterScreen from './screens/Register';
 import ForgotPasswordScreen from './screens/Rpassword';
 import MainScreen from './screens/Principal';
 import MainScreen2 from './screens/AgendarHora';
-import HorasScreen from './screens/HorasAgendada';
+import HorasScreen from './components/HorasAgendada';
 const Stack = createStackNavigator();
 
 export default function App() {
