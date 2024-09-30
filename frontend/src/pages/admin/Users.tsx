@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../utils/axios';
+import { api } from '../../utils/axios';
 import { toast } from "sonner";
 
 interface User {
@@ -15,14 +15,14 @@ interface User {
     gender: string;
 }
 
-const Usuarios: React.FC = () => {
+const Users: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await api.get('/adminCrud/getUsers');
+                const response = await api.get('/users/getUsers');
                 setUsers(response.data);
             } catch (error) {
                 console.error('Error al obtener los usuarios:', error);
@@ -34,7 +34,7 @@ const Usuarios: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await api.delete(`/adminCrud/deleteUsers/${id}`);
+            await api.delete(`/users/deleteUser/${id}`);
             setUsers(users.filter(user => user.id !== id));
             toast('Usuario eliminado con éxito');
         } catch (error) {
@@ -43,11 +43,11 @@ const Usuarios: React.FC = () => {
     };
 
     const handleUpdate = (id: string) => {
-        navigate(`/updateUsers/${id}`);
+        navigate(`/updateUser/${id}`);
     };
 
     const handleRegisterClick = () => {
-        navigate('/createUsers');
+        navigate('/createUser');
     };
 
     return (
@@ -124,4 +124,4 @@ const Usuarios: React.FC = () => {
     );
 };
 
-export default Usuarios;
+export default Users;

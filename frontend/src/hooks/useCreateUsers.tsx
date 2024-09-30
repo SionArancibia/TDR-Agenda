@@ -19,7 +19,7 @@ const useCreateUsers = () => {
     const { setAuthUser } = useAuthContext();
 
     const createUsers = async (inputs: CreateUsersInputs) => {
-        await api.post("/adminCrud/createUsers", inputs)
+        await api.post("/users/createUser", inputs)
         .then(response => {
             console.log(response.data);
             toast('Usuario registrado con éxito');

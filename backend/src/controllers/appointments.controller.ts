@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../db/prisma";
 
-export const getCitas = async (req: Request, res: Response) => {
+export const getAppointments = async (req: Request, res: Response) => {
   const { rut, mes, año } = req.query;
 
   if (!rut || !mes || !año) {
@@ -47,7 +47,7 @@ export const getCitas = async (req: Request, res: Response) => {
 
     res.status(200).json(citas);
   } catch (error: any) {
-    console.log("Error en el controlador getCitas", error.message);
+    console.log("Error en el controlador getAppointments ", error.message);
     res.status(500).json({ error: "Error Interno del Servidor" });
   }
 };

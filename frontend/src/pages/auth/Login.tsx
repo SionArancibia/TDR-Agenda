@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
-import useLogin from '../hooks/useLogin';
+import useLogin from '../../hooks/useLogin';
 
 const LoginSchema = z.object({
     rut: z.string().min(1, 'El RUT es obligatorio').regex(/^\d{7,8}-[kK0-9]$/, 'El RUT debe estar en el formato xxxxxxxx-x'),

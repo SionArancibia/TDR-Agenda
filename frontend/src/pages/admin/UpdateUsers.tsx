@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { api } from '../utils/axios';
+import { api } from '../../utils/axios';
 import { Link, useParams, /* useNavigate */ } from 'react-router-dom';
 import { toast } from "sonner";
 
@@ -20,7 +20,7 @@ const UpdateUsers = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await api.get(`/adminCrud/getUser/${id}`);
+                const response = await api.get(`/users/getUser/${id}`);
                 const selectedUser = response.data;
                 setUser({
                     rut: selectedUser.rut,
@@ -48,7 +48,7 @@ const UpdateUsers = () => {
     const handleUpdate = async () => {
         try {
             console.log(user);
-            await api.put(`/adminCrud/updateUsers/${id}`, user);
+            await api.put(`/users/updateUser/${id}`, user);
             toast('Usuario actualizado con éxito');
             //navigate('/Usuarios'); 
         } catch (error) {
@@ -146,7 +146,7 @@ const UpdateUsers = () => {
             </div>
             <div className="w-full flex justify-center mt-10 mb-10">
                 <Link
-                    to="/usuarios"
+                    to="/users"
                     className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200 w-auto"
                 >
                     <svg

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
-import useAgenda from '../hooks/useAgenda';
-import { useAuthContext } from '../context/AuthContext';
-import MonthCard from '../components/MonthCard';
-import NavigationButton from '../components/NavigationButton';
+import useAgenda from '../../hooks/useAgenda';
+import { useAuthContext } from '../../context/AuthContext';
+import MonthCard from '../../components/professional/MonthCard';
+import NavigationButton from '../../components/professional/NavigationButton';
 
 // Definir la interfaz de una cita
 export interface Appointment {
@@ -32,7 +32,7 @@ export interface Appointment {
 
 
 // Formulario de la agenda
-const AgendaForm = () => {
+const Agenda = () => {
   const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
   const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
   const [rut, setRut] = useState('');
@@ -250,4 +250,4 @@ const AgendaForm = () => {
   );
 };
 
-export default AgendaForm;
+export default Agenda;

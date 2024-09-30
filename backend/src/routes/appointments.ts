@@ -1,10 +1,10 @@
 import express from "express";
-import {getCitas} from "../controllers/citascontroller";
+import {getAppointments} from "../controllers/appointments.controller";
 import protectRoute from "../middleware/protectRoute";
 import authorizeRole from "../middleware/authorizeRole";
 const router = express.Router();
 
 
-router.get("/citas", protectRoute, authorizeRole(['admin', 'professional']), getCitas);
+router.get("/appointments", protectRoute, authorizeRole(['admin', 'professional']), getAppointments);
 
 export default router;

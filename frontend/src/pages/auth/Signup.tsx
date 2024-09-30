@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { validateRut} from '@fdograph/rut-utilities'; // Librería utilizada para validar el RUT: https://github.com/fdograph/rut-utilities/blob/master/README-es.md
-import useSignup from '../hooks/useSignup';
+import useSignup from '../../hooks/useSignup';
 
 const SignupSchema = z.object({
     rut: z.string()

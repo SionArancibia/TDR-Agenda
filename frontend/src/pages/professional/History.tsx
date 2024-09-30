@@ -9,7 +9,7 @@
     
   }
 
-  const Historial: React.FC = () => {
+  const History: React.FC = () => {
   
     const [pacientes, setPacientes] = useState<Paciente[]>([]);
 
@@ -111,4 +111,4 @@
     );
   };
 
-  export default Historial;
+  export default History;

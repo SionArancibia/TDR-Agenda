@@ -3,8 +3,7 @@ import prisma from "../db/prisma";
 import bcryptjs from "bcryptjs";
 import generateToken from "../utils/generateToken";
 
-export const createUsers = async (req: Request, res: Response) => {
-	//console.log(req.body);
+export const createUser = async (req: Request, res: Response) => {
 	try {
 		const {
 			rut,
@@ -71,9 +70,11 @@ export const createUsers = async (req: Request, res: Response) => {
 				apellidos: newUser.apellidos,
 				role: newUser.role
 			});
+
 		} else {
 			return res.status(400).json({ error: "Datos de usuario no válidos" });
 		}
+
 	} catch (error: any) {
 		console.error("Error en el controlador de registro:", error.message);
 		return res.status(500).json({ error: "Error interno del servidor" });
@@ -95,6 +96,7 @@ export const getUserById = async (req: Request, res: Response) => {
         }
 
         res.status(200).json(user);
+
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener el usuario' });
     }
@@ -113,7 +115,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
 //------------------------------------------------------------------------------------------------
 
-export const deleteUsers = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
@@ -122,7 +124,9 @@ export const deleteUsers = async (req: Request, res: Response) => {
                 id: id,
             },
         });
+
         res.status(200).json({ message: 'Usuario eliminado correctamente', user });
+
     } catch (error) {
         res.status(500).json({ error: 'Error al eliminar el usuario' });
     }
@@ -130,7 +134,7 @@ export const deleteUsers = async (req: Request, res: Response) => {
 
 //------------------------------------------------------------------------------------------------
 
-export const UpdateUsers = async (req: Request, res: Response) => {
+export const UpdateUser = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { rut, nombres, apellidos, domicilio, edad, role, telefono, gender } = req.body;
 
@@ -148,7 +152,9 @@ export const UpdateUsers = async (req: Request, res: Response) => {
                 gender: gender,
             },
         });
+
         res.status(200).json({ message: 'Usuario actualizado correctamente', updatedUser });
+
     } catch (error) {
         res.status(500).json({ error: 'Error al actualizar el usuario' });
     }

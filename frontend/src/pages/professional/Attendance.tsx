@@ -9,7 +9,7 @@ interface Paciente {
   
 }
 
-const Asistencia: React.FC = () => {
+const Attendance: React.FC = () => {
 
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
 
@@ -17,7 +17,7 @@ const Asistencia: React.FC = () => {
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/pacientes');
+        const response = await fetch('http://localhost:3000/api/appointments');
         const data = await response.json();
         setPacientes(data);
       } catch (error) {
@@ -111,4 +111,4 @@ const Asistencia: React.FC = () => {
   );
 };
 
-export default Asistencia;
+export default Attendance;
