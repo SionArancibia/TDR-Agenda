@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, ScrollView, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
+import MesesAgenda from './MesesAgenda';
 
 export default function HorasAgendada({ route }) {
   const { title } = route.params;
@@ -13,7 +14,7 @@ export default function HorasAgendada({ route }) {
   const [selectedHora, setSelectedHora] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/fechas?seccion=${seccion}`)
+    axios.get('http://localhost:3000/fechas?seccion=${seccion} ')
       .then(response => {
         setFechas(response.data);
         setSelectedDate(response.data[0]); // Selecciona la primera fecha por defecto
@@ -25,7 +26,7 @@ export default function HorasAgendada({ route }) {
 
   useEffect(() => {
     if (selectedDate) {
-      axios.get(`http://localhost:3000/horas?seccion=${seccion}`)
+      axios.get('http://localhost:3000/horas?seccion=${seccion}')
         .then(response => {
           setHoras(response.data);
         })
@@ -42,14 +43,14 @@ export default function HorasAgendada({ route }) {
 
   const confirmBooking = () => {
     // Aquí puedes agregar la lógica para confirmar la reserva (API call, etc.)
-    console.log(`Reserva confirmada para ${selectedHora.nombre} el ${selectedHora.fecha} a las ${selectedHora.hora}`);
+    console.log('Reserva confirmada para ${selectedHora.nombre} el ${selectedHora.fecha} a las ${selectedHora.hora}');
     setModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{title}</Text>
-
+      <MesesAgenda />
       {/* Sección de Fechas con Scroll Horizontal */}
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
         {fechas.map((fecha, index) => (

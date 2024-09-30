@@ -17,7 +17,7 @@ export default function MainScreen({ navigation }) {
             </TouchableOpacity>
         </View>
     );
-}
+}   
 
 const styles = StyleSheet.create({
     container: {

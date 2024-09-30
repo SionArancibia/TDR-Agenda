@@ -87,7 +87,9 @@ export default function App() {
             headerTitleAlign: 'center', // Centra la imagen en el header
           }}
         />
+        
         <Stack.Screen name="Horas" component={HorasScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

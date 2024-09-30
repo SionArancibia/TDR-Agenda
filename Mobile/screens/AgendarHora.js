@@ -1,13 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import MesesAgenda from '../components/MesesAgenda';
 
 export default function MainScreen2({ navigation }) {
     return (
+        
         <View style={styles.container}>
             <View style={styles.row}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Psicologia' })}>
                     <Text style={styles.buttonText}>Psicologia</Text>
                 </TouchableOpacity>
+                
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Kinesiologia' })}>
                     <Text style={styles.buttonText}>Kinesiologia</Text>
                 </TouchableOpacity>
@@ -17,6 +20,7 @@ export default function MainScreen2({ navigation }) {
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Podologia' })}>
                     <Text style={styles.buttonText}>Podologia</Text>
                 </TouchableOpacity>
+                
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Peluqueria' })}>
                     <Text style={styles.buttonText}>Peluqueria</Text>
                 </TouchableOpacity>
