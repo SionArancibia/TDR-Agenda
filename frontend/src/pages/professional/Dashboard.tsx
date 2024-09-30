@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const ProffesionalDashboard: React.FC = () => {
+const ProfessionalDashboard: React.FC = () => {
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
@@ -33,4 +33,4 @@ const ProffesionalDashboard: React.FC = () => {
   );
 };
 
-export default ProffesionalDashboard;
+export default ProfessionalDashboard;

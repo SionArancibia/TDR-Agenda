@@ -10,11 +10,13 @@ import CreateUsers from "./pages/admin/CreateUsers.tsx";
 import AdminDashboard from './pages/admin/Dashboard.tsx';
 import History from "./pages/professional/History.tsx";
 import Attendance from './pages/professional/Attendance.tsx';
-import ProffesionalDashboard from './pages/professional/Dashboard.tsx';
+import ProfessionalDashboard from './pages/professional/Dashboard.tsx';
 import Navbar from './components/Nabvar.tsx'; 
 import Footer from "./components/Footer.tsx"; 
 import Agenda from "./pages/professional/Agenda.tsx";
- 
+import { ProtectedRoute } from "./pages/auth/ProtectedRoute.tsx";
+import Unauthorized from "./pages/Unauthorized.tsx";
+
 function App() {
   const {authUser} = useAuthContext();
   console.log("authuser: ", authUser);
@@ -22,11 +24,11 @@ function App() {
   const DashboardRedirect = () => {
     if (authUser?.role === "admin") {
       return <Navigate to="/dashboardAdmin" />;
-    } else if (authUser?.role === "professional") {
+    } 
+    
+    if (authUser?.role === "professional") {
       return <Navigate to="/dashboardProfessional" />;
-    } else {
-      return <Navigate to="/login" />;
-    }
+    } 
   };
 
   return (
@@ -35,21 +37,77 @@ function App() {
         <Toaster />
         <Navbar/>
         <Routes>
+
           {/* General */}
-          <Route path="/login" element={<Login/>}/>
+
+          <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
           <Route path="/signup" element={<Signup/>}/>
           <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
-          <Route path="/" element={<DashboardRedirect />} /> 
+          <Route path="/" element={<DashboardRedirect />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />  
+
           {/* Admin */}
-          <Route path="/dashboardAdmin" element={authUser?.role === "admin" ? <AdminDashboard/> : <Navigate to={"/login"} />}/>
-          <Route path="/users" element={authUser?.role === "admin" ? <Users /> : <Navigate to="/login" />} />
-          <Route path="/createUser" element={<CreateUsers/>}/>
-          <Route path="/updateUser/:id" element={authUser?.role === "admin" ? <UpdateUsers/> : <Navigate to={"/login"} />} />
+
+          <Route 
+            path="/dashboardAdmin" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>}
+          />
+          <Route 
+            path="/users" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <Users />
+              </ProtectedRoute>} 
+          />
+          <Route 
+            path="/createUser"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <CreateUsers/>
+              </ProtectedRoute>}
+          />
+          <Route 
+            path="/updateUser/:id"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <UpdateUsers/>
+              </ProtectedRoute>}
+          />
+
           {/* Professional */}
-          <Route path="/dashboardProfessional" element={authUser?.role === "professional" ? <ProffesionalDashboard/> : <Navigate to={"/login"} />}/>
-          <Route path="/history" element={<History />} />
-          <Route path="/agendaProfessional" element={<Agenda />} />
-          <Route path="/attendance" element={<Attendance />} />
+
+          <Route
+            path="/dashboardProfessional"
+            element={
+              <ProtectedRoute requiredRole="professional">
+                <ProfessionalDashboard/>
+              </ProtectedRoute>}
+          />
+          <Route
+            path="/history"
+            element={   
+              <ProtectedRoute requiredRole="professional">
+                <History />
+              </ProtectedRoute>}
+          />
+          <Route 
+            path="/agendaProfessional"
+            element={
+              <ProtectedRoute requiredRole="professional">
+                <Agenda />
+              </ProtectedRoute>}
+          />
+          <Route
+            path="/attendance"
+            element={
+              <ProtectedRoute requiredRole="professional">
+                <Attendance />
+              </ProtectedRoute>} 
+          />
+
         </Routes>
         <Footer/>
       </div>

@@ -10,18 +10,10 @@ const useLogin = () => {
     const login = async (rut: string, contrasena: string) => {
         await api.post("/auth/login", { rut, contrasena })
         .then(response => {
-            console.log(response.data);
             toast('Ingresó con éxito');
+            localStorage.setItem("user", response.data.id);
             setAuthUser(response.data);
-            
-            if (response.data.role === "admin") {
-                navigate("/dashboardAdmin");
-            }
-
-            if (response.data.role === "professional") {
-                navigate("/dashboardProfessional");
-            }
-
+            navigate("/");
         })
         .catch(error => {
             console.log(error.response.data);
