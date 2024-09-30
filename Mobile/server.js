@@ -40,6 +40,28 @@ app.post('/horas', async (req, res) => {
   res.json(newHora);
 });
 
+app.post('/register', async (req, res) => {
+  const { rut, password } = req.body;
+
+  if (!rut || !password) {
+    return res.status(400).json({ message: 'RUT y contraseña son requeridos' });
+  }
+
+  try {
+    const user = await prisma.usuario.create({
+      data: {
+        rut,
+        password,
+      },
+    });
+
+    return res.status(200).json({ message: 'Usuario registrado exitosamente', user });
+  } catch (error) {
+    console.error('Error al registrar usuario:', error);
+    return res.status(500).json({ message: 'Error al registrar usuario' });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -13,7 +13,7 @@ export default function HorasAgendada({ route }) {
   const [selectedHora, setSelectedHora] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/fechas?seccion=${seccion}`)
+    axios.get(`http://192.168.1.10:3000/fechas?seccion=${seccion}`)
       .then(response => {
         setFechas(response.data);
         setSelectedDate(response.data[0]); // Selecciona la primera fecha por defecto
@@ -25,7 +25,7 @@ export default function HorasAgendada({ route }) {
 
   useEffect(() => {
     if (selectedDate) {
-      axios.get(`http://localhost:3000/horas?seccion=${seccion}`)
+      axios.get(`http://192.168.1.10:3000/horas?seccion=${seccion}`)
         .then(response => {
           setHoras(response.data);
         })
