@@ -7,57 +7,113 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id         String   @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
-  rut        String   @unique // El rut es único
-  nombres    String
-  apellidos  String
-  domicilio  String
-  edad       Int
-  contrasena String
-  telefono   Int
-  gender     Gender // Gender es un enum que definimos más abajo
-  createAt   DateTime @default(now())
-  role       Role     @default(patient) // Role es un enum que definimos más abajo
+model User {
+  id            String         @id @default(cuid())
+  rut           String         @unique
+  firstName     String
+  lastName      String
+  address       String
+  age           Int
+  password      String
+  phoneNumber   Int
+  createAt      DateTime       @default(now())
+  gender        Gender
+  role          Role
+  messages      Message[] // Relación de uno a muchos con mensajes.
+  professional  Professional? // Relación opcional si el usuario es un profesional.
+  administrator Administrator? // Relación opcional si el usuario es un administrador.
+  patient       Patient? // Relación opcional si el usuario es un paciente.
 }
 
-model Administrador {
-  id_Administrador     String  @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
-  rut                  String  @unique
-  mensajes             String
-  bloquear_agenda      Boolean
-  registro_profesional String
+model Administrator {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id])
+  blockSchedule     Boolean
+  validatedRequests Request[] // Relación de uno a muchos con las solicitudes que ha validado.
 }
 
-model Profesional {
-  id        String     @id @default(cuid())
-  nombre    String
-  rut       String     @unique
-  pacientes Paciente[] // Relación de uno a muchos, un profesional puede tener muchas 
-  citas     Citas[] // Relación de uno a muchos, un profesional puede tener muchas citas
+model Professional {
+  id           String        @id @default(cuid())
+  area         String
+  specialty    String
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id])
+  appointments Appointment[] // Relación con las citas.
+  requests     Request[] // Relación opcional con solicitudes. Un profesional puede tener 0 o muchas solicitudes.
 }
 
-model Paciente {
+model Patient {
+  id               String        @id @default(cuid())
+  attendanceRecord String
+  reducedMobility  Boolean
+  medicalRecord    String
+  userId           String        @unique
+  user             User          @relation(fields: [userId], references: [id])
+  appointments     Appointment[] // Relación con las citas.
+  requests         Request[] // Relación opcional con solicitudes. Un paciente puede tener 0 o muchas solicitudes.
+}
+
+model Appointment {
+  id                 String          @id @default(cuid())
+  date               DateTime
+  attended           Boolean
+  observations       String?
+  homeCare           Boolean
+  available          Boolean
+  canceled           Boolean         @default(false)
+  cancellationReason String?
+  patientId          String
+  patient            Patient         @relation(fields: [patientId], references: [id])
+  professionalId     String
+  professional       Professional    @relation(fields: [professionalId], references: [id])
+  serviceTypeId      String
+  serviceType        ServiceType     @relation(fields: [serviceTypeId], references: [id])
+  communityCenterId  String
+  communityCenter    CommunityCenter @relation(fields: [communityCenterId], references: [id])
+  log                Log?
+}
+
+model Log {
   id            String      @id @default(cuid())
-  nombre        String
-  rut           String      @unique
-  citas         Citas[]
-  profesional   Profesional @relation(fields: [profesionalId], references: [id])
-  profesionalId String
+  change        String
+  createAt      DateTime    @default(now())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
 }
 
-model Citas {
-  id                   String      @id @default(cuid()) //cuid() es una función que genera un identificador único, es decir, un identificador único universal (UUID), para cada registro en la base de datos.
-  pacienteId           String
-  paciente             Paciente    @relation(fields: [pacienteId], references: [id]) //Relación de uno a muchos, un paciente puede tener muchas citas
-  profesionalId        String
-  profesional          Profesional @relation(fields: [profesionalId], references: [id]) //Relación de uno a muchos, un profesional puede tener muchas citas
-  fecha                DateTime
-  tipoServicio         String
-  centroComunitario    String
-  asiste               Boolean
-  atencionDomiciliaria Boolean
-  observaciones        String
+model Request {
+  id                 String         @id @default(cuid())
+  request            String
+  validated          Boolean        @default(false) // El campo `validated` ahora es Boolean y no referencia a `Administrator`.
+  patientId          String?
+  patient            Patient?       @relation(fields: [patientId], references: [id])
+  professionalId     String?
+  professional       Professional?  @relation(fields: [professionalId], references: [id])
+  validatedByAdminId String? // Campo para identificar el administrador que validó la solicitud.
+  validatedByAdmin   Administrator? @relation(fields: [validatedByAdminId], references: [id]) // Relación opcional con `Administrator`.
+}
+
+model CommunityCenter {
+  id              String        @id @default(cuid())
+  communityCenter String
+  appointments    Appointment[] // Relación con las citas.
+}
+
+model ServiceType {
+  id           String        @id @default(cuid())
+  serviceType  String
+  appointments Appointment[] // Relación con las citas.
+}
+
+model Message {
+  id       String   @id @default(cuid())
+  content  String
+  createAt DateTime @default(now())
+  sent     Boolean // Campo que indica si el mensaje fue enviado (true) o recibido (false).
+  userId   String // ID del usuario relacionado con el mensaje.
+  user     User     @relation(fields: [userId], references: [id])
+  read     Boolean  @default(false) // Indica si el mensaje ha sido leído.
 }
 
 enum Gender {
