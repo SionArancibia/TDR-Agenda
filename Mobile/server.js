@@ -1,6 +1,8 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const app = express();
 const prisma = new PrismaClient();
@@ -60,6 +62,24 @@ app.post('/register', async (req, res) => {
     console.error('Error al registrar usuario:', error);
     return res.status(500).json({ message: 'Error al registrar usuario' });
   }
+});
+
+app.post('/login', async (req, res) => {
+  const { rut, password } = req.body;
+
+  const user = await prisma.usuario.findUnique({
+    where: { rut },
+  });
+
+  if (!user || user.password !== password) {
+    return res.status(401).json({ error: 'RUT o contraseña incorrectos' });
+  }
+
+  const token = jwt.sign({ rut: user.rut, id: user.id }, process.env.JWT_SECRET, {
+    expiresIn: '1h',
+  });
+
+  res.json({ token });
 });
 
 const PORT = process.env.PORT || 3000;
