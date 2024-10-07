@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 
 export default function RegisterScreen() {
   const [rut, setRut] = useState('');
-  const [file, setFile] = useState(null);
   const [password, setPassword] = useState('');
 
   const handleRegister = async () => {
@@ -19,47 +17,25 @@ export default function RegisterScreen() {
       return;
     }
 
-    if (!file) {
-      Alert.alert('Error', 'Por favor seleccione un archivo.');
-      return;
-    }
-
-
-    const formData = new FormData();
-    formData.append('rut', rut);
-    formData.append('password', password);
-    formData.append('file', {
-      uri: file.uri,
-      name: file.name,
-      type: file.mimeType,  
-    });
-
     try {
-
-      const response = await axios.post('http://3000/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await axios.post('http://192.168.1.10:3000/register', {
+        rut,
+        password,
       });
 
       if (response.status === 200) {
-        Alert.alert('Registro Exitoso', `Archivo subido con éxito: ${file.name}`);
+        Alert.alert('Registro Exitoso', 'Usuario registrado con éxito');
       } else {
         Alert.alert('Error', 'No se pudo completar el registro.');
       }
     } catch (error) {
-      console.error('Error al subir el archivo:', error);
+      console.error('Error al registrar el usuario:', error);
       Alert.alert('Error', 'Hubo un problema al registrar la información.');
     }
   };
 
   const handleFilePicker = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
-    if (result.type === 'success') {
-      setFile(result);
-    } else {
-      Alert.alert('Error', 'No se seleccionó ningún archivo.');
-    }
+    return 0;
   };
 
   return (
