@@ -14,7 +14,7 @@ export default function HorasAgendada({ route }) {
   const [selectedHora, setSelectedHora] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://192.168.0.8:3000/fechas?seccion=${seccion}`) // Cambiar por su ip para que funcione en expogo etc
+    axios.get(`http://192.168.97.191:3000/fechas?seccion=${seccion}`) // Cambiar por su ip para que funcione en expogo etc
       .then(response => {
         setFechas(response.data);
         setSelectedDate(response.data[0]); // Selecciona la primera fecha por defecto
@@ -26,7 +26,7 @@ export default function HorasAgendada({ route }) {
 
   useEffect(() => {
     if (selectedDate) {
-      axios.get(`http://192.168.0.8:3000/horas?seccion=${seccion}`) // Cambiar por su ip para que funcione en expogo etc
+      axios.get(`http://192.168.97.191:3000/horas?seccion=${seccion}`) // Cambiar por su ip para que funcione en expogo etc
         .then(response => {
           setHoras(response.data);
         })
@@ -42,9 +42,21 @@ export default function HorasAgendada({ route }) {
   };
 
   const confirmBooking = () => {
-    // Aquí puedes agregar la lógica para confirmar la reserva (API call, etc.)
-    console.log('Reserva confirmada para ${selectedHora.nombre} el ${selectedHora.fecha} a las ${selectedHora.hora}');
-    setModalVisible(false);
+    const usuario = 'usuario_demo'; // Puedes reemplazar esto con el usuario actual
+
+    axios.post('http://192.168.97.191:3000/agendar', {
+      fecha: new Date(selectedHora.fecha).toISOString(), // Convertir la fecha a ISO-8601
+      hora: selectedHora.hora,
+      profesional: selectedHora.nombre,
+      usuario: usuario,
+    })
+    .then(response => {
+      console.log('Cita agendada:', response.data);
+      setModalVisible(false);
+    })
+    .catch(error => {
+      console.error('Error al agendar la cita:', error);
+    });
   };
 
   return (
@@ -114,7 +126,6 @@ export default function HorasAgendada({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#f9f9f9',
     padding: 10,
   },
@@ -130,10 +141,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   dateButton: {
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 20,
     backgroundColor: '#E0F7EF',
     marginHorizontal: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   selectedDateButton: {
     backgroundColor: '#49BA98',

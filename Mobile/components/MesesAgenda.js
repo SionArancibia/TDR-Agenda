@@ -17,7 +17,6 @@ const MesesAgenda = () => {
 
   return (
     <View style={styles.contenedor}>
-      <Text style={styles.titulo}>Horas agendadas</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scroll}>
         {meses.map((mes, index) => (
           <TouchableOpacity

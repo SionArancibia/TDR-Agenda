@@ -14,3 +14,10 @@ model Hora {
   fecha     String
   seccion   String   @default("default_seccion")
 }
+model citas_agendadas {
+  id          Int      @id @default(autoincrement())
+  fecha       DateTime
+  hora        String
+  profesional String
+  usuario     String
+}

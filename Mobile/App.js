@@ -8,6 +8,7 @@ import ForgotPasswordScreen from './screens/Rpassword';
 import MainScreen from './screens/Principal';
 import MainScreen2 from './screens/AgendarHora';
 import HorasScreen from './components/HorasAgendada';
+import MisHoras from './screens/MisHoras';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -89,6 +90,7 @@ export default function App() {
         />
         
         <Stack.Screen name="Horas" component={HorasScreen} />
+        <Stack.Screen name="MisHoras" component={MisHoras} />
 
       </Stack.Navigator>
     </NavigationContainer>
