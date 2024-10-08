@@ -8,21 +8,24 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  rut           String         @unique
-  firstName     String
-  lastName      String
-  address       String
-  age           Int
-  password      String
-  phoneNumber   Int
-  createAt      DateTime       @default(now())
-  gender        Gender
-  role          Role
-  messages      Message[] // Relación de uno a muchos con mensajes.
-  professional  Professional? // Relación opcional si el usuario es un profesional.
-  administrator Administrator? // Relación opcional si el usuario es un administrador.
-  patient       Patient? // Relación opcional si el usuario es un paciente.
+  id                   String         @id @default(cuid())
+  rut                  String         @unique
+  firstName            String
+  lastName             String
+  address              String
+  age                  Int
+  password             String
+  email                String         @unique // Nuevo campo de email
+  phoneNumber          Int
+  createAt             DateTime       @default(now())
+  gender               Gender
+  role                 Role
+  messages             Message[] // Relación de uno a muchos con mensajes.
+  professional         Professional? // Relación opcional si el usuario es un profesional.
+  administrator        Administrator? // Relación opcional si el usuario es un administrador.
+  patient              Patient? // Relación opcional si el usuario es un paciente.
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
 }
 
 model Administrator {
