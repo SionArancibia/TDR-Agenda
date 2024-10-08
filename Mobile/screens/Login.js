@@ -1,18 +1,34 @@
 import React, { useState } from 'react';
-import { View, Image, Text, TextInput, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Image, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({ navigation }) {
   const [rut, setRut] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    console.log('RUT:', rut);
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://192.168.0.8:3000/login', {
+        rut,
+        password,
+      });
+
+      const { token } = response.data;
+      console.log('Token recibido:', token);
+
+      AsyncStorage.setItem('token', token);
+
+      navigation.navigate('Principal');
+    } catch (error) {
+      console.log('Error de inicio de sesión:', error);
+      Alert.alert('Error', 'RUT o contraseña incorrectos');
+    }
   };
 
   return (
     <View style={styles.container}>
-
-      
       <View style={styles.formContainer}>
         <Icon name="user" size={120} color="#007acc" style={styles.userIcon} />
 
@@ -29,13 +45,13 @@ export default function LoginScreen({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="********"
-          value={rut}
-          onChangeText={setRut}
+          value={password}
+          onChangeText={setPassword}
           keyboardType="default"
           secureTextEntry
         />
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Principal')}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Icon name="sign-in" size={25} color="#fff" style={styles.icon} />
           <Text style={styles.buttonText}>Iniciar Sesión</Text>
         </TouchableOpacity>

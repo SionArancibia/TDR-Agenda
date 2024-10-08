@@ -7,7 +7,7 @@ export default function MisHoras({ route }) {
   const usuario = 'usuario_demo'; // Puedes reemplazar esto con el usuario actual
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/mis-horas?usuario=${usuario}`)
+    axios.get(`http://192.168.0.8/mis-horas?usuario=${usuario}`)
       .then(response => {
         setHoras(response.data);
       })
