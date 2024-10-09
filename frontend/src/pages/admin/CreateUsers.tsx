@@ -3,9 +3,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { validateRut} from '@fdograph/rut-utilities'; // Librería utilizada para validar el RUT: https://github.com/fdograph/rut-utilities/blob/master/README-es.md
 import useCreateUsers from '../../hooks/useCreateUsers';
-import { Link } from 'react-router-dom';
 
-const createUsersSchema = z.object({
+const SignupSchema = z.object({
     rut: z.string()
         .min(1, 'El RUT es obligatorio')
         .refine(value => validateRut(value), {
@@ -14,34 +13,35 @@ const createUsersSchema = z.object({
         .refine(value => /^\d{7,8}-[kK0-9]$/.test(value), {
             message: 'El RUT debe estar en el formato xxxxxxxx-x',
         }),
-    nombres: z.string().min(1, 'El nombre es obligatorio'),
-    apellidos: z.string().min(1, 'El apellido es obligatorio'),
-    domicilio: z.string().min(1, 'El domicilio es obligatorio'),
-    edad: z.number().min(1, 'La edad es obligatoria'),
-    telefono: z.number().min(1, 'El teléfono es obligatorio'),
-    contrasena: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-    confirmarContrasena: z.string().min(6, 'Confirme su contraseña'),
+    firstName: z.string().min(1, 'El nombre es obligatorio'),
+    lastName: z.string().min(1, 'El apellido es obligatorio'),
+    address: z.string().min(1, 'La dirección es obligatoria'),
+    age: z.number().min(1, 'La edad es obligatoria'),
+    email: z.string().min(1,'El email es obligatorio').email('El email está incorrecto'),
+    phoneNumber: z.number().min(1, 'El teléfono es obligatorio'),
+    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    confirmPassword: z.string().min(6, 'Confirme su contraseña'),
     gender: z.enum(['male', 'female']),
-    role: z.enum(['admin', 'professional']),
-}).refine(data => data.contrasena === data.confirmarContrasena, {
+    role: z.enum(['professional', 'admin', 'patient']),
+}).refine(data => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
-    path: ["confirmarContrasena"],
+    path: ["confirmPassword"],
 });
 
-type createUsersSchemaType = z.infer<typeof createUsersSchema>;
+type SignupSchemaType = z.infer<typeof SignupSchema>;
 
 const CreateUsers = () => {
-    const createUsers = useCreateUsers(); 
+    const createUser = useCreateUsers(); 
 
     const {
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm<createUsersSchemaType>({ resolver: zodResolver(createUsersSchema) });
+    } = useForm<SignupSchemaType>({ resolver: zodResolver(SignupSchema) });
 
-    const onSubmit: SubmitHandler<createUsersSchemaType> = (data) => {
+    const onSubmit: SubmitHandler<SignupSchemaType> = (data) => {
         //console.log(data);
-        createUsers(data);
+        createUser(data);
     };
 
     return (
@@ -49,7 +49,7 @@ const CreateUsers = () => {
             <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
                 <div className="max-w-md w-full">
                     <div className="p-8 rounded-2xl bg-white shadow">
-                        <h2 className="text-gray-800 text-center text-2xl font-bold">Registrar Usuario</h2>
+                        <h2 className="text-gray-800 text-center text-2xl font-bold">Regístrate</h2>
                         <form className="mt-8 space-y-4" onSubmit={handleSubmit(onSubmit)}>
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">RUT</label>
@@ -58,45 +58,51 @@ const CreateUsers = () => {
                             </div>
 
                             <div>
+                                <label className="text-gray-800 text-sm mb-2 block">Correo electrónico</label>
+                                <input {...register("email")} type='email' className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.email && <span className="text-red-600">{errors.email.message}</span>}
+                            </div>
+
+                            <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Nombres</label>
-                                <input {...register("nombres")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
-                                {errors.nombres && <span className="text-red-600">{errors.nombres.message}</span>}
+                                <input {...register("firstName")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.firstName && <span className="text-red-600">{errors.firstName.message}</span>}
                             </div>
 
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Apellidos</label>
-                                <input {...register("apellidos")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
-                                {errors.apellidos && <span className="text-red-600">{errors.apellidos.message}</span>}
+                                <input {...register("lastName")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.lastName && <span className="text-red-600">{errors.lastName.message}</span>}
                             </div>
 
                             <div>
-                                <label className="text-gray-800 text-sm mb-2 block">Domicilio</label>
-                                <input {...register("domicilio")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
-                                {errors.domicilio && <span className="text-red-600">{errors.domicilio.message}</span>}
+                                <label className="text-gray-800 text-sm mb-2 block">Dirección domiciliaria</label>
+                                <input {...register("address")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.address && <span className="text-red-600">{errors.address.message}</span>}
                             </div>
 
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Edad</label>
-                                <input {...register("edad", { valueAsNumber: true })} type="number" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
-                                {errors.edad && <span className="text-red-600">{errors.edad.message}</span>}
+                                <input {...register("age", { valueAsNumber: true })} type="number" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.age && <span className="text-red-600">{errors.age.message}</span>}
                             </div>
 
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Teléfono</label>
-                                <input {...register("telefono", { valueAsNumber: true })} type="number" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
-                                {errors.telefono && <span className="text-red-600">{errors.telefono.message}</span>}
+                                <input {...register("phoneNumber", { valueAsNumber: true })} type="number" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.phoneNumber && <span className="text-red-600">{errors.phoneNumber.message}</span>}
                             </div>
 
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Contraseña</label>
-                                <input {...register("contrasena")} type="password" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
-                                {errors.contrasena && <span className="text-red-600">{errors.contrasena.message}</span>}
+                                <input {...register("password")} type="password" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.password && <span className="text-red-600">{errors.password.message}</span>}
                             </div>
 
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Confirmar Contraseña</label>
-                                <input {...register("confirmarContrasena")} type="password" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
-                                {errors.confirmarContrasena && <span className="text-red-600">{errors.confirmarContrasena.message}</span>}
+                                <input {...register("confirmPassword")} type="password" className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                                {errors.confirmPassword && <span className="text-red-600">{errors.confirmPassword.message}</span>}
                             </div>
 
                             <div>
@@ -110,34 +116,18 @@ const CreateUsers = () => {
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Rol</label>
                                 <select {...register('role')} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600">
-                                    <option value="admin">Administrador</option>
+                                    <option value="patient">Paciente</option>
                                     <option value="professional">Profesional</option>
+                                    <option value="admin">Administrador</option>
                                 </select>
                             </div>
 
                             <div className="!mt-8">
-                                <input type="submit" value="Registrar usuario" className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"/>
+                                <input type="submit" value="Registrarse" className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"/>
                             </div>
                         </form>
                     </div>
                 </div>
-            </div>
-            <div className="w-full flex justify-center mt-10 mb-10">
-                <Link
-                    to="/users"
-                    className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200 w-auto"
-                >
-                    <svg
-                    className="w-6 h-6 mr-2"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    xmlns="http://www.w3.org/2000/svg"
-                    >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Atrás
-                </Link>
             </div>
         </div>
     );

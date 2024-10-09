@@ -1,6 +1,5 @@
 import {Route, Routes, Navigate} from "react-router-dom";
 import Login from "./pages/auth/Login.tsx";
-import Signup from "./pages/auth/Signup.tsx";
 import { useAuthContext } from "./context/AuthContext";
 import UpdateUsers from "./pages/admin/UpdateUsers.tsx";
 import PasswordRecovery from "./pages/auth/PasswordRecovery.tsx";
@@ -40,7 +39,6 @@ function App() {
           {/* General */}
           <Route element={<SimpleLayout />}>
             <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
-            <Route path="/signup" element={<Signup/>}/>
             <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
             <Route path="/" element={<DashboardRedirect />} />
             <Route path="/unauthorized" element={<Unauthorized />} />  

@@ -6,7 +6,7 @@ import useLogin from '../../hooks/useLogin';
 
 const LoginSchema = z.object({
     rut: z.string().min(1, 'El RUT es obligatorio').regex(/^\d{7,8}-[kK0-9]$/, 'El RUT debe estar en el formato xxxxxxxx-x'),
-    contrasena: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
 });
 
 type LoginSchemaType = z.infer<typeof LoginSchema>;
@@ -21,7 +21,7 @@ const Login = () => {
     } = useForm<LoginSchemaType>({ resolver: zodResolver(LoginSchema) });
 
     const onSubmit: SubmitHandler<LoginSchemaType> = (data) => {
-        login(data.rut, data.contrasena);
+        login(data.rut, data.password);
     };
 
     return (
@@ -43,11 +43,11 @@ const Login = () => {
                             <div>
                                 <label className="text-gray-800 text-sm mb-2 block">Contraseña</label>
                                 <input 
-                                    {...register("contrasena")} 
+                                    {...register("password")} 
                                     type="password"
                                     className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
                                 />
-                                {errors.contrasena && <span className="text-red-600 text-sm">{errors.contrasena.message}</span>}
+                                {errors.password && <span className="text-red-600 text-sm">{errors.password.message}</span>}
                             </div>
 
                             <div className="flex flex-wrap items-center justify-between gap-4">

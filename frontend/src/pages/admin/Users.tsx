@@ -6,12 +6,13 @@ import { toast } from "sonner";
 interface User {
     id: string;
     rut: string;
-    nombres: string;
-    apellidos: string;
-    domicilio: string;
-    edad: number;
+    firstName: string;
+    lastName: string;
+    address: string;
+    email: string;
+    age: number;
+    phoneNumber: string;
     role: string;
-    telefono: string;
     gender: string;
 }
 
@@ -84,8 +85,9 @@ const Users: React.FC = () => {
                             <th className="py-2 px-4 border">Rut</th>
                             <th className="py-2 px-4 border">Nombres</th>
                             <th className="py-2 px-4 border">Apellidos</th>
-                            <th className="py-2 px-4 border">Domicilio</th>
+                            <th className="py-2 px-4 border">Dirección</th>
                             <th className="py-2 px-4 border">Edad</th>
+                            <th className="py-2 px-4 border">Correo</th>
                             <th className="py-2 px-4 border">Rol</th>
                             <th className="py-2 px-4 border">Teléfono</th>
                             <th className="py-2 px-4 border">Género</th>
@@ -96,12 +98,13 @@ const Users: React.FC = () => {
                         {users.map(user => (
                             <tr key={user.id}>
                                 <td className="py-2 px-4 border">{user.rut}</td>
-                                <td className="py-2 px-4 border">{user.nombres}</td>
-                                <td className="py-2 px-4 border">{user.apellidos}</td>
-                                <td className="py-2 px-4 border">{user.domicilio}</td>
-                                <td className="py-2 px-4 border">{user.edad}</td>
+                                <td className="py-2 px-4 border">{user.firstName}</td>
+                                <td className="py-2 px-4 border">{user.lastName}</td>
+                                <td className="py-2 px-4 border">{user.address}</td>
+                                <td className="py-2 px-4 border">{user.age}</td>
+                                <td className="py-2 px-4 border">{user.email}</td>
                                 <td className="py-2 px-4 border">{user.role}</td>
-                                <td className="py-2 px-4 border">{user.telefono}</td>
+                                <td className="py-2 px-4 border">{user.phoneNumber}</td>
                                 <td className="py-2 px-4 border">{user.gender}</td>
                                 <td className="py-2 px-4 border">
                                     <button
