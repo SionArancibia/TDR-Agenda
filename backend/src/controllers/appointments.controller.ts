@@ -1,50 +1,111 @@
 import { Request, Response } from "express";
 import prisma from "../db/prisma";
 
-export const getAppointments = async (req: Request, res: Response) => {
-  const { rut, mes, año } = req.query;
-
-  if (!rut || !mes || !año) {
-    return res.status(400).json({ error: "Faltan parámetros requeridos" });
-  }
+// Crear una cita
+export const createAppointment = async (req: Request, res: Response) => {
+  const { date, patientId, professionalId, serviceTypeId, communityCenterId, homeCare } = req.body;
 
   try {
-    // Paso 1: Obtener el usuario usando el rut
-    const user = await prisma.user.findUnique({
-      where: {
-        rut: rut as string,
+    const appointment = await prisma.appointment.create({
+      data: {
+        date: new Date(date),
+        patientId,
+        professionalId,
+        serviceTypeId,
+        communityCenterId,
+        homeCare,
+        available: true,
+        attended: false,
+        canceled: false,
       },
-      select: {
-        id: true,
-        professional: {
-          select: {
-            id: true,
-          },
-        },
+    });
+    res.status(201).json(appointment);
+  } catch (error) {
+    console.error('Error al crear la cita:', error);
+    res.status(500).json({ error: 'Error al crear la cita' });
+  }
+};
+
+// Obtener todas las citas
+export const getAppointments = async (req: Request, res: Response) => {
+  try {
+    const appointments = await prisma.appointment.findMany({
+      include: {
+        patient: true,
+        professional: true,
+        serviceType: true,
+        communityCenter: true,
+      },
+    });
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error al obtener citas:', error);
+    res.status(500).json({ error: 'Error al obtener citas' });
+  }
+};
+
+// Obtener una cita por ID
+export const getAppointmentById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const appointment = await prisma.appointment.findUnique({
+      where: { id },
+      include: {
+        patient: true,
+        professional: true,
+        serviceType: true,
+        communityCenter: true,
       },
     });
 
-    if (!user || !user.professional) {
-      return res.status(404).json({ error: "Profesional no encontrado" });
+    if (!appointment) {
+      return res.status(404).json({ error: 'Cita no encontrada' });
     }
 
-    // Paso 2: Obtener las citas del profesional, filtrando por mes y año
-    const mesInt = parseInt(mes as string);
-    const añoInt = parseInt(año as string);
+    res.status(200).json(appointment);
+  } catch (error) {
+    console.error('Error al obtener la cita:', error);
+    res.status(500).json({ error: 'Error al obtener la cita' });
+  }
+};
 
-    const citas = await prisma.appointment.findMany({
-      where: {
-        professionalId: user.professional.id,
-        date: {
-          gte: new Date(añoInt, mesInt - 1, 1),
-          lt: new Date(añoInt, mesInt, 1),
-        },
+// Actualizar una cita
+export const updateAppointment = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { date, attended, observations, homeCare, available, canceled, cancellationReason } = req.body;
+
+  try {
+    const appointment = await prisma.appointment.update({
+      where: { id },
+      data: {
+        date: date ? new Date(date) : undefined,
+        attended,
+        observations,
+        homeCare,
+        available,
+        canceled,
+        cancellationReason,
       },
     });
-
-    res.json(citas);
+    res.status(200).json(appointment);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al obtener las citas" });
+    console.error('Error al actualizar la cita:', error);
+    res.status(500).json({ error: 'Error al actualizar la cita' });
+  }
+};
+
+// Eliminar una cita
+export const deleteAppointment = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.appointment.delete({
+      where: { id },
+    });
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error al eliminar la cita:', error);
+    res.status(500).json({ error: 'Error al eliminar la cita' });
   }
 };

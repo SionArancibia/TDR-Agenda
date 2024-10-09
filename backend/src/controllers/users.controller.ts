@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../db/prisma";
 import bcryptjs from "bcryptjs";
 import generateToken from "../utils/generateToken";
+import { Role } from '@prisma/client';  // Importa el enum Role desde Prisma
 
 export const createUser = async (req: Request, res: Response) => {
 	try {
@@ -159,4 +160,31 @@ export const UpdateUser = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({ error: 'Error al actualizar el usuario' });
     }
+};
+
+
+export const getUsersByRole = async (req: Request, res: Response) => {
+	const { role } = req.params; 
+  
+	// Verifica si el rol recibido es válido dentro de los valores del enum Role
+	if (!Object.values(Role).includes(role as Role)) {
+	  return res.status(400).json({ error: 'Rol no válido' });
+	}
+  
+	try {
+	  const users = await prisma.user.findMany({
+		where: {
+		  role: role as Role,  // Se asegura que el role sea del tipo Role
+		},
+	  });
+  
+	  if (users.length === 0) {
+		return res.status(404).json({ message: 'No se encontraron usuarios con este rol' });
+	  }
+  
+	  res.status(200).json(users);
+	} catch (error) {
+	  console.error('Error al obtener usuarios por rol:', error);
+	  res.status(500).json({ error: 'Error interno del servidor al obtener usuarios por rol' });
+	}
 };

@@ -44,7 +44,20 @@ model Professional {
   user         User          @relation(fields: [userId], references: [id])
   appointments Appointment[] // Relación con las citas.
   requests     Request[] // Relación opcional con solicitudes. Un profesional puede tener 0 o muchas solicitudes.
+  ProfessionalBlock ProfessionalBlock[]
 }
+
+model ProfessionalBlock {
+  id             String   @id @default(uuid())
+  startDate      DateTime
+  endDate        DateTime
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  professionalId String
+  reason         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
 
 model Patient {
   id               String        @id @default(cuid())
