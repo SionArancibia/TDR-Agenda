@@ -7,54 +7,57 @@ export const createUser = async (req: Request, res: Response) => {
 	try {
 		const {
 			rut,
-			nombres,
-			apellidos,
-			domicilio,
-			edad,
-			telefono,
-			contrasena,
-			confirmarContrasena,
+			firstName,
+			lastName,
+			address,
+			age,
+			email,
+			phoneNumber,
+			password,
+			confirmPassword,
 			gender,
 			role
 		} = req.body;
 
 		if (
 			!rut ||
-			!nombres ||
-			!apellidos ||
-			!domicilio ||
-			!edad ||
-			!telefono ||
-			!contrasena ||
-			!confirmarContrasena ||
+			!email ||
+			!firstName ||
+			!lastName ||
+			!address ||
+			!age ||
+			!phoneNumber ||
+			!password ||
+			!confirmPassword ||
 			!gender ||
 			!role
 		) {
 			return res.status(400).json({ error: "Por favor completa todos los campos" });
 		}
 
-		if (contrasena !== confirmarContrasena) {
+		if (password !== confirmPassword) {
 			return res.status(400).json({ error: "Las contraseñas no coinciden" });
 		}
 
-		const existingUser = await prisma.usuario.findUnique({ where: { rut } });
+		const existingUser = await prisma.user.findUnique({ where: { rut } });
 
 		if (existingUser) {
 			return res.status(400).json({ error: "El RUT ya está registrado" });
 		}
 
 		const salt = await bcryptjs.genSalt(10);
-		const hashedPassword = await bcryptjs.hash(contrasena, salt);
+		const hashedPassword = await bcryptjs.hash(password, salt);
 
-		const newUser = await prisma.usuario.create({
+		const newUser = await prisma.user.create({
 			data: {
 				rut,
-				nombres,
-				apellidos,
-				domicilio,
-				edad: edad,
-				telefono: telefono,
-				contrasena: hashedPassword,
+				firstName,
+				lastName,
+				address,
+				email,
+				age: age,
+				phoneNumber: phoneNumber,
+				password: hashedPassword,
 				gender,
 				role,
 			},
@@ -66,8 +69,6 @@ export const createUser = async (req: Request, res: Response) => {
 			return res.status(201).json({
 				id: newUser.id,
 				rut: newUser.rut,
-				nombres: newUser.nombres,
-				apellidos: newUser.apellidos,
 				role: newUser.role
 			});
 
@@ -87,7 +88,7 @@ export const getUserById = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const user = await prisma.usuario.findUnique({
+        const user = await prisma.user.findUnique({
             where: { id: id },
         });
 
@@ -106,7 +107,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const getUsers = async (req: Request, res: Response) => {
     try {
-        const users = await prisma.usuario.findMany();
+        const users = await prisma.user.findMany();
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ error: 'Error al obtener usuarios' });
@@ -119,7 +120,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const user = await prisma.usuario.delete({
+        const user = await prisma.user.delete({
             where: {
                 id: id,
             },
@@ -136,19 +137,19 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 export const UpdateUser = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { rut, nombres, apellidos, domicilio, edad, role, telefono, gender } = req.body;
+    const { rut, firstName, lastName, address, age, role, phoneNumber, gender } = req.body;
 
     try {
-        const updatedUser = await prisma.usuario.update({
+        const updatedUser = await prisma.user.update({
             where: { id: id },
             data: {
                 rut: rut,
-                nombres: nombres,
-                apellidos: apellidos,
-                domicilio: domicilio,
-                edad: parseInt(edad),
+                firstName: firstName,
+                lastName: lastName,
+                address: address,
+                age: parseInt(age),
                 role: role,
-                telefono: parseInt(telefono),
+                phoneNumber: parseInt(phoneNumber),
                 gender: gender,
             },
         });

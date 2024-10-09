@@ -11,11 +11,11 @@ import AdminDashboard from './pages/admin/Dashboard.tsx';
 import History from "./pages/professional/History.tsx";
 import Attendance from './pages/professional/Attendance.tsx';
 import ProfessionalDashboard from './pages/professional/Dashboard.tsx';
-import Navbar from './components/Nabvar.tsx'; 
-import Footer from "./components/Footer.tsx"; 
 import Agenda from "./pages/professional/Agenda.tsx";
 import { ProtectedRoute } from "./pages/auth/ProtectedRoute.tsx";
 import Unauthorized from "./pages/Unauthorized.tsx";
+import SimpleLayout from './layouts/SimpleLayout';
+import MainLayout from './layouts/MainLayout';
 
 function App() {
   const {authUser} = useAuthContext();
@@ -35,84 +35,82 @@ function App() {
     <>
       <div>
         <Toaster />
-        <Navbar/>
         <Routes>
 
           {/* General */}
-
-          <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
-          <Route path="/signup" element={<Signup/>}/>
-          <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
-          <Route path="/" element={<DashboardRedirect />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />  
-
+          <Route element={<SimpleLayout />}>
+            <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
+            <Route path="/signup" element={<Signup/>}/>
+            <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
+            <Route path="/" element={<DashboardRedirect />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />  
+          </Route>
           {/* Admin */}
+          <Route element={<MainLayout />}>
+            <Route 
+              path="/dashboardAdmin" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>}
+            />
+            <Route 
+              path="/users" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Users />
+                </ProtectedRoute>} 
+            />
+            <Route 
+              path="/createUser"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CreateUsers/>
+                </ProtectedRoute>}
+            />
+            <Route 
+              path="/updateUser/:id"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <UpdateUsers/>
+                </ProtectedRoute>}
+            />
 
-          <Route 
-            path="/dashboardAdmin" 
-            element={
-              <ProtectedRoute requiredRole="admin">
-                <AdminDashboard />
-              </ProtectedRoute>}
-          />
-          <Route 
-            path="/users" 
-            element={
-              <ProtectedRoute requiredRole="admin">
-                <Users />
-              </ProtectedRoute>} 
-          />
-          <Route 
-            path="/createUser"
-            element={
-              <ProtectedRoute requiredRole="admin">
-                <CreateUsers/>
-              </ProtectedRoute>}
-          />
-          <Route 
-            path="/updateUser/:id"
-            element={
-              <ProtectedRoute requiredRole="admin">
-                <UpdateUsers/>
-              </ProtectedRoute>}
-          />
+            {/* Professional */}
 
-          {/* Professional */}
-
-          <Route
-            path="/dashboardProfessional"
-            element={
-              <ProtectedRoute requiredRole="professional">
-                <ProfessionalDashboard/>
-              </ProtectedRoute>}
-          />
-          <Route
-            path="/history"
-            element={   
-              <ProtectedRoute requiredRole="professional">
-                <History />
-              </ProtectedRoute>}
-          />
-          <Route 
-            path="/agendaProfessional"
-            element={
-              <ProtectedRoute requiredRole="professional">
-                <Agenda />
-              </ProtectedRoute>}
-          />
-          <Route
-            path="/attendance"
-            element={
-              <ProtectedRoute requiredRole="professional">
-                <Attendance />
-              </ProtectedRoute>} 
-          />
-
+            <Route
+              path="/dashboardProfessional"
+              element={
+                <ProtectedRoute requiredRole="professional">
+                  <ProfessionalDashboard/>
+                </ProtectedRoute>}
+            />
+            <Route
+              path="/history"
+              element={   
+                <ProtectedRoute requiredRole="professional">
+                  <History />
+                </ProtectedRoute>}
+            />
+            <Route 
+              path="/agendaProfessional"
+              element={
+                <ProtectedRoute requiredRole="professional">
+                  <Agenda />
+                </ProtectedRoute>}
+            />
+            <Route
+              path="/attendance"
+              element={
+                <ProtectedRoute requiredRole="professional">
+                  <Attendance />
+                </ProtectedRoute>} 
+            />
+            </Route>
         </Routes>
-        <Footer/>
       </div>
     </>
-  )
+  );
 }
 
 export default App;

@@ -9,17 +9,22 @@ export const getAppointments = async (req: Request, res: Response) => {
   }
 
   try {
-    // Paso 1: Obtener el id del profesional usando el rut
-    const profesional = await prisma.profesional.findUnique({
+    // Paso 1: Obtener el usuario usando el rut
+    const user = await prisma.user.findUnique({
       where: {
         rut: rut as string,
       },
       select: {
         id: true,
+        professional: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
-    if (!profesional) {
+    if (!user || !user.professional) {
       return res.status(404).json({ error: "Profesional no encontrado" });
     }
 
@@ -27,27 +32,19 @@ export const getAppointments = async (req: Request, res: Response) => {
     const mesInt = parseInt(mes as string);
     const añoInt = parseInt(año as string);
 
-    // Validar que el mes y año sean válidos
-    if (isNaN(mesInt) || isNaN(añoInt) || mesInt < 1 || mesInt > 12 || añoInt < 1900 || añoInt > 2100) {
-      return res.status(400).json({ error: "Mes o año inválidos" });
-    }
-
-    const fechaInicio = new Date(añoInt, mesInt - 1, 1); // 1 de mes
-    const fechaFin = new Date(añoInt, mesInt, 1); // 1 del mes siguiente
-
-    const citas = await prisma.citas.findMany({
+    const citas = await prisma.appointment.findMany({
       where: {
-        profesionalId: profesional.id,
-        fecha: {
-          gte: fechaInicio,
-          lt: fechaFin,
+        professionalId: user.professional.id,
+        date: {
+          gte: new Date(añoInt, mesInt - 1, 1),
+          lt: new Date(añoInt, mesInt, 1),
         },
       },
     });
 
-    res.status(200).json(citas);
-  } catch (error: any) {
-    console.log("Error en el controlador getAppointments ", error.message);
-    res.status(500).json({ error: "Error Interno del Servidor" });
+    res.json(citas);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener las citas" });
   }
 };

@@ -4,18 +4,21 @@ import bcryptjs from "bcryptjs";
 import generateToken from "../utils/generateToken";
 
 export const login = async (req: Request, res: Response) => {
-    try {
-        const { rut, contrasena } = req.body;
+  try {
+    const { rut, password } = req.body;
+        if (!rut || !password) {
+          return res.status(400).json({ message: "Todos los campos son obligatorios" });
+        }
 
-        const user = await prisma.usuario.findUnique({
-			where: { rut },
-		});
+        const user = await prisma.user.findUnique({
+          where: { rut },
+        });
 
         if (!user) {
             return res.status(400).json({ error: "Credenciales inválidas" });
         }
 
-        const isPasswordCorrect = await bcryptjs.compare(contrasena, user.contrasena);
+        const isPasswordCorrect = await bcryptjs.compare(password, user.password);
 
         if (!isPasswordCorrect) {
             return res.status(400).json({ error: "Credenciales inválidas" });
@@ -26,7 +29,6 @@ export const login = async (req: Request, res: Response) => {
         res.status(200).json({
             id: user.id,
             rut: user.rut,
-            nombres: user.nombres,
             role: user.role,
         });
 		
@@ -50,19 +52,24 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const getMe = async (req: Request, res: Response) => {
-    try {
-        const user = await prisma.usuario.findUnique({ where: { id: req.user.id } });
+  try {
+        const user = await prisma.user.findUnique({ where: { id: req.user?.id } });
 
         if (!user) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
         res.status(200).json({
-            id: user.id,
-            rut: user.rut,
-            nombres: user.nombres,
-            role: user.role,
-            gender: user.gender,
+          id: user.id,
+          rut: user.rut,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          address: user.address,
+          age: user.age,
+          phoneNumber: user.phoneNumber,
+          gender: user.gender,
+          role: user.role,
+          email: user.email,
         });
 
     } catch (error: any) {
