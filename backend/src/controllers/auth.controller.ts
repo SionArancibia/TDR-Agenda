@@ -53,27 +53,16 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
   try {
-        const user = await prisma.user.findUnique({ where: { id: req.user?.id } });
-
-        if (!user) {
-            return res.status(404).json({ error: "Usuario no encontrado" });
-        }
-
-        res.status(200).json({
-          id: user.id,
-          rut: user.rut,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          address: user.address,
-          age: user.age,
-          phoneNumber: user.phoneNumber,
-          gender: user.gender,
-          role: user.role,
-          email: user.email,
-        });
-
-    } catch (error: any) {
-        console.log("Error en el controlador de obtener usuario", error.message);
-        res.status(500).json({ error: "Error interno del servidor" });
+    if (!req.user) {
+      return res.status(401).json({ message: 'No autorizado' });
     }
+    const user = await prisma.user.findUnique({ where: { id: req.user?.id } });
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error al obtener el usuario:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };

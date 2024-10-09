@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import usersRoutes from "./routes/users"
 import passwordRecoveryRoutes from './routes/passwordRecovery'; // Importar la nueva ruta
-import "./types/express"
+
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
