@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../utils/axios';
-import { Link, useParams, /* useNavigate */ } from 'react-router-dom';
+import { Link, useNavigate, useParams, /* useNavigate */ } from 'react-router-dom';
 import { toast } from "sonner";
 
 const UpdateUsers = () => {
     const { id } = useParams(); 
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
     const [user, setUser] = useState({
         rut: '',
-        nombres: '',
-        apellidos: '',
-        domicilio: '',
-        edad: '',
+        firstName: '',
+        lastName: '',
+        address: '',
+        age: '',
         role: '',
-        telefono: '',
+        phoneNumber: '',
         gender: '',
     });
 
@@ -24,12 +24,12 @@ const UpdateUsers = () => {
                 const selectedUser = response.data;
                 setUser({
                     rut: selectedUser.rut,
-                    nombres: selectedUser.nombres,
-                    apellidos: selectedUser.apellidos,
-                    domicilio: selectedUser.domicilio,
-                    edad: selectedUser.edad,
+                    firstName: selectedUser.firstName,
+                    lastName: selectedUser.lastName,
+                    address: selectedUser.address,
+                    age: selectedUser.age,
                     role: selectedUser.role,
-                    telefono: selectedUser.telefono,
+                    phoneNumber: selectedUser.phoneNumber,
                     gender: selectedUser.gender,
                 });
             } catch (error) {
@@ -50,7 +50,7 @@ const UpdateUsers = () => {
             console.log(user);
             await api.put(`/users/updateUser/${id}`, user);
             toast('Usuario actualizado con éxito');
-            //navigate('/Usuarios'); 
+            navigate('/users');
         } catch (error) {
             console.error('Error al actualizar el usuario:', error);
         }
@@ -70,38 +70,38 @@ const UpdateUsers = () => {
                     className="border px-4 py-2 w-full mb-4"
                 />
 
-                <label className="block mb-2">Nombres</label>
+                <label className="block mb-2">firstName</label>
                 <input
                     type="text"
-                    name="nombres"
-                    value={user.nombres}
+                    name="firstName"
+                    value={user.firstName}
                     onChange={handleInputChange}
                     className="border px-4 py-2 w-full mb-4"
                 />
 
-                <label className="block mb-2">Apellidos</label>
+                <label className="block mb-2">lastName</label>
                 <input
                     type="text"
-                    name="apellidos"
-                    value={user.apellidos}
+                    name="lastName"
+                    value={user.lastName}
                     onChange={handleInputChange}
                     className="border px-4 py-2 w-full mb-4"
                 />
 
-                <label className="block mb-2">Domicilio</label>
+                <label className="block mb-2">address</label>
                 <input
                     type="text"
-                    name="domicilio"
-                    value={user.domicilio}
+                    name="address"
+                    value={user.address}
                     onChange={handleInputChange}
                     className="border px-4 py-2 w-full mb-4"
                 />
 
-                <label className="block mb-2">Edad</label>
+                <label className="block mb-2">age</label>
                 <input
                     type="number"
-                    name="edad"
-                    value={user.edad}
+                    name="age"
+                    value={user.age}
                     onChange={handleInputChange}
                     className="border px-4 py-2 w-full mb-4"
                 />
@@ -113,15 +113,16 @@ const UpdateUsers = () => {
                     onChange={handleInputChange}
                     className="border px-4 py-2 w-full mb-4"
                 >
+                    <option value="patient">Paciente</option>
                     <option value="professional">Profesional</option>
-                    <option value="admin">Admin</option>
+                    <option value="admin">Administrador</option>
                 </select>
 
                 <label className="block mb-2">Telefóno</label>
                 <input
                     type="tel"
-                    name="telefono"
-                    value={user.telefono}
+                    name="phoneNumber"
+                    value={user.phoneNumber}
                     onChange={handleInputChange}
                     className="border px-4 py-2 w-full mb-4"
                 />
