@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import axios from 'axios';
 
-export default function MisHoras({ route }) {
+export default function MyHours({ route }) {
   const [horas, setHoras] = useState([]);
   const usuario = 'usuario_demo'; // Puedes reemplazar esto con el usuario actual
 

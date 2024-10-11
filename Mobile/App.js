@@ -5,10 +5,10 @@ import { Image } from 'react-native';
 import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
 import ForgotPasswordScreen from './screens/Rpassword';
-import MainScreen from './screens/Principal';
-import MainScreen2 from './screens/AgendarHora';
-import HorasScreen from './components/HorasAgendada';
-import MisHoras from './screens/MisHoras';
+import MainScreen from './screens/Main';
+import MainScreen2 from './screens/ScheduleHours';
+import ScheduledHours from './components/ScheduleC';
+import MyHours from './screens/MyHours';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -89,8 +89,8 @@ export default function App() {
           }}
         />
         
-        <Stack.Screen name="Horas" component={HorasScreen} />
-        <Stack.Screen name="MisHoras" component={MisHoras} />
+        <Stack.Screen name="Horas" component={ScheduledHours} />
+        <Stack.Screen name="MyHours" component={MyHours} />
 
       </Stack.Navigator>
     </NavigationContainer>
