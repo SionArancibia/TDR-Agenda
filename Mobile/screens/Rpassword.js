@@ -12,11 +12,11 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function ForgotPasswordScreen() {
-    const [rut, setRut] = useState("");
+    const [idNumber, setIdNumber] = useState("");
     const [email, setEmail] = useState("");
 
     const handleResetPassword = () => {
-        if (!rut) {
+        if (!idNumber) {
             Alert.alert("Error", "Por favor ingrese su RUT.");
             return;
         }
@@ -25,7 +25,7 @@ export default function ForgotPasswordScreen() {
             return;
         }
 
-        Alert.alert("Solicitud Enviada", `RUT: ${rut}\nCorreo: ${email}`);
+        Alert.alert("Solicitud Enviada", `RUT: ${idNumber}\nCorreo: ${email}`);
     };
 
     return (
@@ -35,8 +35,8 @@ export default function ForgotPasswordScreen() {
             <TextInput
                 style={styles.input}
                 placeholder="Ej: 12345678-9"
-                value={rut}
-                onChangeText={setRut}
+                value={idNumber}
+                onChangeText={setIdNumber}
                 keyboardType="default"
             />
             <Text style={styles.label}>Ingrese su Correo Electrónico:</Text>

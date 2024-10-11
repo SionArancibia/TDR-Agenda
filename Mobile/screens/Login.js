@@ -61,9 +61,9 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.buttonText}>Registrarse</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.recuperarButton} onPress={() => navigation.navigate('Rpassword')}>
+        <TouchableOpacity style={styles.recoverButton} onPress={() => navigation.navigate('Rpassword')}>
           <Icon name="key" size={20} color="#fff" style={styles.icon} />
-          <Text style={styles.recuperarButtonT}>Recuperar Contraseña</Text>
+          <Text style={styles.recoverButtonText}>Recuperar Contraseña</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
   },
-  recuperarButton: {
+  recoverButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
   },
-  recuperarButtonT: {
+  recoverButtonText: {
     color: '#fff',
     fontSize: 18,
     marginLeft: 10,

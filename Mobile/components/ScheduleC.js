@@ -4,51 +4,51 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import MesesAgenda from './MesesAgenda';
 
-export default function HorasAgendada({ route }) {
+export default function ScheduledHours({ route }) {
   const { title } = route.params;
-  const seccion = title; // Usar el título como la sección
+  const section = title; // Usar el título como la sección
   const [selectedDate, setSelectedDate] = useState(null);
-  const [fechas, setFechas] = useState([]);
-  const [horas, setHoras] = useState([]);
+  const [dates, setDates] = useState([]);
+  const [hours, setHours] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedHora, setSelectedHora] = useState(null);
+  const [selectedHour, setSelectedHour] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://192.168.0.8:3000/fechas?seccion=${seccion}`) // Cambiar por su ip para que funcione en expogo etc
+    axios.get(`http://192.168.0.8:3000/fechas?seccion=${section}`) // Cambiar por su ip para que funcione en expogo etc
       .then(response => {
-        setFechas(response.data);
+        setDates(response.data);
         setSelectedDate(response.data[0]); // Selecciona la primera fecha por defecto
       })
       .catch(error => {
         console.error(error);
       });
-  }, [seccion]);
+  }, [section]);
 
   useEffect(() => {
     if (selectedDate) {
-      axios.get(`http://192.168.0.8:3000/horas?seccion=${seccion}`) // Cambiar por su ip para que funcione en expogo etc
+      axios.get(`http://192.168.0.8:3000/horas?seccion=${section}`) // Cambiar por su ip para que funcione en expogo etc
         .then(response => {
-          setHoras(response.data);
+          setHours(response.data);
         })
         .catch(error => {
           console.error(error);
         });
     }
-  }, [selectedDate, seccion]);
+  }, [selectedDate, section]);
 
-  const openModal = (hora) => {
-    setSelectedHora(hora);
+  const openModal = (hour) => {
+    setSelectedHour(hour);
     setModalVisible(true);
   };
 
   const confirmBooking = () => {
-    const usuario = 'usuario_demo'; // Puedes reemplazar esto con el usuario actual
+    const user = 'usuario_demo'; 
 
     axios.post('http://192.168.0.8:3000/agendar', {
-      fecha: new Date(selectedHora.fecha).toISOString(), // Convertir la fecha a ISO-8601
-      hora: selectedHora.hora,
-      profesional: selectedHora.nombre,
-      usuario: usuario,
+      fecha: new Date(selectedHour.fecha).toISOString(), // Convertir la fecha a ISO-8601
+      hora: selectedHour.hora,
+      profesional: selectedHour.nombre,
+      usuario: user,
     })
     .then(response => {
       console.log('Cita agendada:', response.data);
@@ -65,17 +65,17 @@ export default function HorasAgendada({ route }) {
       <MesesAgenda />
       {/* Sección de Fechas con Scroll Horizontal */}
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
-        {fechas.map((fecha, index) => (
-          <TouchableOpacity key={index} onPress={() => setSelectedDate(fecha)} style={[
-            styles.dateButton, selectedDate === fecha && styles.selectedDateButton]}>
-            <Text style={[styles.dateText, selectedDate === fecha && styles.selectedDateText]}>{fecha}</Text>
+        {dates.map((date, index) => (
+          <TouchableOpacity key={index} onPress={() => setSelectedDate(date)} style={[
+            styles.dateButton, selectedDate === date && styles.selectedDateButton]}>
+            <Text style={[styles.dateText, selectedDate === date && styles.selectedDateText]}>{date}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
       {/* Lista de Psicólogos */}
       <FlatList
-        data={horas.filter(hora => hora.fecha === selectedDate)}
+        data={hours.filter(hour => hour.fecha === selectedDate)}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
@@ -93,7 +93,7 @@ export default function HorasAgendada({ route }) {
       />
 
       {/* Modal para confirmar la hora */}
-      {selectedHora && (
+      {selectedHour && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -103,9 +103,9 @@ export default function HorasAgendada({ route }) {
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalHeader}>Confirmar Cita</Text>
-              <Text style={styles.modalText}>Fecha: {selectedHora.fecha}</Text>
-              <Text style={styles.modalText}>Hora: {selectedHora.hora}</Text>
-              <Text style={styles.modalText}>Profesional: {selectedHora.nombre}</Text>
+              <Text style={styles.modalText}>Fecha: {selectedHour.fecha}</Text>
+              <Text style={styles.modalText}>Hora: {selectedHour.hora}</Text>
+              <Text style={styles.modalText}>Profesional: {selectedHour.nombre}</Text>
 
               {/* Botones de Confirmar y Cerrar */}
               <View style={styles.modalButtonContainer}>

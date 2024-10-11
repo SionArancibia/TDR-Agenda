@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 const HelpScreen = () => {
   const [selectedHelp, setSelectedHelp] = useState(null);
 
-  
   const renderContent = () => {
     switch (selectedHelp) {
       case 'agendar':
