@@ -32,7 +32,6 @@ model Administrator {
   id                String    @id @default(cuid())
   userId            String    @unique
   user              User      @relation(fields: [userId], references: [id])
-  blockSchedule     Boolean
   validatedRequests Request[] // Relación de uno a muchos con las solicitudes que ha validado.
 }
 
@@ -44,7 +43,7 @@ model Professional {
   user         User          @relation(fields: [userId], references: [id])
   appointments Appointment[] // Relación con las citas.
   requests     Request[] // Relación opcional con solicitudes. Un profesional puede tener 0 o muchas solicitudes.
-  ProfessionalBlock ProfessionalBlock[]
+  ProfessionalBlocks ProfessionalBlock[]
 }
 
 model ProfessionalBlock {
@@ -57,7 +56,6 @@ model ProfessionalBlock {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
-
 
 model Patient {
   id               String        @id @default(cuid())
@@ -100,7 +98,7 @@ model Log {
 
 model Request {
   id                 String         @id @default(cuid())
-  request            String
+  requestType        RequestType    // Tipo de solicitud definido por el enum
   validated          Boolean        @default(false) // El campo `validated` ahora es Boolean y no referencia a `Administrator`.
   patientId          String?
   patient            Patient?       @relation(fields: [patientId], references: [id])
@@ -108,6 +106,18 @@ model Request {
   professional       Professional?  @relation(fields: [professionalId], references: [id])
   validatedByAdminId String? // Campo para identificar el administrador que validó la solicitud.
   validatedByAdmin   Administrator? @relation(fields: [validatedByAdminId], references: [id]) // Relación opcional con `Administrator`.
+  RegistrationRequest RegistrationRequest[]
+}
+
+model RegistrationRequest {
+  id        String  @id @default(cuid())
+  rut       String  // RUT del usuario que se desea registrar
+  password  String  // Contraseña del usuario
+  document  String  // URL del PDF con el documento de respaldo
+  requestId String  @unique
+  request   Request @relation(fields: [requestId], references: [id])
+
+  createdAt DateTime @default(now())
 }
 
 model CommunityCenter {
@@ -141,4 +151,9 @@ enum Role {
   admin
   professional
   patient
+}
+
+enum RequestType {
+  REGISTRATION_REQUEST
+  BLOCK_SCHEDULE_REQUEST
 }

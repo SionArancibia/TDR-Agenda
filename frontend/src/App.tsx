@@ -15,6 +15,7 @@ import { ProtectedRoute } from "./pages/auth/ProtectedRoute.tsx";
 import Unauthorized from "./pages/Unauthorized.tsx";
 import SimpleLayout from './layouts/SimpleLayout';
 import MainLayout from './layouts/MainLayout';
+import Requests from "./pages/admin/Requests.tsx";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -72,6 +73,13 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <UpdateUsers/>
                 </ProtectedRoute>}
+            />
+            <Route 
+              path="/requests" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Requests />
+                </ProtectedRoute>} 
             />
 
             {/* Professional */}
