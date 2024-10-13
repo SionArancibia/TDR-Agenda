@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 
@@ -40,32 +40,38 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <Icon name="user" size={120} color="#333333" style={styles.userIcon} />
+      <Icon name="user" size={120} color="#007acc" style={styles.userIcon} />
       <Text style={styles.title}>Registro</Text>
-      <Text style={styles.label}>Ingrese su RUT:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ej: 12345678-9"
-        value={rut}
-        onChangeText={setRut}
-        keyboardType="default"
-      />
-      <Text style={styles.label}>Ingrese su Contraseña:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry={true}
-      />
+
+      <View style={styles.inputContainer}>
+        <Icon name="user" size={20} color="#333" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su RUT"
+          value={rut}
+          onChangeText={setRut}
+          keyboardType="default"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Icon name="lock" size={20} color="#333" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+      </View>
 
       <TouchableOpacity style={styles.archivoButton} onPress={handleFilePicker}>
-        <Icon name="file-text-o" size={25} color="#fff" style={styles.icon} />
-        <Text style={styles.buttonTextD}>Subir Archivo</Text>
+        <Icon name="file-text-o" size={20} color="#fff" style={styles.icon} />
+        <Text style={styles.buttonText}>Subir Archivo</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Icon name="sign-in" size={25} color="#fff" style={styles.icon} />
+        <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
     </View>
@@ -73,65 +79,70 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  userIcon: {
-    justifyContent: 'center',
-    textAlign: 'center',
-  },
-  title: {
-    justifyContent: 'center',
-    fontSize: 40,
-    textAlign: 'center',
-    paddingBottom: 40,
-  },
   container: {
     flex: 1,
-    padding: 30,
+    backgroundColor: '#f0f8ff',
     justifyContent: 'center',
-    backgroundColor: '#f2f2f2',
+    alignItems: 'center',
+    padding: 20,
   },
-  label: {
-    fontSize: 22,
-    color: '#333333',
+  userIcon: {
     marginBottom: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#333',
     textAlign: 'center',
+    marginBottom: 30,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 25,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    width: '100%', // Esto asegura que el input ocupe todo el ancho disponible
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  icon: {
+    marginRight: 10,
   },
   input: {
+    flex: 1,
     height: 50,
-    borderColor: '#007acc',
-    borderWidth: 2,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    backgroundColor: '#fff',
-    fontSize: 18,
+    fontSize: 16,
+    paddingHorizontal: 10,
   },
   archivoButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#28a745',
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 20,
+    paddingVertical: 15,
+    borderRadius: 25,
+    marginBottom: 20,
+    width: '100%', // Esto asegura que el botón ocupe todo el ancho disponible
   },
   registerButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0000FF',
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginTop: 20,
+    paddingVertical: 15,
+    borderRadius: 25,
+    width: '100%', // Esto asegura que el botón ocupe todo el ancho disponible
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     marginLeft: 10,
-  },
-  buttonTextD: {
-    color: '#fff',
-    fontSize: 18,
-    marginLeft: 10,
-    paddingVertical: 15,
   },
 });
