@@ -3,6 +3,7 @@ import Login from "./pages/auth/Login.tsx";
 import { useAuthContext } from "./context/AuthContext";
 import UpdateUsers from "./pages/admin/UpdateUsers.tsx";
 import PasswordRecovery from "./pages/auth/PasswordRecovery.tsx";
+import ResetPassword from "./pages/auth/ResetPassword.tsx";
 import { Toaster } from "sonner";
 import Users from "./pages/admin/Users.tsx";
 import CreateUsers from "./pages/admin/CreateUsers.tsx";
@@ -16,6 +17,7 @@ import Unauthorized from "./pages/Unauthorized.tsx";
 import SimpleLayout from './layouts/SimpleLayout';
 import MainLayout from './layouts/MainLayout';
 import Requests from "./pages/admin/Requests.tsx";
+
 
 function App() {
   const {authUser} = useAuthContext();
@@ -41,6 +43,7 @@ function App() {
           <Route element={<SimpleLayout />}>
             <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
             <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
+            <Route path="/resetPassword/:token" element={<ResetPassword />} /> 
             <Route path="/" element={<DashboardRedirect />} />
             <Route path="/unauthorized" element={<Unauthorized />} />  
           </Route>

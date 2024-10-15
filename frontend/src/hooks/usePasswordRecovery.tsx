@@ -17,10 +17,10 @@ const usePasswordRecovery = () => {
         console.log(response);
       // Mostrar el mensaje de éxito solo si la solicitud fue exitosa
       if (response.status === 200) {
-        toast('Solicitud de recuperación de contraseña enviada con éxito');
+        toast('Solicitud de recuperación de contraseña enviada con éxito, revisa tu correo electrónico');
         
         // Redirigir al usuario a una página específica si es necesario
-        navigate("/somePage");
+        navigate("/login");
       } else {
         toast.error('Error inesperado al enviar la solicitud de recuperación de contraseña');
       }

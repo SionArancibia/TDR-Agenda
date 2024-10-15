@@ -3,6 +3,9 @@ import crypto from 'crypto';
 import prisma from '../db/prisma';
 import bcryptjs from 'bcryptjs';
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config(); // Cargar las variables de entorno desde el archivo .env
 
 export const passwordRecovery = async (req: Request, res: Response) => {
   const { email } = req.body;
@@ -40,8 +43,8 @@ export const passwordRecovery = async (req: Request, res: Response) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Recuperación de Contraseña',
-      text: `Recibimos una solicitud para restablecer tu contraseña. Haz clic en el siguiente enlace para restablecer tu contraseña: http://localhost:3000/reset-password?token=${token}`,
+      subject: 'Recuperación de contraseña',
+      text: `Recibimos una solicitud para restablecer tu contraseña. Utiliza el siguiente enlace para restablecer tu contraseña: \n\nhttp://${req.hostname}:5173/resetPassword/${token}\n\nSi no solicitaste este cambio, ignora este correo.`,
     };
 
     // Enviar el correo electrónico
@@ -55,36 +58,38 @@ export const passwordRecovery = async (req: Request, res: Response) => {
 };
 
 export const resetPassword = async (req: Request, res: Response) => {
-    const { token, newPassword } = req.body;
-  
-    try {
-      const user = await prisma.user.findFirst({
-        where: {
-          passwordResetToken: token,
-          passwordResetExpires: {
-            gt: new Date(),
-          },
+  const { token, newPassword } = req.body;
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        passwordResetToken: token,
+        passwordResetExpires: {
+          gt: new Date(),
         },
-      });
-  
-      if (!user) {
-        return res.status(400).json({ message: 'Token inválido o expirado' });
-      }
-  
-      const hashedPassword = await bcryptjs.hash(newPassword, 10);
-  
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          password: hashedPassword,
-          passwordResetToken: null,
-          passwordResetExpires: null,
-        },
-      });
-  
-      res.status(200).json({ message: 'Contraseña restablecida con éxito' });
-    } catch (error) {
-      console.error('Error al restablecer la contraseña:', error);
-      res.status(500).json({ message: 'Error interno del servidor' });
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Token inválido o expirado' });
     }
-  };
+
+    // Cifrar la nueva contraseña
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
+
+    // Actualizar la contraseña del usuario y eliminar el token de recuperación
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetExpires: null,
+      },
+    });
+
+    res.status(200).json({ message: 'Contraseña restablecida con éxito' });
+  } catch (error) {
+    console.error('Error al restablecer la contraseña:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
