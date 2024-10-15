@@ -28,15 +28,41 @@ export const createAppointment = async (req: Request, res: Response) => {
 
 // Obtener todas las citas
 export const getAppointments = async (req: Request, res: Response) => {
+  const { patientId, month } = req.query;
+
   try {
-    const appointments = await prisma.appointment.findMany({
-      include: {
-        patient: true,
-        professional: true,
-        serviceType: true,
-        communityCenter: true,
-      },
-    });
+    let appointments;
+
+ 
+    if (patientId && month) {
+      const year = new Date().getFullYear(); 
+      appointments = await prisma.appointment.findMany({
+        where: {
+          patientId: String(patientId),
+          date: {
+            gte: new Date(`${year}-${month}-01`), 
+            lt: new Date(`${year}-${Number(month) + 1}-01`)  
+          }
+        },
+        include: {
+          patient: true,
+          professional: true,
+          serviceType: true,
+          communityCenter: true,
+        },
+      });
+    } else {
+     
+      appointments = await prisma.appointment.findMany({
+        include: {
+          patient: true,
+          professional: true,
+          serviceType: true,
+          communityCenter: true,
+        },
+      });
+    }
+
     res.status(200).json(appointments);
   } catch (error) {
     console.error('Error al obtener citas:', error);
@@ -108,4 +134,7 @@ export const deleteAppointment = async (req: Request, res: Response) => {
     console.error('Error al eliminar la cita:', error);
     res.status(500).json({ error: 'Error al eliminar la cita' });
   }
+
+
+  
 };

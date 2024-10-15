@@ -6,6 +6,7 @@ interface Paciente {
   id: string;
   nombre: string;
   rut: string;
+  patientId:string;
   
 }
 
@@ -17,7 +18,7 @@ const Attendance: React.FC = () => {
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/appointments');
+        const response = await fetch('http://localhost:3000/api/patients');
         const data = await response.json();
         setPacientes(data);
       } catch (error) {
@@ -27,6 +28,8 @@ const Attendance: React.FC = () => {
     fetchPacientes();
   }, []);
 
+
+  
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-4xl">
@@ -74,13 +77,15 @@ const Attendance: React.FC = () => {
                 className="bg-white p-4 shadow-md rounded-lg flex justify-between items-center hover:shadow-lg transition-shadow duration-300"
               >
               <div>
-                  <p className="font-semibold text-gray-600 text-lg">{paciente.nombre}</p>
+                  <p className="font-semibold text-gray-600 text-lg">Nombre : {paciente.firstName} {paciente.lastName}</p>
                   <p className="text-gray-600">RUT: {paciente.rut}</p>
                  
                 </div>
-                <button className="bg-green-300 text-white px-4 py-2 rounded-full shadow-md hover:bg-green-600 transition duration-300">
-                  Ver Registro de Asistencia
-                </button>  
+                <Link to={`/registro/${paciente.id}`}>
+        <button className="bg-green-300 text-white px-4 py-2 rounded-full shadow-md hover:bg-green-600 transition duration-300">
+          Ver Registro de Asistencia
+        </button>
+      </Link>
               </div>
             ))
           ) : (

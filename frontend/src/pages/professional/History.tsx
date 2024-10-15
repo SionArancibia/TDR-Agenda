@@ -17,7 +17,7 @@
     useEffect(() => {
       const fetchPacientes = async () => {
         try {
-          const response = await fetch('http://localhost:3000/api/pacientes');
+          const response = await fetch('http://localhost:3000/api/patients');
           const data = await response.json();
           setPacientes(data);
         } catch (error) {
@@ -74,7 +74,7 @@
                   className="bg-white p-4 shadow-md rounded-lg flex justify-between items-center hover:shadow-lg transition-shadow duration-300"
                 >
                 <div>
-                    <p className="font-semibold text-gray-600 text-lg">{paciente.nombre}</p>
+                    <p className="font-semibold text-gray-600 text-lg">{paciente.firstName}</p>
                     <p className="text-gray-600">RUT: {paciente.rut}</p>
                    
                   </div>

@@ -17,7 +17,7 @@ import Unauthorized from "./pages/Unauthorized.tsx";
 import SimpleLayout from './layouts/SimpleLayout';
 import MainLayout from './layouts/MainLayout';
 import Requests from "./pages/admin/Requests.tsx";
-
+import RegistroAsistencia from './pages/professional/appointment_register.tsx';
 
 function App() {
   const {authUser} = useAuthContext();
@@ -77,13 +77,17 @@ function App() {
                   <UpdateUsers/>
                 </ProtectedRoute>}
             />
-            <Route 
+
+
+<Route 
               path="/requests" 
               element={
                 <ProtectedRoute requiredRole="admin">
                   <Requests />
                 </ProtectedRoute>} 
             />
+
+
 
             {/* Professional */}
 
@@ -94,7 +98,16 @@ function App() {
                   <ProfessionalDashboard/>
                 </ProtectedRoute>}
             />
-            <Route
+
+
+
+          <Route path="/registro/:patientId" element={<RegistroAsistencia />} />
+
+
+
+
+
+          <Route
               path="/history"
               element={   
                 <ProtectedRoute requiredRole="professional">

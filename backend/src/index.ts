@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import usersRoutes from "./routes/users"
 import passwordRecoveryRoutes from './routes/passwordRecovery'; // Importar la nueva ruta
+import patientRoutes  from './routes/patients';
 
 dotenv.config();
 
@@ -22,8 +23,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use('/api/passwordRecovery', passwordRecoveryRoutes);
+app.use('/api', patientRoutes); 
 app.use('/api/requests', requestsRoutes)
-
+  
 app.listen(PORT, () => {
   console.log('Server running on port:', PORT);
 });
