@@ -6,7 +6,6 @@ import authorizeRole from "../middleware/authorizeRole";
 
 const router = express.Router();
 
-
 router.get("/appointments", protectRoute, authorizeRole(['admin', 'professional']), getAppointments);
 router.get('/appointments/:id', protectRoute, authorizeRole(['admin', 'professional']), getAppointmentById);
 router.post('/appointments', protectRoute, authorizeRole(['admin', 'professional']), createAppointment);
