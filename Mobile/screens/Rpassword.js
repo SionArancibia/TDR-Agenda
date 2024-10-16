@@ -8,13 +8,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import axios from 'axios';
 
 export default function ForgotPasswordScreen() {
-  const [idNumber, setIdNumber] = useState("");
+  const [rut, setRut] = useState("");
   const [email, setEmail] = useState("");
 
-  const handleResetPassword = () => {
-    if (!idNumber) {
+  const handleResetPassword = async () => {
+    if (!rut) {
       Alert.alert("Error", "Por favor ingrese su RUT.");
       return;
     }
@@ -23,7 +24,24 @@ export default function ForgotPasswordScreen() {
       return;
     }
 
-    Alert.alert("Solicitud Enviada", `RUT: ${idNumber}\nCorreo: ${email}`);
+    try {
+      // Llamada a la API
+      const response = await axios.post('http://192.168.1.10:3000/reset-password', {
+        rut,
+        email,
+      });
+
+      //const data = await response.json();
+
+      if (response.status === 200) {
+        Alert.alert("Correo enviado", "Se ha enviado un correo para recuperar su contraseña.");
+      } else {
+        Alert.alert("Error", response.data.message || "Hubo un problema al enviar el correo.");
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Hubo un problema de conexión.");
+    }
   };
 
   return (
@@ -36,8 +54,8 @@ export default function ForgotPasswordScreen() {
         <TextInput
           style={styles.input}
           placeholder="Ingrese su RUT"
-          value={idNumber}
-          onChangeText={setIdNumber}
+          value={rut}
+          onChangeText={setRut}
           keyboardType="default"
         />
       </View>
@@ -58,7 +76,7 @@ export default function ForgotPasswordScreen() {
         onPress={handleResetPassword}
       >
         <Icon name="paper-plane" size={20} color="#fff" style={styles.icon} />
-        <Text style={styles.buttonText}>Enviar Solicitud</Text>
+        <Text style={styles.buttonText}>Enviar Correo</Text>
       </TouchableOpacity>
     </View>
   );

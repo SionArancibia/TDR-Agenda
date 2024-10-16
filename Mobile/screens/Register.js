@@ -18,7 +18,7 @@ export default function RegisterScreen() {
     }
 
     try {
-      const response = await axios.post('http://192.168.0.8:3000/register', {
+      const response = await axios.post('http://192.168.1.10:3000/register', {
         rut,
         password,
       });

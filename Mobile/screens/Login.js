@@ -10,7 +10,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.0.8:3000/login', {
+      const response = await axios.post('http://192.168.1.10:3000/login', {
         rut,
         password,
       });
