@@ -19,8 +19,8 @@ export const createRegistrationRequest = async (req: Request, res: Response) => 
   
       res.status(201).json(newRequest);
     } catch (error) {
-      console.error('Error en createRegistrationRequest:', error);
-      res.status(500).json({ error: 'Error en createRegistrationRequest' });
+      console.error('Error al crear la solicitud de registro:', error);
+      res.status(500).json({ error: 'Error al crear la solicitud de registro' });
     }
 };
 
@@ -36,7 +36,7 @@ export const getRegistrationRequests = async (req: Request, res: Response) => {
       res.status(200).json(requests);
     } catch (error) {
       console.error('Error en getRegistrationRequests: ', error);
-      res.status(500).json({ error: 'Error en getRegistrationRequests' });
+      res.status(500).json({ error: 'Error al obtener las solicitudes de registro' });
     }
   };
   
@@ -54,6 +54,6 @@ export const validateRegistrationRequest = async (req: Request, res: Response) =
       res.status(200).json(updatedRequest);
     } catch (error) {
       console.error('Error en validateRegistrationRequest: ', error);
-      res.status(500).json({ error: 'Error em validateRegistrationRequest' });
+      res.status(500).json({ error: 'Error al validar la solicitud de registro' });
     }
 };

@@ -6,7 +6,7 @@ import authorizeRole from "../middleware/authorizeRole";
 const router = express.Router();
 
 router.post("/createRegistrationRequest", createRegistrationRequest);
-router.get("/getRegistrationRequests", getRegistrationRequests);
-router.post("/validateRegistrationRequest", validateRegistrationRequest);
+router.get("/getRegistrationRequests", protectRoute, authorizeRole(['admin']), getRegistrationRequests);
+router.post("/validateRegistrationRequest", protectRoute, authorizeRole(['admin']), validateRegistrationRequest);
 
 export default router;

@@ -122,7 +122,10 @@ model RegistrationRequest {
 
 model CommunityCenter {
   id              String        @id @default(cuid())
-  communityCenter String
+  name String
+  address String
+  phoneNumber String
+  managerName String
   appointments    Appointment[] // Relación con las citas.
 }
 
