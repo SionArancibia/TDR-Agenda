@@ -16,6 +16,8 @@ import Unauthorized from "./pages/Unauthorized.tsx";
 import SimpleLayout from './layouts/SimpleLayout';
 import MainLayout from './layouts/MainLayout';
 import Requests from "./pages/admin/Requests.tsx";
+import CommunityCenters from "./pages/admin/CommunityCenters.tsx";
+import Services from "./pages/admin/Services.tsx";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -79,6 +81,20 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <Requests />
+                </ProtectedRoute>} 
+            />
+            <Route 
+              path="/communityCenters" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CommunityCenters />
+                </ProtectedRoute>} 
+            />
+            <Route 
+              path="/services" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Services />
                 </ProtectedRoute>} 
             />
 
