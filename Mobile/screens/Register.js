@@ -1,19 +1,51 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
+import { z } from 'zod';
+import { validateRut} from '@fdograph/rut-utilities';
 
-export default function RegisterScreen() {
+const registerSchema = z.object({
+  rut: z.string().min(1, { message: 'El RUT es requerido' }).refine(value => validateRut(value), {
+    message: "RUT inválido",
+}).refine(value => /^\d{7,8}-[kK0-9]$/.test(value), {
+  message: 'El RUT debe estar en el formato xxxxxxxx-x',
+}),
+
+password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
+});
+
+export default function RegisterScreen( {navigation} ) {
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
 
   const handleRegister = async () => {
+
     if (!rut) {
-      Alert.alert('Error', 'Por favor ingrese su RUT.');
+      Toast.show({
+        type: 'error',
+        text1: 'Por favor, ingrese su rut',
+      });
       return;
     }
     if (!password) {
-      Alert.alert('Error', 'Por favor ingrese una Contraseña.');
+      Toast.show({
+        type: 'error',
+        text1: 'Por favor, ingrese una contraseña',
+      });
+      return;
+    }
+
+    const validationResult = registerSchema.safeParse({ rut, password });
+    
+    if (!validationResult.success) {
+      validationResult.error.errors.forEach(err => {
+        Toast.show({
+          type: 'error',
+          text1: err.message,
+        });
+      });
       return;
     }
 
@@ -24,13 +56,30 @@ export default function RegisterScreen() {
       });
 
       if (response.status === 200) {
-        Alert.alert('Registro Exitoso', 'Usuario registrado con éxito');
+        navigation.navigate('Login', { showToast: true, text1: 'Registro exitoso', text2: 'Te has registrado correctamente!', messageType: 'success' });
       } else {
-        Alert.alert('Error', 'No se pudo completar el registro.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error de registro',
+          text2: 'Hubo un problema con el registro. Inténtalo de nuevo.',
+        });
       }
     } catch (error) {
-      console.error('Error al registrar el usuario:', error);
-      Alert.alert('Error', 'Hubo un problema al registrar la información.');
+      //console.error('Error al registrar el usuario:', error);
+      if (error.response && error.response.status === 400) {
+        // Si el RUT ya está registrado
+        Toast.show({
+          type: 'error',
+          text1: error.response.data.message, // Mensaje del servidor
+        });
+      } else {
+        // Manejo de otros errores
+        Toast.show({
+          type: 'error',
+          text1: 'Error de registro',
+          text2: 'Ocurrió un error inesperado',
+        });
+      }
     }
   };
 
@@ -74,6 +123,7 @@ export default function RegisterScreen() {
         <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
+      <Toast />
     </View>
   );
 }

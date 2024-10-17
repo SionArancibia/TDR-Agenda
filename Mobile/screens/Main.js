@@ -1,7 +1,20 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Toast from 'react-native-toast-message';
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ navigation, route }) {
+
+    useEffect(() => {
+        // Verificar si se pasó un mensaje desde LoginScreen
+        if (route.params?.showToast) {
+          Toast.show({
+            type: route.params.messageType, // 'success' o 'error'
+            text1: route.params.text1,
+            text2: route.params.text2,
+          });
+        }
+      }, [route.params]);
+
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('GenericScreen')}>
@@ -15,6 +28,7 @@ export default function MainScreen({ navigation }) {
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Ayuda')}>
                 <Text style={styles.buttonText}>Ayuda</Text>
             </TouchableOpacity>
+            <Toast />
         </View>
     );
 }   

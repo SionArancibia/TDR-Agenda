@@ -61,16 +61,27 @@ app.post('/register', async (req, res) => {
   }
 
   try {
+
+    const existingUser = await prisma.usuario.findUnique({
+      where: { rut },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'El RUT ya está registrado' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await prisma.usuario.create({
       data: {
         rut,
-        password,
+        password: hashedPassword,
       },
     });
 
     return res.status(200).json({ message: 'Usuario registrado exitosamente', user });
   } catch (error) {
-    console.error('Error al registrar usuario:', error);
+    //console.error('Error al registrar usuario:', error);
     return res.status(500).json({ message: 'Error al registrar usuario' });
   }
 });
@@ -80,19 +91,34 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   const { rut, password } = req.body;
 
-  const user = await prisma.usuario.findUnique({
-    where: { rut },
-  });
-
-  if (!user || user.password !== password) {
-    return res.status(401).json({ error: 'RUT o contraseña incorrectos' });
+  if (!rut || !password) {
+    return res.status(400).json({ message: 'RUT y contraseña son requeridos' });
   }
 
-  const token = jwt.sign({ rut: user.rut, id: user.id }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
-  });
+  try {
+    const user = await prisma.usuario.findUnique({
+      where: { rut },
+    });
 
-  res.json({ token });
+    if (!user) {
+      return res.status(401).json({ error: 'RUT o contraseña incorrectos' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'RUT o contraseña incorrectos' });
+    }
+
+    // Generar un token JWT si las credenciales son correctas
+    const token = jwt.sign({ rut: user.rut, id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: '1h', 
+    });
+
+    res.json({ token });
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
 });
 
 // ----------------------------------------------------------------------------------------------------------------------------------------

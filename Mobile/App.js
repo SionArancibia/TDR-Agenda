@@ -1,4 +1,5 @@
 import React from 'react';
+import Toast from 'react-native-toast-message';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Image } from 'react-native';
@@ -13,86 +14,88 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen 
-          name="Login" 
-          component={LoginScreen} 
-          options={{
-            headerTitle: () => (
-              <Image
-                source={require('./assets/muni.png')}
-                style={{ width: 100, height: 55 }} // Ajusta el tamaño 
-                resizeMode="contain"
-              />
-            ),
-            headerTitleAlign: 'center', // Centra la imagen en el header
-          }}
-        />
-        
-        <Stack.Screen 
-          name="Principal" 
-          component={MainScreen} 
-          options={{
-            headerTitle: () => (
-              <Image
-                source={require('./assets/muni.png')}
-                style={{ width: 100, height: 50 }} // Ajusta el tamaño 
-                resizeMode="contain"
-              />
-            ),
-            headerTitleAlign: 'center', // Centra la imagen en el header
-          }}
-        />
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen 
+            name="Login" 
+            component={LoginScreen} 
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require('./assets/muni.png')}
+                  style={{ width: 100, height: 55 }} // Ajusta el tamaño 
+                  resizeMode="contain"
+                />
+              ),
+              headerTitleAlign: 'center', // Centra la imagen en el header
+            }}
+          />
+          
+          <Stack.Screen 
+            name="Principal" 
+            component={MainScreen} 
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require('./assets/muni.png')}
+                  style={{ width: 100, height: 50 }} // Ajusta el tamaño 
+                  resizeMode="contain"
+                />
+              ),
+              headerTitleAlign: 'center', // Centra la imagen en el header
+              headerLeft: () => null, // No mostrar flecha para volver atrás
+            }}
+          />
 
-        <Stack.Screen 
-          name="Register" 
-          component={RegisterScreen} 
-          options={{
-            headerTitle: () => (
-              <Image
-                source={require('./assets/muni.png')}
-                style={{ width: 100, height: 50 }} // Ajusta el tamaño 
-                resizeMode="contain"
-              />
-            ),
-            headerTitleAlign: 'center', 
-          }}
-        />
-        
-        <Stack.Screen 
-          name="Rpassword" 
-          component={ForgotPasswordScreen} 
-          options={{
-            headerTitle: () => (
-              <Image
-                source={require('./assets/muni.png')}
-                style={{ width: 100, height: 50 }} // Ajusta el tamaño 
-                resizeMode="contain"
-              />
-            ),
-            headerTitleAlign: 'center', 
-          }}
-        />
-        <Stack.Screen 
-          name="GenericScreen"  
-          component={MainScreen2}  
-          options={{
-            headerTitle: () => (
-              <Image
-                source={require('./assets/muni.png')}
-                style={{ width: 100, height: 50 }} // Ajusta el tamaño 
-                resizeMode="contain"
-              />
-            ),
-            headerTitleAlign: 'center', // Centra la imagen en el header
-          }}
-        />
-        
-        <Stack.Screen name="Horas" component={ScheduledHours} />
-        <Stack.Screen name="MyHours" component={MyHours} />
+          <Stack.Screen 
+            name="Register" 
+            component={RegisterScreen} 
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require('./assets/muni.png')}
+                  style={{ width: 100, height: 50 }} // Ajusta el tamaño 
+                  resizeMode="contain"
+                />
+              ),
+              headerTitleAlign: 'center', 
+            }}
+          />
+          
+          <Stack.Screen 
+            name="Rpassword" 
+            component={ForgotPasswordScreen} 
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require('./assets/muni.png')}
+                  style={{ width: 100, height: 50 }} // Ajusta el tamaño 
+                  resizeMode="contain"
+                />
+              ),
+              headerTitleAlign: 'center', 
+            }}
+          />
+          <Stack.Screen 
+            name="GenericScreen"  
+            component={MainScreen2}  
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require('./assets/muni.png')}
+                  style={{ width: 100, height: 50 }} // Ajusta el tamaño 
+                  resizeMode="contain"
+                />
+              ),
+              headerTitleAlign: 'center', // Centra la imagen en el header
+            }}
+          />
+          
+          <Stack.Screen name="Horas" component={ScheduledHours} />
+          <Stack.Screen name="MyHours" component={MyHours} />
 
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+        <Toast/>
+      </NavigationContainer>
   );
 }
