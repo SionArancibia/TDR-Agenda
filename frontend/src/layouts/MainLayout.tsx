@@ -1,14 +1,15 @@
+// src/layouts/MainLayout.tsx
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Nabvar';
-import Footer from '../components/Footer';
 
 const MainLayout: React.FC = () => {
   return (
-    <div>
+    <div className="grid grid-rows-[auto,1fr] min-h-screen bg-gray-100">
       <Navbar />
-      <Outlet /> {/* Aquí se renderizarán las rutas hijas */}
-      <Footer />
+      <div className="pt-16 p-4"> {/* Espacio para el navbar fijo */}
+        <Outlet /> {/* Aquí se renderizarán las rutas hijas */}
+      </div>
     </div>
   );
 };
