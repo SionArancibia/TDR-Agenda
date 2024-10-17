@@ -81,8 +81,8 @@ model Appointment {
   patient            Patient         @relation(fields: [patientId], references: [id])
   professionalId     String
   professional       Professional    @relation(fields: [professionalId], references: [id])
-  serviceTypeId      String
-  serviceType        ServiceType     @relation(fields: [serviceTypeId], references: [id])
+  serviceId      String
+  service        Service     @relation(fields: [serviceId], references: [id])
   communityCenterId  String
   communityCenter    CommunityCenter @relation(fields: [communityCenterId], references: [id])
   log                Log?
@@ -129,10 +129,15 @@ model CommunityCenter {
   appointments    Appointment[] // Relación con las citas.
 }
 
-model ServiceType {
-  id           String        @id @default(cuid())
-  serviceType  String
-  appointments Appointment[] // Relación con las citas.
+model Service {
+  id            String        @id @default(cuid())
+  name          String        // Nombre del servicio (ej: Fisioterapia, Consulta Médica)
+  description   String       
+  category      String        // Categoría del servicio (ej: Estetica, Medicina)
+  isActive      Boolean       @default(true) // Estado del servicio
+  createdAt     DateTime      @default(now()) // Fecha de creación
+  updatedAt     DateTime      @updatedAt // Fecha de última actualización
+  appointments  Appointment[] // Relación con las citas
 }
 
 model Message {

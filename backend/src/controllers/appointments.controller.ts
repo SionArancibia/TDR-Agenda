@@ -3,7 +3,7 @@ import prisma from "../db/prisma";
 
 // Crear una cita
 export const createAppointment = async (req: Request, res: Response) => {
-  const { date, patientId, professionalId, serviceTypeId, communityCenterId, homeCare } = req.body;
+  const { date, patientId, professionalId, serviceId, communityCenterId, homeCare } = req.body;
 
   try {
     const appointment = await prisma.appointment.create({
@@ -11,7 +11,7 @@ export const createAppointment = async (req: Request, res: Response) => {
         date: new Date(date),
         patientId,
         professionalId,
-        serviceTypeId,
+        serviceId,
         communityCenterId,
         homeCare,
         available: true,
@@ -33,7 +33,7 @@ export const getAppointments = async (req: Request, res: Response) => {
       include: {
         patient: true,
         professional: true,
-        serviceType: true,
+        service: true,
         communityCenter: true,
       },
     });
@@ -54,7 +54,7 @@ export const getAppointmentById = async (req: Request, res: Response) => {
       include: {
         patient: true,
         professional: true,
-        serviceType: true,
+        service: true,
         communityCenter: true,
       },
     });

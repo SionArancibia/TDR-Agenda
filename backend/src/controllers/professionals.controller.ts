@@ -22,7 +22,7 @@ export const blockProfessionalTime = async (req: Request, res: Response) => {
 };
 
 export const getAvailableAppointments = async (req: Request, res: Response) => {
-    const { professionalId, serviceTypeId } = req.query;
+    const { professionalId, service } = req.query;
   
     try {
       // Obtener todos los bloques de tiempo para el profesional
@@ -40,13 +40,13 @@ export const getAvailableAppointments = async (req: Request, res: Response) => {
       const allAvailableAppointments = await prisma.appointment.findMany({
         where: {
           professionalId: String(professionalId),
-          serviceTypeId: String(serviceTypeId),
+          serviceId: String(service),
           available: true,
           canceled: false,
         },
         include: {
           professional: true,
-          serviceType: true,
+          service: true,
           patient: true,
         },
       });

@@ -8,6 +8,7 @@ import cors from "cors";
 import usersRoutes from "./routes/users"
 import passwordRecoveryRoutes from './routes/passwordRecovery';
 import communityCenters from './routes/communityCenters';
+import services from './routes/services';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use("/api/appointments", appointmentsRoutes);
 app.use('/api/passwordRecovery', passwordRecoveryRoutes);
 app.use('/api/requests', requestsRoutes);
 app.use('/api/communityCenters', communityCenters);
+app.use('/api/services', services);
 
 app.listen(PORT, () => {
   console.log('Server running on port:', PORT);
