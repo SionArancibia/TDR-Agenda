@@ -4,14 +4,23 @@ import prisma from '../db/prisma';
 // Crear un nuevo servicio
 export const createService = async (req: Request, res: Response) => {
   try {
-    const { name, description, category, isActive } = req.body;
+    const { name, description, categoryId, isActive } = req.body;
+
+    // Verificar que categoryId exista en ServiceCategory
+    const category = await prisma.serviceCategory.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      return res.status(404).json({ message: 'Categoría no encontrada' });
+    }
 
     const service = await prisma.service.create({
       data: {
         name,
         description,
-        category,
-        isActive: isActive ?? true, // Si no se envía, lo deja activo por defecto
+        categoryId,
+        isActive: isActive ?? true, // Activo por defecto si no se envía
       },
     });
 
@@ -25,13 +34,18 @@ export const createService = async (req: Request, res: Response) => {
 // Obtener todos los servicios
 export const getAllServices = async (req: Request, res: Response) => {
   try {
-    const services = await prisma.service.findMany();
+    const services = await prisma.service.findMany({
+      include: {
+        category: true,
+      },
+    });
     res.json(services);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error obteniendo los servicios' });
   }
 };
+
 
 // Obtener un servicio por ID
 export const getServiceById = async (req: Request, res: Response) => {
@@ -57,11 +71,11 @@ export const getServiceById = async (req: Request, res: Response) => {
 export const updateService = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, category, isActive } = req.body;
+    const { name, description, categoryId, isActive } = req.body; 
 
     const service = await prisma.service.update({
       where: { id },
-      data: { name, description, category, isActive },
+      data: { name, description, categoryId, isActive },
     });
 
     res.json(service);
@@ -70,7 +84,6 @@ export const updateService = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error actualizando servicio' });
   }
 };
-
 // Eliminar un servicio por ID
 export const deleteService = async (req: Request, res: Response) => {
   try {

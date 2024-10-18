@@ -19,6 +19,8 @@ import Requests from "./pages/admin/Requests.tsx";
 import CommunityCenters from "./pages/admin/CommunityCenters.tsx";
 import Services from "./pages/admin/Services.tsx";
 import CreateCommunityCenter from "./components/forms/CreateCommunityCenter.tsx";
+import CreateService from "./components/forms/CreateService.tsx";
+import ManageCategories from "./components/forms/ManageCategories.tsx";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -103,6 +105,21 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <CreateCommunityCenter />
+                </ProtectedRoute>} 
+            />
+            <Route 
+              path="/createService" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CreateService />
+                </ProtectedRoute>} 
+            />
+
+            <Route 
+              path="/manageCategories" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageCategories />
                 </ProtectedRoute>} 
             />
 

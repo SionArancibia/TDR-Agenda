@@ -130,15 +130,25 @@ model CommunityCenter {
 }
 
 model Service {
-  id            String        @id @default(cuid())
-  name          String        // Nombre del servicio (ej: Fisioterapia, Consulta Médica)
-  description   String       
-  category      String        // Categoría del servicio (ej: Estetica, Medicina)
-  isActive      Boolean       @default(true) // Estado del servicio
-  createdAt     DateTime      @default(now()) // Fecha de creación
-  updatedAt     DateTime      @updatedAt // Fecha de última actualización
-  appointments  Appointment[] // Relación con las citas
+  id            String          @id @default(cuid())
+  name          String          
+  description   String          
+  isActive      Boolean         @default(true) 
+  categoryId    String
+  category      ServiceCategory @relation(fields: [categoryId], references: [id]) // Relación con la categoría
+  createdAt     DateTime        @default(now()) // Fecha de creación
+  updatedAt     DateTime        @updatedAt // Fecha de última actualización
+  appointments  Appointment[]   // Relación con las citas
 }
+
+model ServiceCategory {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  services  Service[] // Relación uno a muchos con los servicios
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 
 model Message {
   id       String   @id @default(cuid())

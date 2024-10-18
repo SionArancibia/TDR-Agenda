@@ -9,6 +9,7 @@ import usersRoutes from "./routes/users"
 import passwordRecoveryRoutes from './routes/passwordRecovery';
 import communityCenters from './routes/communityCenters';
 import services from './routes/services';
+import serviceCategories from './routes/serviceCategories';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/api/passwordRecovery', passwordRecoveryRoutes);
 app.use('/api/requests', requestsRoutes);
 app.use('/api/communityCenters', communityCenters);
 app.use('/api/services', services);
+app.use('/api/serviceCategories', serviceCategories);
 
 app.listen(PORT, () => {
   console.log('Server running on port:', PORT);
