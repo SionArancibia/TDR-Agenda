@@ -56,7 +56,12 @@ export const getMe = async (req: Request, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: 'No autorizado' });
     }
-    const user = await prisma.user.findUnique({ where: { id: req.user?.id } });
+    const user = await prisma.user.findUnique({
+      where: { id: req.user?.id },
+      include: {
+        professional: true, // Incluir la relación con el modelo Professional
+      },
+    });
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }

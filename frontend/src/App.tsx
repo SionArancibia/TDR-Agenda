@@ -18,6 +18,8 @@ import SimpleLayout from './layouts/SimpleLayout';
 import MainLayout from './layouts/MainLayout';
 import Requests from "./pages/admin/Requests.tsx";
 import RegistroAsistencia from './pages/professional/appointment_register.tsx';
+import Profile from './pages/professional/Profile'; // Importa el componente Profile
+
 
 function App() {
   const {authUser} = useAuthContext();
@@ -77,20 +79,14 @@ function App() {
                   <UpdateUsers/>
                 </ProtectedRoute>}
             />
-
-
-<Route 
+            <Route 
               path="/requests" 
               element={
                 <ProtectedRoute requiredRole="admin">
                   <Requests />
                 </ProtectedRoute>} 
             />
-
-
-
             {/* Professional */}
-
             <Route
               path="/dashboardProfessional"
               element={
@@ -98,15 +94,15 @@ function App() {
                   <ProfessionalDashboard/>
                 </ProtectedRoute>}
             />
-
-
-
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute requiredRole="professional">
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
           <Route path="/registro/:patientId" element={<RegistroAsistencia />} />
-
-
-
-
-
           <Route
               path="/history"
               element={   
