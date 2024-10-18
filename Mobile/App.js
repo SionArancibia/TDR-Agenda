@@ -10,6 +10,7 @@ import MainScreen from './screens/Main';
 import MainScreen2 from './screens/ScheduleHours';
 import ScheduledHours from './components/ScheduleC';
 import MyHours from './screens/MyHours';
+import HelpScreen from './screens/Help';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
                 />
               ),
               headerTitleAlign: 'center', // Centra la imagen en el header
+              gestureEnabled: false,
               headerLeft: () => null, // No mostrar flecha para volver atrás
             }}
           />
@@ -91,6 +93,21 @@ export default function App() {
             }}
           />
           
+          <Stack.Screen 
+            name="Help"  
+            component={HelpScreen}  
+            options={{
+              headerTitle: () => (
+                <Image
+                  source={require('./assets/muni.png')}
+                  style={{ width: 100, height: 50 }} // Ajusta el tamaño 
+                  resizeMode="contain"
+                />
+              ),
+              headerTitleAlign: 'center', // Centra la imagen en el header
+            }}
+          />
+
           <Stack.Screen name="Horas" component={ScheduledHours} />
           <Stack.Screen name="MyHours" component={MyHours} />
 

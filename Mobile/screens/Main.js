@@ -1,19 +1,44 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import ExitModal from '../components/ExitModal';
 
 export default function MainScreen({ navigation, route }) {
+    const [modalVisible, setModalVisible] = useState(false); // Estado para mostrar el modal
 
     useEffect(() => {
         // Verificar si se pasó un mensaje desde LoginScreen
         if (route.params?.showToast) {
-          Toast.show({
-            type: route.params.messageType, // 'success' o 'error'
-            text1: route.params.text1,
-            text2: route.params.text2,
-          });
+            Toast.show({
+                type: route.params.messageType, // 'success' o 'error'
+                text1: route.params.text1,
+                text2: route.params.text2,
+            });
         }
-      }, [route.params]);
+    }, [route.params]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                setModalVisible(true); // Mostrar modal cuando el usuario presiona atrás
+                return true; // Bloquear comportamiento por defecto
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () =>
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+        }, [])
+    );
+
+    const exitApplication = () => {
+        BackHandler.exitApp(); // Cerrar la aplicación
+    };
+
+    const cancelExit = () => {
+        setModalVisible(false); // Cerrar el modal sin salir
+    };
 
     return (
         <View style={styles.container}>
@@ -21,17 +46,24 @@ export default function MainScreen({ navigation, route }) {
                 <Text style={styles.buttonText}>Agendar Hora</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MisHoras')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas')}>
                 <Text style={styles.buttonText}>Mis Horas</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Ayuda')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Help')}>
                 <Text style={styles.buttonText}>Ayuda</Text>
             </TouchableOpacity>
+
+            <ExitModal
+                visible={modalVisible}
+                onCancel={cancelExit}
+                onExit={exitApplication}
+            />
+
             <Toast />
         </View>
     );
-}   
+}
 
 const styles = StyleSheet.create({
     container: {
