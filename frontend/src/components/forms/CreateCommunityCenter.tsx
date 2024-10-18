@@ -28,7 +28,6 @@ const CreateCommunityCenter: React.FC = () => {
   const onSubmit: SubmitHandler<CommunityCenterSchemaType> = async (data) => {
     try {
       await createCenter(data);
-      toast.success('Centro comunitario creado exitosamente.');
     } catch (error: any) {
       toast.error(error.message || 'Error creando el centro comunitario.');
     }

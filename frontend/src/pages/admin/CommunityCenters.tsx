@@ -15,7 +15,6 @@ const CommunityCenters: React.FC = () => {
   const [centers, setCenters] = useState<CommunityCenter[]>([]);
   const [filteredCenters, setFilteredCenters] = useState<CommunityCenter[]>([]);
   const [searchName, setSearchName] = useState('');
-  const [selectedCenter, setSelectedCenter] = useState<CommunityCenter | null>(null);
   const navigate = useNavigate();
 
   // Obtener los centros comunitarios al cargar el componente
@@ -42,15 +41,23 @@ const CommunityCenters: React.FC = () => {
     setFilteredCenters(filtered);
   }, [searchName, centers]);
 
-  const handleBack = () => {
-    setSelectedCenter(null); // Volver a la vista de la tabla
+
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete(`/communityCenters/${id}`);
+      const updatedCenters = centers.filter((center) => center.id !== id);
+      setCenters(updatedCenters);
+      setFilteredCenters(updatedCenters);
+      toast.success('Centro comunitario eliminado con éxito.');
+    } catch (error) {
+      console.error('Error al eliminar el centro comunitario:', error);
+      toast.error('No se pudo eliminar el centro comunitario.');
+    }
   };
 
   return (
     <div className="mt-10 relative overflow-x-auto shadow-md sm:rounded-lg">
       <h2 className="text-lg font-semibold text-center p-4">Centros Comunitarios</h2>
-
-      {!selectedCenter ? (
         <>
           <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
             <input
@@ -96,16 +103,10 @@ const CommunityCenters: React.FC = () => {
                     <td className="px-6 py-4">{center.managerName}</td>
                     <td className="px-6 py-4">
                       <button
-                        onClick={() => setSelectedCenter(center)}
-                        className="text-blue-600 hover:underline mr-5"
+                        onClick={() => handleDelete(center.id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
                       >
                         Eliminar
-                      </button>
-                      <button
-                        onClick={() => setSelectedCenter(center)}
-                        className="text-blue-600 hover:underline ml-5"
-                      >
-                        Editar
                       </button>
                     </td>
                   </tr>
@@ -120,18 +121,6 @@ const CommunityCenters: React.FC = () => {
             </tbody>
           </table>
         </>
-      ) : (
-        <>
-          <div className="flex justify-center">
-            <button
-              onClick={handleBack}
-              className="mt-4 p-2 bg-green-500 text-white rounded-md"
-            >
-              Volver a la tabla
-            </button>
-          </div>
-        </>
-      )}
     </div>
   );
 };
