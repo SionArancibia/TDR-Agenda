@@ -130,7 +130,7 @@ export default function LoginScreen({ navigation, route }) {
           <Text style={styles.recoverButtonText}>Recuperar Contraseña</Text>
         </TouchableOpacity>
       </View>
-      <Toast />
+      <Toast/>
     </View>
   );
 }
@@ -202,9 +202,10 @@ const styles = StyleSheet.create({
   },
   recoverButton: {
     backgroundColor: '#FF6347',
-    paddingVertical: 10,
+    paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',
+    marginBottom: 20,
   },
   recoverButtonText: {
     color: '#fff',

@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0000FF',
+    backgroundColor: '#007acc',
     paddingVertical: 15,
     borderRadius: 25,
     width: '100%', // Esto asegura que el botón ocupe todo el ancho disponible

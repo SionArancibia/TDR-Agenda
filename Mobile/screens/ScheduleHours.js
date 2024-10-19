@@ -1,37 +1,46 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import MesesAgenda from '../components/MesesAgenda';
 
 export default function MainScreen2({ navigation }) {
     return (
-        
         <View style={styles.container}>
+            <Text style={styles.header}>Seleccione un Servicio</Text>
+            
             <View style={styles.row}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Psicologia' })}>
-                    <Text style={styles.buttonText}>Psicologia</Text>
+                    <Ionicons name="heart" size={30} color="#fff" style={styles.icon} />
+                    <Text style={styles.buttonText}>Psicología</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Kinesiologia' })}>
-                    <Text style={styles.buttonText}>Kinesiologia</Text>
+                    <Ionicons name="body" size={30} color="#fff" style={styles.icon} />
+                    <Text style={styles.buttonText}>Kinesiología</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.row}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Podologia' })}>
-                    <Text style={styles.buttonText}>Podologia</Text>
+                    <Ionicons name="walk" size={30} color="#fff" style={styles.icon} />
+                    <Text style={styles.buttonText}>Podología</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Peluqueria' })}>
-                    <Text style={styles.buttonText}>Peluqueria</Text>
+                    <Ionicons name="cut" size={30} color="#fff" style={styles.icon} />
+                    <Text style={styles.buttonText}>Peluquería</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.row}>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Atencion Social' })}>
-                    <Text style={styles.buttonText}>Atencion Social</Text>
+                    <Ionicons name="people" size={30} color="#fff" style={styles.icon} />
+                    <Text style={styles.buttonText}>Atención Social</Text>
                 </TouchableOpacity>
+                
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas', { title: 'Atencion Juridica' })}>
-                    <Text style={styles.buttonText}>Atencion Juridica</Text>
+                    <Ionicons name="briefcase" size={30} color="#fff" style={styles.icon} />
+                    <Text style={styles.buttonText}>Atención Jurídica</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -43,25 +52,41 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         padding: 20,
-        backgroundColor: '#f2f2f2',
+        backgroundColor: '#f2f2f2', 
+    },
+    header: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: 20,
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginVertical: 10,
+        marginVertical: 20,
     },
     button: {
-        backgroundColor: '#49BA98', // Color verde para los botones
-        paddingVertical: 20,
-        borderRadius: 10,
-        flex: 1,
-        marginHorizontal: 10,
+        backgroundColor: '#49BA98', 
+        borderRadius: 12,
+        width: '48%', // Ancho uniforme
+        height: 100, 
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 10, 
+        paddingVertical: 10,   
+        flexDirection: 'column', 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 5, // Sombra
     },
     buttonText: {
         color: '#fff',
-        fontSize: 28, // Tamaño grande para texto
+        fontSize: 20, 
         fontWeight: 'bold',
+        marginTop: 5, 
+        textAlign: 'center',
     },
 });

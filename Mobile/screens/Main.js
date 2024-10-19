@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import ExitModal from '../components/ExitModal';
 
 export default function MainScreen({ navigation, route }) {
@@ -42,15 +43,20 @@ export default function MainScreen({ navigation, route }) {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Bienvenido</Text>
+
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('GenericScreen')}>
+                <Ionicons name="calendar-outline" size={28} color="#fff" style={styles.icon} />
                 <Text style={styles.buttonText}>Agendar Hora</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas')}>
+                <Ionicons name="time-outline" size={28} color="#fff" style={styles.icon} />
                 <Text style={styles.buttonText}>Mis Horas</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Help')}>
+                <Ionicons name="help-circle-outline" size={28} color="#fff" style={styles.icon} />
                 <Text style={styles.buttonText}>Ayuda</Text>
             </TouchableOpacity>
 
@@ -72,13 +78,26 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#f2f2f2',
     },
+    title: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 30,
+        color: '#333', 
+    },
     button: {
         backgroundColor: '#49BA98', // Color verde para los botones
-        paddingVertical: 20,
-        borderRadius: 10,
+        paddingVertical: 18,
+        paddingHorizontal: 40,
+        borderRadius: 12,
         marginVertical: 20,
         justifyContent: 'center',
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 5, // Sombra
     },
     buttonText: {
         color: '#fff',
