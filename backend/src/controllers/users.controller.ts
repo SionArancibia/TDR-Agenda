@@ -17,9 +17,16 @@ export const createUser = async (req: Request, res: Response) => {
 			password,
 			confirmPassword,
 			gender,
-			role
+			role,
+			// Campos adicionales para roles específicos
+			area,       // Para profesionales
+			specialty,  // Para profesionales
+			attendanceRecord, // Para pacientes
+			reducedMobility,   // Para pacientes
+			medicalRecord      // Para pacientes
 		} = req.body;
 
+		// Validaciones de entrada
 		if (
 			!rut ||
 			!email ||
@@ -49,6 +56,7 @@ export const createUser = async (req: Request, res: Response) => {
 		const salt = await bcryptjs.genSalt(10);
 		const hashedPassword = await bcryptjs.hash(password, salt);
 
+		// Crear el nuevo usuario
 		const newUser = await prisma.user.create({
 			data: {
 				rut,
@@ -56,8 +64,8 @@ export const createUser = async (req: Request, res: Response) => {
 				lastName,
 				address,
 				email,
-				age: age,
-				phoneNumber: phoneNumber,
+				age,
+				phoneNumber,
 				password: hashedPassword,
 				gender,
 				role,
@@ -65,14 +73,37 @@ export const createUser = async (req: Request, res: Response) => {
 		});
 
 		if (newUser) {
-			generateToken(newUser.id, newUser.role, res);
+			// Crear un registro específico basado en el rol
+			if (role === Role.professional) {
+				await prisma.professional.create({
+					data: {
+						area: area || null,
+						specialty: specialty || null,
+						userId: newUser.id,
+					},
+				});
+			} else if (role === Role.admin) {
+				await prisma.administrator.create({
+					data: {
+						userId: newUser.id,
+					},
+				});
+			} else if (role === Role.patient) {
+				await prisma.patient.create({
+					data: {
+						attendanceRecord: attendanceRecord || null,
+						reducedMobility: reducedMobility ?? false,
+						medicalRecord: medicalRecord || null,
+						userId: newUser.id,
+					},
+				});
+			}
 
 			return res.status(201).json({
 				id: newUser.id,
 				rut: newUser.rut,
 				role: newUser.role
 			});
-
 		} else {
 			return res.status(400).json({ error: "Datos de usuario no válidos" });
 		}
@@ -82,6 +113,7 @@ export const createUser = async (req: Request, res: Response) => {
 		return res.status(500).json({ error: "Error interno del servidor" });
 	}
 };
+
 
 //------------------------------------------------------------------------------------------------
 

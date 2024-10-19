@@ -10,6 +10,8 @@ import passwordRecoveryRoutes from './routes/passwordRecovery';
 import communityCenters from './routes/communityCenters';
 import services from './routes/services';
 import serviceCategories from './routes/serviceCategories';
+import professionals from './routes/professionals';
+import schedules from './routes/schedules';
 
 dotenv.config();
 
@@ -24,11 +26,13 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/appointments", appointmentsRoutes);
+app.use("/api/professionals", professionals);
 app.use('/api/passwordRecovery', passwordRecoveryRoutes);
 app.use('/api/requests', requestsRoutes);
 app.use('/api/communityCenters', communityCenters);
 app.use('/api/services', services);
 app.use('/api/serviceCategories', serviceCategories);
+app.use('/api/schedules', schedules);
 
 app.listen(PORT, () => {
   console.log('Server running on port:', PORT);
