@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { api } from '../../utils/axios';
+import { useParams } from 'react-router-dom';
 
 const ScheduleSchema = z.object({
   professionalId: z.string().min(1, 'El ID del profesional es obligatorio'),
@@ -15,7 +16,8 @@ const ScheduleSchema = z.object({
 // Extender el tipo para incluir el id
 type ScheduleSchemaType = z.infer<typeof ScheduleSchema> & { id: string };
 
-const ManageSchedule: React.FC<{ professionalId: string }> = ({ professionalId }) => {
+const ManageSchedule: React.FC = () => {
+  const { professionalId } = useParams<{ professionalId: string }>();
   const [schedules, setSchedules] = useState<any[]>([]);
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleSchemaType | null>(null);
 
@@ -37,6 +39,20 @@ const ManageSchedule: React.FC<{ professionalId: string }> = ({ professionalId }
     { value: 'Saturday', label: 'Sábado' },
     { value: 'Sunday', label: 'Domingo' },
   ];
+
+  // Función para traducir el día
+  const translateDay = (day: string) => {
+    const translations: { [key: string]: string } = {
+      Monday: 'Lunes',
+      Tuesday: 'Martes',
+      Wednesday: 'Miércoles',
+      Thursday: 'Jueves',
+      Friday: 'Viernes',
+      Saturday: 'Sábado',
+      Sunday: 'Domingo',
+    };
+    return translations[day] || day;
+  };
 
   const fetchSchedules = async () => {
     try {
@@ -69,11 +85,6 @@ const ManageSchedule: React.FC<{ professionalId: string }> = ({ professionalId }
     }
   };
 
-  const handleEdit = (schedule: ScheduleSchemaType) => {
-    setSelectedSchedule(schedule);
-    reset(schedule);
-  };
-
   const handleDelete = async (id: string) => {
     try {
       await api.delete(`/schedules/${id}`);
@@ -97,7 +108,7 @@ const ManageSchedule: React.FC<{ professionalId: string }> = ({ professionalId }
                 <label className="text-gray-800 text-sm mb-2 block">ID del Profesional</label>
                 <input 
                   {...register('professionalId')} 
-                  defaultValue={professionalId} // ID del profesional se muestra aquí
+                  defaultValue={professionalId}
                   readOnly
                   className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" 
                 />
@@ -157,10 +168,9 @@ const ManageSchedule: React.FC<{ professionalId: string }> = ({ professionalId }
               {schedules.map((schedule) => (
                 <li key={schedule.id} className="flex justify-between items-center p-2 border border-gray-300 rounded-md">
                   <div>
-                    <p>{schedule.day} de {schedule.startTime} a {schedule.endTime}</p>
+                    <p>{translateDay(schedule.day)} de {schedule.startTime} a {schedule.endTime}</p>
                   </div>
                   <div>
-                    <button onClick={() => handleEdit(schedule)} className="text-blue-600 hover:underline">Editar</button>
                     <button onClick={() => handleDelete(schedule.id)} className="ml-2 text-red-600 hover:underline">Eliminar</button>
                   </div>
                 </li>

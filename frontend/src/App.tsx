@@ -22,6 +22,9 @@ import CreateCommunityCenter from "./components/forms/CreateCommunityCenter.tsx"
 import CreateService from "./components/forms/CreateService.tsx";
 import ManageCategories from "./components/forms/ManageCategories.tsx";
 import AgendaAdmin from "./pages/admin/AgendaAdmin.tsx";
+import ProfessionalAgenda from "./pages/admin/ProfessionalAgenda.tsx";
+import ManageSchedule from "./components/forms/ManageSchedule.tsx";
+import GenerateAppointments from "./components/forms/GenerateAppointments.tsx";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -129,6 +132,30 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <AgendaAdmin />
+                </ProtectedRoute>} 
+            />
+            {/* admin y profesional quí ojo */}
+            <Route 
+              path="/professionalAgenda/:professionalId"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ProfessionalAgenda />
+                </ProtectedRoute>} 
+            />
+
+            <Route 
+              path="/manageSchedule/:professionalId"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageSchedule />
+                </ProtectedRoute>} 
+            />
+            
+            <Route 
+              path="/generateAppointments/:professionalId"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <GenerateAppointments />
                 </ProtectedRoute>} 
             />
 

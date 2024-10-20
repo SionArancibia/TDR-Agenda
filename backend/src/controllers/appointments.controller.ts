@@ -1,19 +1,21 @@
 import { Request, Response } from "express";
 import prisma from "../db/prisma";
+import { toZonedTime, fromZonedTime} from "date-fns-tz";
 
 // Crear una cita
 export const createAppointment = async (req: Request, res: Response) => {
   const { date, patientId, professionalId, serviceId, communityCenterId, homeCare } = req.body;
 
   try {
+    const utcDate = fromZonedTime(date, 'America/Santiago'); // Convertir fecha local a UTC
     const appointment = await prisma.appointment.create({
       data: {
-        date: new Date(date),
+        date: utcDate,
         patientId,
         professionalId,
         serviceId,
         communityCenterId,
-        homeCare,
+        homeCare: false,
         available: true,
         attended: false,
         canceled: false,
@@ -37,7 +39,13 @@ export const getAppointments = async (req: Request, res: Response) => {
         communityCenter: true,
       },
     });
-    res.status(200).json(appointments);
+
+    const formattedAppointments = appointments.map((appointment) => ({
+      ...appointment,
+      date: toZonedTime(appointment.date, 'America/Santiago'), // Convertir UTC a la zona local
+    }));
+
+    res.status(200).json(formattedAppointments);
   } catch (error) {
     console.error('Error al obtener citas:', error);
     res.status(500).json({ error: 'Error al obtener citas' });
@@ -63,7 +71,13 @@ export const getAppointmentById = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Cita no encontrada' });
     }
 
-    res.status(200).json(appointment);
+    const formattedAppointment = {
+      ...appointment,
+      date: toZonedTime(appointment.date, 'America/Santiago'),
+    };
+
+    res.status(200).json(formattedAppointment);
+
   } catch (error) {
     console.error('Error al obtener la cita:', error);
     res.status(500).json({ error: 'Error al obtener la cita' });
@@ -76,10 +90,11 @@ export const updateAppointment = async (req: Request, res: Response) => {
   const { date, attended, observations, homeCare, available, canceled, cancellationReason } = req.body;
 
   try {
+    const utcDate = date ? fromZonedTime(date, 'America/Santiago') : undefined;
     const appointment = await prisma.appointment.update({
       where: { id },
       data: {
-        date: date ? new Date(date) : undefined,
+        date: utcDate,
         attended,
         observations,
         homeCare,

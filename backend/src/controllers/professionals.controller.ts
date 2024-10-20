@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import prisma from "../db/prisma";
 import { Appointment } from "@prisma/client";
-import { toZonedTime, fromZonedTime} from "date-fns-tz";
-
-
-
+import { toZonedTime } from "date-fns-tz";
+import {getDayName, toLocalTime, toUTC} from "../utils/dateUtils";
 // Obtener todos los profesionales
 export const getAllProfessionals = async (_req: Request, res: Response) => {
   try {
@@ -73,86 +71,85 @@ export const deleteProfessional = async (req: Request, res: Response) => {
 };
 
 // Generar citas disponibles para un profesional
+// Generar citas disponibles para un profesional
 export const generateAvailableAppointments = async (req: Request, res: Response) => {
-  const { professionalId, duration, date } = req.body;
+  const { professionalId, duration } = req.body;
+  const timeZone = 'America/Santiago';
 
   try {
-    const selectedDate = new Date(date);
-    if (isNaN(selectedDate.getTime())) {
-      return res.status(400).json({ error: 'Fecha inválida.' });
+    // Obtener el horario general para todo el año
+    const schedules = await prisma.schedule.findMany({
+      where: { professionalId },
+    });
+
+    if (!schedules.length) {
+      return res.status(404).json({ error: `No hay horarios disponibles para el profesional.` });
     }
-    
-    const timeZone = 'America/Santiago';
-    const zonedDate = toZonedTime(selectedDate, timeZone);
-    zonedDate.setHours(0, 0, 0, 0);
-    const dayName = zonedDate.toLocaleString('en-US', { weekday: 'long', timeZone });
-
-    const [blocks, schedule] = await Promise.all([
-      prisma.professionalBlock.findMany({
-        where: { professionalId },
-        select: { startDate: true, endDate: true },
-      }),
-      prisma.schedule.findFirst({
-        where: { professionalId, day: dayName },
-      }),
-    ]);
-
-    if (!schedule) {
-      return res.status(404).json({ error: `No hay horario disponible para ${dayName}.` });
-    }
-
-    const [startHours, startMinutes] = schedule.startTime.split(':').map(Number);
-    const [endHours, endMinutes] = schedule.endTime.split(':').map(Number);
-
-    const startHour = new Date(zonedDate);
-    startHour.setHours(startHours, startMinutes, 0, 0);
-
-    const endHour = new Date(zonedDate);
-    endHour.setHours(endHours, endMinutes, 0, 0);
 
     const availableAppointments: Omit<Appointment, 'id'>[] = [];
 
-    while (startHour <= endHour) {
-      const newAppointmentDate = new Date(startHour);
-      const newAppointmentDateUTC = fromZonedTime(newAppointmentDate, timeZone);
+    // Iterar sobre cada día del año
+    for (let month = 0; month < 12; month++) {
+      for (let day = 1; day <= 31; day++) {
+        const date = new Date(new Date().getFullYear(), month, day);
+        if (date.getMonth() !== month) continue; // Verificar si el día es válido para el mes
 
-      const isBlocked = blocks.some(block =>
-        newAppointmentDateUTC >= block.startDate && newAppointmentDateUTC < block.endDate
-      );
+        const dayName = getDayName(date, timeZone);
+        const schedule = schedules.find(schedule => schedule.day === dayName);
 
-      if (!isBlocked) {
-        availableAppointments.push({
-          date: newAppointmentDate, // Esta hora se guardará en UTC
-          attended: false,
-          observations: null,
-          homeCare: false,
-          available: true,
-          canceled: false,
-          cancellationReason: null,
-          patientId: null,
-          professionalId,
-          serviceId: null,
-          communityCenterId: null,
-        });
+        if (!schedule) continue; // Si no hay horario para este día, continuar
+
+        const [startHours, startMinutes] = schedule.startTime.split(':').map(Number);
+        const [endHours, endMinutes] = schedule.endTime.split(':').map(Number);
+
+        const startHour = new Date(date);
+        startHour.setHours(startHours, startMinutes, 0, 0);
+
+        const endHour = new Date(date);
+        endHour.setHours(endHours, endMinutes, 0, 0);
+
+        // Generar citas dentro del rango horario
+        while (startHour < endHour) {
+          const newAppointmentDateUTC = new Date(startHour);
+          const isBlocked = await prisma.professionalBlock.findFirst({
+            where: {
+              professionalId,
+              startDate: { lte: newAppointmentDateUTC },
+              endDate: { gte: newAppointmentDateUTC },
+            },
+          });
+
+          if (!isBlocked) {
+            availableAppointments.push({
+              date: newAppointmentDateUTC,
+              attended: false,
+              observations: null,
+              homeCare: false,
+              available: true,
+              canceled: false,
+              cancellationReason: null,
+              patientId: null,
+              professionalId,
+              serviceId: null,
+              communityCenterId: null,
+            });
+          }
+
+          startHour.setMinutes(startHour.getMinutes() + duration);
+        }
       }
-
-      startHour.setMinutes(startHour.getMinutes() + duration);
     }
 
     const createdAppointments = await prisma.$transaction(
-      availableAppointments.map(appointment => 
+      availableAppointments.map(appointment =>
         prisma.appointment.create({ data: appointment })
       )
     );
 
-    // Convertir las citas a la zona horaria para enviarlas al frontend
-    const appointmentsToSend = createdAppointments.map(appointment => {
-      const localDate = toZonedTime(appointment.date, timeZone);
-      return {
-        ...appointment,
-        date: localDate.toISOString(), // O formatear como prefieras para el frontend
-      };
-    });
+    const appointmentsToSend = createdAppointments.map(appointment => ({
+      ...appointment,
+      date: toLocalTime(appointment.date, timeZone),
+    }));
 
     res.status(201).json(appointmentsToSend);
   } catch (error) {
@@ -160,7 +157,6 @@ export const generateAvailableAppointments = async (req: Request, res: Response)
     res.status(500).json({ error: 'Error al generar citas disponibles.' });
   }
 };
-
 
 
 export const blockProfessionalTime = async (req: Request, res: Response) => {
@@ -183,47 +179,82 @@ export const blockProfessionalTime = async (req: Request, res: Response) => {
     }
 };
 
+
+// Obtener citas disponibles
 export const getAvailableAppointments = async (req: Request, res: Response) => {
-    const { professionalId, service } = req.query;
-  
-    try {
-      // Obtener todos los bloques de tiempo para el profesional
-      const blocks = await prisma.professionalBlock.findMany({
-        where: {
-          professionalId: String(professionalId),
-        },
-        select: {
-          startDate: true,
-          endDate: true,
-        },
-      });
-  
-      // Obtener todas las citas del profesional que están disponibles y que no han sido canceladas
-      const allAvailableAppointments = await prisma.appointment.findMany({
-        where: {
-          professionalId: String(professionalId),
-          serviceId: String(service),
-          available: true,
-          canceled: false,
-        },
-        include: {
-          professional: true,
-          service: true,
-          patient: true,
-        },
-      });
-  
-      // Filtrar citas que no caen dentro de los bloques
-      const availableAppointments = allAvailableAppointments.filter(appointment => {
-        return !blocks.some(block => 
-          appointment.date >= block.startDate && appointment.date <= block.endDate
-        );
-      });
-  
-      res.status(200).json(availableAppointments);
-    } catch (error) {
-      console.error('Error al obtener citas disponibles:', error);
-      res.status(500).json({ error: 'Error al obtener citas disponibles' });
-    }
+  const { professionalId, service } = req.query;
+  const timeZone = 'America/Santiago';
+
+  try {
+    const blocks = await prisma.professionalBlock.findMany({
+      where: { professionalId: String(professionalId) },
+      select: { startDate: true, endDate: true },
+    });
+
+    const allAvailableAppointments = await prisma.appointment.findMany({
+      where: {
+        professionalId: String(professionalId),
+        serviceId: String(service),
+        available: true,
+        canceled: false,
+      },
+      include: { professional: true, service: true, patient: true },
+    });
+
+    const availableAppointments = allAvailableAppointments.filter(appointment => 
+      !blocks.some(block => 
+        appointment.date >= block.startDate && appointment.date <= block.endDate
+      )
+    );
+
+    const appointmentsToSend = availableAppointments.map(appointment => ({
+      ...appointment,
+      date: toLocalTime(appointment.date, timeZone).toISOString(),
+    }));
+
+    res.status(200).json(appointmentsToSend);
+  } catch (error) {
+    console.error('Error al obtener citas disponibles:', error);
+    res.status(500).json({ error: 'Error al obtener citas disponibles' });
+  }
 };
-  
+
+// Obtener todas las citas de un profesional
+export const getAllAppointments = async (req: Request, res: Response) => {
+  const { professionalId } = req.query;
+  const timeZone = 'America/Santiago';
+
+  try {
+    // Obtener bloques de tiempo del profesional
+    const blocks = await prisma.professionalBlock.findMany({
+      where: { professionalId: String(professionalId) },
+      select: { startDate: true, endDate: true },
+    });
+
+    // Obtener todas las citas del profesional
+    const allAppointments = await prisma.appointment.findMany({
+      where: {
+        professionalId: String(professionalId),
+      },
+      include: { professional: true, service: true, patient: true },
+    });
+
+    // Filtrar citas que no están dentro de los bloques de tiempo
+    const filteredAppointments = allAppointments.filter(appointment => 
+      !blocks.some(block => 
+        appointment.date >= block.startDate && appointment.date <= block.endDate
+      )
+    );
+
+    // Mapear citas para formatear la fecha
+    const appointmentsToSend = filteredAppointments.map(appointment => ({
+      ...appointment,
+      date: toLocalTime(appointment.date, timeZone).toISOString(),
+    }));
+
+    res.status(200).json(appointmentsToSend);
+  } catch (error) {
+    console.error('Error al obtener todas las citas:', error);
+    res.status(500).json({ error: 'Error al obtener todas las citas' });
+  }
+};
