@@ -7,16 +7,13 @@ const useLogin = () => {
 	const { setAuthUser } = useAuthContext();
     const navigate = useNavigate();
 
-    const login = async (rut: string, contrasena: string) => {
-        await api.post("/auth/login", { rut, contrasena })
+    const login = async (rut: string, password: string) => {
+        await api.post("/auth/login", { rut, password })
         .then(response => {
-            console.log(response.data);
             toast('Ingresó con éxito');
+            localStorage.setItem("user", response.data.id);
             setAuthUser(response.data);
-            
-            if (response.data.role === "admin") {
-                navigate("/dashboard");
-            }
+            navigate("/");
         })
         .catch(error => {
             console.log(error.response.data);

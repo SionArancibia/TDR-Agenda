@@ -1,15 +1,19 @@
 {
-    "compilerOptions": {
-		"target": "ES2020", // Specifies what version of ECMAScript the code should be compiled to.
-		"module": "NodeNext", // Specifies what module code should be generated.
-		"moduleResolution": "NodeNext", // Specifies how TypeScript should resolve module imports.
-		"outDir": "./dist", // Redirect output structure to the directory.
-		"rootDir": "./src",
-		"strict": true, // Enable all strict type-checking options.
-		"esModuleInterop": true, // This will allow you to use default imports with CommonJS modules.
-		"skipLibCheck": true // this option will skip type checking all .d.ts files.
+	"compilerOptions": {
+	  "target": "ES2020", // O la versión de ECMAScript que necesites
+	  "module": "commonjs", // Utiliza el sistema de módulos de Node.js
+	  "moduleResolution": "node", // Resolución de módulos para Node.js
+	  "outDir": "./dist", // Donde se va a compilar el código
+	  "rootDir": "./src", // Directorio raíz del código fuente
+	  "strict": true, // Activa las opciones de chequeo estricto de tipos
+	  "esModuleInterop": true, // Permite la interoperabilidad con módulos ES6
+	  "skipLibCheck": true, // Opcional para saltar la verificación de archivos .d.ts de las dependencias
+	  "forceConsistentCasingInFileNames": true, // Evita problemas de sensibilidad a mayúsculas/minúsculas en los imports
+	  "typeRoots": ["./src/types", "./node_modules/@types",], // Incluye los tipos personalizados
+	  "types": ["node", "express"],
+	  "resolveJsonModule": true, // Si necesitas importar archivos JSON
+	  "isolatedModules": true // Recomendado para proyectos con ts-node y nodemon
 	},
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"]
-}
-
+	"include": ["src/**/*.ts"], // Incluye todos los archivos .ts en src
+	"exclude": ["node_modules"] // Excluye la carpeta node_modules
+  }

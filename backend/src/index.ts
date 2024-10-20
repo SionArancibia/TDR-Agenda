@@ -1,10 +1,14 @@
-import express from "express";
+import express from 'express';
 import authRoutes from "./routes/auth"
-import citasRoutes from "./routes/citas"
+import appointmentsRoutes from "./routes/appointments"
+import requestsRoutes from "./routes/requests"
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import adminRoutes from "./routes/admin.router"
+import usersRoutes from "./routes/users"
+import passwordRecoveryRoutes from './routes/passwordRecovery'; // Importar la nueva ruta
+import patientRoutes  from './routes/patients';
+import professionalRoutes from './routes/professionals';
 
 dotenv.config();
 
@@ -17,9 +21,13 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/adminCrud", adminRoutes);
-app.use("/api", citasRoutes);
-
-app.listen(PORT,()=> {
-    console.log("Server running on port: ", PORT);
+app.use("/api/users", usersRoutes);
+app.use("/api/appointments", appointmentsRoutes);
+app.use('/api/passwordRecovery', passwordRecoveryRoutes);
+app.use('/api', patientRoutes); 
+app.use('/api/requests', requestsRoutes)
+app.use('/api/professionals', professionalRoutes);
+  
+app.listen(PORT, () => {
+  console.log('Server running on port:', PORT);
 });

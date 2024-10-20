@@ -1,29 +1,31 @@
-import { useAuthContext } from "../context/AuthContext";
 import { toast } from "sonner";
 import { api } from "../utils/axios";
+import { useNavigate } from "react-router-dom";
 
 type CreateUsersInputs = {
 	rut: string;
-	nombres: string;
-	apellidos: string;
-    domicilio: string;
-    edad: number;
-    telefono: number;
-    contrasena: string;
-    confirmarContrasena: string;
+	firstName: string;
+	lastName: string;
+    address: string;
+    age: number;
+    email: string;
+    phoneNumber: number;
+    password: string;
+    confirmPassword: string;
     gender: string;
     role: string;
 };
 
 const useCreateUsers = () => {
-    const { setAuthUser } = useAuthContext();
-
+    const navigate = useNavigate();
+    
     const createUsers = async (inputs: CreateUsersInputs) => {
-        await api.post("/adminCrud/createUsers", inputs)
+        await api.post("/users/createUser", inputs)
         .then(response => {
             console.log(response.data);
             toast('Usuario registrado con éxito');
-            setAuthUser(response.data);
+            navigate("/users")
+            
         })
         .catch(error => {
             console.log(error.response.data);
