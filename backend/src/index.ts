@@ -12,6 +12,7 @@ import services from './routes/services';
 import serviceCategories from './routes/serviceCategories';
 import professionals from './routes/professionals';
 import schedules from './routes/schedules';
+import blocks from './routes/blocks';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/api/communityCenters', communityCenters);
 app.use('/api/services', services);
 app.use('/api/serviceCategories', serviceCategories);
 app.use('/api/schedules', schedules);
+app.use('/api/blocks', blocks);
 
 app.listen(PORT, () => {
   console.log('Server running on port:', PORT);

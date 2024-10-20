@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { api } from '../../utils/axios';
 import { toast } from 'sonner';
 import CreateAppointment from '../../components/forms/CreateAppointment';
+import BlockScheduleModal from '../../components/forms/BlockScheduleModal';
 
 interface Appointment {
   id: string;
@@ -12,13 +13,13 @@ interface Appointment {
   patientId: string | null;
   available: boolean;
   canceled: boolean;
-  // Agrega otros campos que necesites
 }
 
 const ProfessionalAgenda: React.FC = () => {
   const { professionalId } = useParams<{ professionalId: string }>();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isBlockModalOpen, setBlockModalOpen] = useState(false);
     
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -39,7 +40,7 @@ const ProfessionalAgenda: React.FC = () => {
   const handleCancelAppointment = async (id: string, canceled: boolean) => {
     try {
       const response = await api.put(`/appointments/${id}`, {
-        canceled: !canceled, // Cambiar el estado de cancelación
+        canceled: !canceled,
       });
       setAppointments((prev) => 
         prev.map((appointment) => 
@@ -56,7 +57,7 @@ const ProfessionalAgenda: React.FC = () => {
   const handleToggleAvailability = async (id: string, available: boolean) => {
     try {
       const response = await api.put(`/appointments/${id}`, {
-        available: !available, // Cambiar el estado de disponibilidad
+        available: !available,
       });
       setAppointments((prev) => 
         prev.map((appointment) => 
@@ -82,11 +83,19 @@ const ProfessionalAgenda: React.FC = () => {
   };
 
   const handleCreateAppointment = () => {
-    setModalOpen(true);
+    setCreateModalOpen(true);
   };
 
-  const closeModal = () => {
-      setModalOpen(false);
+  const handleBlockSchedule = () => {
+    setBlockModalOpen(true);
+  };
+
+  const closeCreateModal = () => {
+    setCreateModalOpen(false);
+  };
+
+  const closeBlockModal = () => {
+    setBlockModalOpen(false);
   };
 
   return (
@@ -94,11 +103,18 @@ const ProfessionalAgenda: React.FC = () => {
       <h2 className="text-lg font-semibold text-center p-4">Agenda del Profesional</h2>
       <button
         onClick={handleCreateAppointment}
-        className="mb-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+        className="mb-4 bg-blue-500 text-white px-4 py-2 mr-5 ml-5 rounded hover:bg-blue-600 transition"
       >
         Crear Cita
       </button>
-      {isModalOpen && <CreateAppointment onClose={closeModal} professionalId={professionalId} />}
+      <button
+        onClick={handleBlockSchedule}
+        className="mb-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+      >
+        Bloquear horario
+      </button>
+      {isCreateModalOpen && <CreateAppointment onClose={closeCreateModal} professionalId={professionalId} />}
+      {isBlockModalOpen && <BlockScheduleModal professionalId={professionalId} onClose={closeBlockModal} />}
       <>
         {appointments.length > 0 ? (
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">

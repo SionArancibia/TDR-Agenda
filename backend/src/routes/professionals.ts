@@ -1,6 +1,6 @@
 
 import express from "express";
-import { blockProfessionalTime, 
+import {
         getAvailableAppointments, 
         generateAvailableAppointments, 
         deleteProfessional, 
@@ -12,7 +12,6 @@ import authorizeRole from "../middleware/authorizeRole";
 
 const router = express.Router();
 
-router.post('/block', protectRoute, authorizeRole(['admin', 'professional']), blockProfessionalTime);
 router.post('/generate/available/appointments', protectRoute, authorizeRole(['admin', 'professional']), generateAvailableAppointments);
 router.get('/appointments/available', protectRoute, authorizeRole(['admin', 'professional', 'patient']), getAvailableAppointments);
 router.get('/appointments/all', protectRoute, authorizeRole(['admin', 'professional']), getAllAppointments);

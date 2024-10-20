@@ -71,7 +71,6 @@ export const deleteProfessional = async (req: Request, res: Response) => {
 };
 
 // Generar citas disponibles para un profesional
-// Generar citas disponibles para un profesional
 export const generateAvailableAppointments = async (req: Request, res: Response) => {
   const { professionalId, duration } = req.body;
   const timeZone = 'America/Santiago';
@@ -157,28 +156,6 @@ export const generateAvailableAppointments = async (req: Request, res: Response)
     res.status(500).json({ error: 'Error al generar citas disponibles.' });
   }
 };
-
-
-export const blockProfessionalTime = async (req: Request, res: Response) => {
-    const { professionalId, startDate, endDate, reason } = req.body;
-  
-    try {
-      const block = await prisma.professionalBlock.create({
-        data: {
-          professionalId,
-          startDate: new Date(startDate),
-          endDate: new Date(endDate),
-          reason,
-        },
-      });
-  
-      res.status(201).json(block);
-    } catch (error) {
-      console.error('Error al bloquear el periodo:', error);
-      res.status(500).json({ error: 'Error al bloquear el periodo' });
-    }
-};
-
 
 // Obtener citas disponibles
 export const getAvailableAppointments = async (req: Request, res: Response) => {

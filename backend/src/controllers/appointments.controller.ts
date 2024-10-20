@@ -7,7 +7,24 @@ export const createAppointment = async (req: Request, res: Response) => {
   const { date, patientId, professionalId, serviceId, communityCenterId, homeCare } = req.body;
 
   try {
-    const utcDate = fromZonedTime(date, 'America/Santiago'); // Convertir fecha local a UTC
+    const blocks = await prisma.professionalBlock.findMany({
+      where: { professionalId: String(professionalId) },
+      select: { startDate: true, endDate: true },
+    });
+    const utcDate = fromZonedTime(date, 'America/Santiago'); 
+
+    // Verificar si la fecha de la cita está dentro de los bloques de tiempo
+    const isBlocked = blocks.some(block => {
+      const blockStart = new Date(block.startDate).getTime();
+      const blockEnd = new Date(block.endDate).getTime();
+      return utcDate.getTime() >= blockStart && utcDate.getTime() <= blockEnd;
+    });
+
+    if (isBlocked) {
+      return res.status(400).json({ error: 'No se pudo crear la cita, pues existe un bloqueo de horario para esa fecha.' });
+    }
+
+    // Crear la cita si no está bloqueada
     const appointment = await prisma.appointment.create({
       data: {
         date: utcDate,
@@ -21,6 +38,7 @@ export const createAppointment = async (req: Request, res: Response) => {
         canceled: false,
       },
     });
+
     res.status(201).json(appointment);
   } catch (error) {
     console.error('Error al crear la cita:', error);

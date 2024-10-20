@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '../../utils/axios';
 import { toast } from 'sonner';
+import { AxiosError } from 'axios';
 
 const AppointmentSchema = z.object({
     date: z.string().min(1, 'La fecha es obligatoria'),
@@ -17,7 +18,7 @@ type AppointmentSchemaType = z.infer<typeof AppointmentSchema>;
 
 interface CreateAppointmentProps {
     onClose: () => void;
-    professionalId?: string; // Añadido para recibir el ID del profesional
+    professionalId?: string;
 }
 
 const CreateAppointment: React.FC<CreateAppointmentProps> = ({ onClose, professionalId }) => {
@@ -29,7 +30,7 @@ const CreateAppointment: React.FC<CreateAppointmentProps> = ({ onClose, professi
         resolver: zodResolver(AppointmentSchema),
         defaultValues: {
             date: '',
-            professionalId: professionalId || '', // Usar un valor vacío si es undefined
+            professionalId: professionalId || '',
             serviceId: null,
             patientId: null,
             available: true,
@@ -39,12 +40,17 @@ const CreateAppointment: React.FC<CreateAppointmentProps> = ({ onClose, professi
 
     const onSubmit: SubmitHandler<AppointmentSchemaType> = async (data) => {
         try {
-            await api.post('/appointments', data); // Ajusta la ruta según tu API
+            await api.post('/appointments', data);
             toast.success('Cita creada con éxito.');
             onClose(); // Cerrar el modal después de crear la cita
         } catch (error) {
-            console.error('Error al crear la cita:', error);
-            toast.error('Error al crear la cita.');
+            if (error instanceof AxiosError && error.response) {
+                console.error('Error al crear la cita:', error.response.data);
+                toast.error(error.response.data.error || 'Error al crear la cita.');
+            } else {
+                console.error('Error inesperado:', error);
+                toast.error('Error al crear la cita.');
+            }
         }
     };
 
@@ -64,7 +70,7 @@ const CreateAppointment: React.FC<CreateAppointmentProps> = ({ onClose, professi
                             <label className="text-gray-800 text-sm mb-2 block">ID del Profesional</label>
                             <input 
                                 {...register("professionalId")} 
-                                value={professionalId} // Se establece el valor como el ID del profesional
+                                value={professionalId}
                                 readOnly 
                                 className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" 
                             />
