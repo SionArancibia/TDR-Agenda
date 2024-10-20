@@ -18,7 +18,8 @@ import SimpleLayout from './layouts/SimpleLayout';
 import MainLayout from './layouts/MainLayout';
 import Requests from "./pages/admin/Requests.tsx";
 import RegistroAsistencia from './pages/professional/appointment_register.tsx';
-import Profile from './pages/professional/Profile'; // Importa el componente Profile
+import AdminProfile from "./pages/admin/AdminProfile.tsx";
+import ProfessionalProfile from "./pages/professional/ProfessionalProfile.tsx";
 
 
 function App() {
@@ -40,7 +41,6 @@ function App() {
       <div>
         <Toaster />
         <Routes>
-
           {/* General */}
           <Route element={<SimpleLayout />}>
             <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
@@ -86,6 +86,14 @@ function App() {
                   <Requests />
                 </ProtectedRoute>} 
             />
+            <Route
+              path="/adminProfile"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminProfile />
+                </ProtectedRoute>
+              }
+            />
             {/* Professional */}
             <Route
               path="/dashboardProfessional"
@@ -95,10 +103,10 @@ function App() {
                 </ProtectedRoute>}
             />
             <Route
-              path="/profile"
+              path="/professionalProfile"
               element={
                 <ProtectedRoute requiredRole="professional">
-                  <Profile />
+                  <ProfessionalProfile />
                 </ProtectedRoute>
               }
             />
