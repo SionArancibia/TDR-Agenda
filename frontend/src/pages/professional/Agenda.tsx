@@ -9,14 +9,20 @@ import NavigationButton from '../../components/professional/NavigationButton';
 // Definir la interfaz de una cita
 export interface Appointment {
   id: string;
-  pacienteId: string;
-  profesionalId: string;
-  asiste: boolean;
-  atencionDomiciliaria: boolean;
-  centroComunitario: string;
-  fecha: string; // Puedes usar Date si prefieres manejar fechas como objetos Date
-  observaciones: string;
-  tipoServicio: string;
+  patientId: string;
+  professionalId: string;
+  attended: boolean;
+  homeCare: boolean;
+  communityCenter: {
+    id: string;
+    communityCenter: string;
+  };
+  date: string; // You can use Date if you prefer to handle dates as Date objects
+  observations: string;
+  serviceType: {
+    id: string;
+    name: string;
+  };
 }
 
   // Genera un arreglo de los meses a mostrar, simulando una cuadrícula de 4 meses.
@@ -35,40 +41,40 @@ export interface Appointment {
 const Agenda = () => {
   const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
   const [searchTerm, setSearchTerm] = useState('');
-  const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
-  const [rut, setRut] = useState('');
+  const { getAppointments } = useAgenda(); // Desestructurar para obtener la función getCitas
+  const [professionalRut, setProfessionalRut] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // Mes actual
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Año actual
   const [displayedMonths, setDisplayedMonths] = useState(getMonthsToDisplay(selectedYear, selectedMonth)); // Meses a mostrar
-  const [mes, setMes] = useState((selectedMonth + 1).toString());
-  const [año, setAño] = useState(selectedYear.toString());
+  const [month, setMonth] = useState((selectedMonth + 1).toString());
+  const [year, setYear] = useState(selectedYear.toString());
 
   // Obtener el rut del usuario aut
   useEffect(() => {
     if (authUser !== null) {
-      setRut(authUser.rut);
+      setProfessionalRut(authUser.rut);
     }
   }, [authUser]);
-
-  // para que se actualice la lista de citas cuando se cambie de mes o año
+  //Realizar la petición de las citas al cargar el componente
   useEffect(() => {
-    if (mes && año) { // Solo llamar a fetchAppointments si mes y año están definidos
+    if (professionalRut) {
       fetchAppointments();
     }
-  }, [mes, año]);
+  }, [professionalRut, selectedMonth, selectedYear]);
+
 
   // Función para obtener las citas
   const fetchAppointments = async () => {
-    if (!rut || !mes || !año) {
+    if (!professionalRut || !month || !year) {
       //toast.error('Faltan parámetros requeridos');
       return;
     }
     try {
-      const citasData = await getCitas(rut, mes, año);
-      setAppointments(citasData || []); // Establecer las citas obtenidas en el estado
+      const appointmentData = await getAppointments(professionalRut, month, year);
+      setAppointments(appointmentData || []); // Establecer las citas obtenidas en el estado
     } catch (error) {
       console.error("Error fetching appointments:", error);
       setAppointments([]); // En caso de error, establecer appointments como un arreglo vacío
@@ -157,8 +163,8 @@ const Agenda = () => {
             selectedMonth={selectedMonth}
             selectedYear={selectedYear}
             handleMonthChange={handleMonthChange}
-            setMes={setMes}
-            setAño={setAño}
+            setMonth={setMonth}
+            setYear={setYear}
           />
         ))}
       </div>
@@ -178,23 +184,22 @@ const Agenda = () => {
             className="bg-white p-4 rounded shadow-md flex justify-between items-center"
           >
             <div>
-              <h3 className="text-lg font-bold">{appointment.asiste}</h3>
-              <p>{appointment.fecha} - {appointment.centroComunitario}</p>
+              <h3 className="text-lg font-bold">{appointment.attended ? 'Attended' : 'Not Attended'}</h3>
+              <p>{new Date(appointment.date).toLocaleString()} - {appointment.communityCenter.communityCenter}</p>
             </div>
             <div className="space-x-4">
               <button
                 onClick={() => handleDetailsClick(appointment)}
                 className="bg-green-400 text-white px-4 py-2 rounded-full"
               >
-                Detalles
+                Details
               </button>
               <button
                 onClick={() => handleCancelClick(appointment)}
                 className="bg-red-400 text-white px-4 py-2 rounded-full"
-                >
-                  Cancelar
+              >
+                Cancel
               </button>
-
             </div>
           </div>
         ))}
@@ -218,25 +223,39 @@ const Agenda = () => {
       </div>
 
       {/* Modal de detalles o edición */}
-      {selectedAppointment && ( // Si selectedAppointment es verdadero, mostrar el modal
+      {selectedAppointment && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-md">
-            {
-              <div>
-                <h3 className="text-lg font-bold">Detalles de la Cita</h3>
-                <p>Id: {selectedAppointment.id}</p>
-                <p>Fecha: {selectedAppointment.fecha}</p>
-                <p>Observaciones: {selectedAppointment.observaciones}</p>
-                <p>Atencion Domiciliaria: {selectedAppointment.atencionDomiciliaria ? 'Sí' : 'No'}</p>
-                <p>Centro Comunitario: {selectedAppointment.centroComunitario}</p>
-                <p>Asistencia: {selectedAppointment.asiste ? 'Sí' : 'No'}</p>
-              </div>
-            }
+          <div className="bg-white p-6 rounded shadow-md w-96">
+            <h3 className="text-lg font-bold mb-4">Appointment Details</h3>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold">ID:</label>
+              <p className="text-gray-900">{selectedAppointment.id}</p>
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold">Date:</label>
+              <p className="text-gray-900">{selectedAppointment.date}</p>
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold">Observations:</label>
+              <p className="text-gray-900">{selectedAppointment.observations}</p>
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold">Home Care:</label>
+              <p className="text-gray-900">{selectedAppointment.homeCare ? 'Yes' : 'No'}</p>
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold">Community Center:</label>
+              <p className="text-gray-900">{selectedAppointment.communityCenter.communityCenter}</p>
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold">Attended:</label>
+              <p className="text-gray-900">{selectedAppointment.attended ? 'Yes' : 'No'}</p>
+            </div>
             <button
               onClick={() => setSelectedAppointment(null)}
-              className="mt-4 bg-red-400 text-white px-4 py-2 rounded-full"
+              className="mt-4 bg-red-400 text-white px-4 py-2 rounded-full hover:bg-red-500"
             >
-              Cerrar
+              Close
             </button>
           </div>
         </div>

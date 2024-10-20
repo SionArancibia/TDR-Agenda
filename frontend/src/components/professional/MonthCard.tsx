@@ -7,17 +7,17 @@ interface MonthCardProps {
   selectedMonth: number;
   selectedYear: number;
   handleMonthChange: (year: number, month: number) => void;
-  setMes: (mes: string) => void;
-  setAño: (año: string) => void;
+  setMonth: (mes: string) => void;
+  setYear: (año: string) => void;
 }
 
-const MonthCard: React.FC<MonthCardProps> = ({ month, index, selectedMonth, selectedYear, handleMonthChange, setMes, setAño }) => {
+const MonthCard: React.FC<MonthCardProps> = ({ month, index, selectedMonth, selectedYear, handleMonthChange, setMonth, setYear }) => {
   const handleClick = () => {
     const newMonth = selectedMonth + index;
     const newYear = selectedYear + Math.floor(newMonth / 12);
     handleMonthChange(newYear, newMonth % 12);
-    setMes(((newMonth % 12) + 1).toString());
-    setAño(newYear.toString());
+    setMonth(((newMonth % 12) + 1).toString());
+    setYear(newYear.toString());
   };
 
   return (

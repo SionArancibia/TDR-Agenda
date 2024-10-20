@@ -65,3 +65,57 @@ export const getAvailableAppointments = async (req: Request, res: Response) => {
   }
 };
   
+export const getAppointmentsByDate = async (req: Request, res: Response) => {
+  const { professionalRut, month, year } = req.query;
+
+  if (!professionalRut || !month || !year) {
+    return res.status(400).json({ error: "Faltan parámetros de consulta" });
+  }
+
+  try {
+    // Buscar al usuario con el RUT proporcionado
+    const user = await prisma.user.findUnique({
+      where: {
+        rut: String(professionalRut),
+      },
+      include: {
+        professional: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    if (!user.professional) {
+      return res.status(404).json({ error: "El usuario no está relacionado con un profesional" });
+    }
+
+    const professionalId = user.professional.id;
+
+    // Calcular las fechas de inicio y fin correctamente
+    const startDate = new Date(Number(year), Number(month) - 1, 1);
+    const endDate = new Date(Number(year), Number(month), 1);
+
+    // Buscar todas las citas del profesional y filtrar por mes y año
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        professionalId: professionalId,
+        date: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+      include: {
+        patient: true,
+        serviceType: true,
+        communityCenter: true,
+      },
+    });
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error al obtener citas por fecha:', error);
+    res.status(500).json({ error: 'Error al obtener citas por fecha' });
+  }
+};
