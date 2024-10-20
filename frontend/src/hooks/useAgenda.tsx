@@ -4,7 +4,7 @@ import { api } from "../utils/axios";
 const useAgenda = () => {
   const getCitas = async (rut: string, mes: string, año: string) => {
     try {
-      const response = await api.get("profesional/citas", {
+      const response = await api.get("professionals/appointments/available", {
         params: { rut, mes, año }
       });
       console.log(response.data);

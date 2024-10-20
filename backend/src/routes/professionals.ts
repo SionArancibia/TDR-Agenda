@@ -4,7 +4,7 @@ import { blockProfessionalTime, getAvailableAppointments } from "../controllers/
 
 const router = express.Router();
 
-router.post('/professional/block', blockProfessionalTime);
-router.get('/professional/appointments/available', getAvailableAppointments);
+router.post('/block', blockProfessionalTime);
+router.get('/appointments/available', getAvailableAppointments);
 
 export default router;

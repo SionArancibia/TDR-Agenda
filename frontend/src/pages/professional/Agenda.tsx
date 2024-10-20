@@ -34,6 +34,7 @@ export interface Appointment {
 // Formulario de la agenda
 const Agenda = () => {
   const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
+  const [searchTerm, setSearchTerm] = useState('');
   const { getCitas } = useAgenda(); // Desestructurar para obtener la función getCitas
   const [rut, setRut] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -62,7 +63,7 @@ const Agenda = () => {
   // Función para obtener las citas
   const fetchAppointments = async () => {
     if (!rut || !mes || !año) {
-      toast.error('Faltan parámetros requeridos');
+      //toast.error('Faltan parámetros requeridos');
       return;
     }
     try {
@@ -110,42 +111,36 @@ const Agenda = () => {
     handleMonthChange(newYear, newMonth);
   };
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
   return (
-    <div className="min-h-screen w-screen flex flex-col bg-gray-100 p-4">
+    <div className="min-h-screen pt-20 flex flex-col items-center justify-start py-6 px-4 bg-gray-50"> {/* Ajustar padding-top */}
       {/* Barra de búsqueda */}
-      <div className="w-full max-w-4xl mb-8 mx-auto">
-        <div className="flex items-center bg-white rounded-full shadow-md p-4">
-          <button className="p-2">
-            <svg
-              className="w-6 h-6 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </button>
-          <input
-            type="text"
-            className="ml-4 flex-1 bg-transparent outline-none text-gray-700"
-            placeholder="Buscar pacientes"
-          />
-          <button className="p-2">
-            <svg
-              className="w-6 h-6 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l5-5m-5 5a7 7 0 1110 0 7 7 0 01-10 0z" />
-            </svg>
-          </button>
+      <div className="w-full max-w-md bg-white p-2 rounded-lg shadow-md mb-4"> {/* Ajustar padding y margen */}
+        <div className="flex items-center border-b border-gray-300 py-2">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleSearch}
+              className="ml-4 flex-1 bg-transparent outline-none text-gray-700"
+              placeholder="Buscar pacientes"
+            />
+            <button className="p-2">
+              <svg
+                className="w-6 h-6 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l5-5m-5 5a7 7 0 1110 0 7 7 0 01-10 0z" />
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
 
       {/* Título */}
       <h2 className="text-2xl text-black font-bold mb-4 text-center">Horas agendadas</h2>
