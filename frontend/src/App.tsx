@@ -20,6 +20,7 @@ import Requests from "./pages/admin/Requests.tsx";
 import RegistroAsistencia from './pages/professional/appointment_register.tsx';
 import AdminProfile from "./pages/admin/AdminProfile.tsx";
 import ProfessionalProfile from "./pages/professional/ProfessionalProfile.tsx";
+import AdminStats from "./pages/admin/AdminStats.tsx";
 
 
 function App() {
@@ -85,6 +86,13 @@ function App() {
                 <ProtectedRoute requiredRole="admin">
                   <Requests />
                 </ProtectedRoute>} 
+            />
+            <Route
+              path="/adminStats"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AdminStats />
+                </ProtectedRoute>}
             />
             <Route
               path="/adminProfile"
