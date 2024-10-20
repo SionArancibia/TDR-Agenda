@@ -5,6 +5,8 @@ import useAgenda from '../../hooks/useAgenda';
 import { useAuthContext } from '../../context/AuthContext';
 import MonthCard from '../../components/professional/MonthCard';
 import NavigationButton from '../../components/professional/NavigationButton';
+import CancelAppointmentModal from '../../components/professional/CancelAppointmentModal';
+
 
 // Definir la interfaz de una cita
 export interface Appointment {
@@ -23,6 +25,7 @@ export interface Appointment {
     id: string;
     name: string;
   };
+  canceled: boolean;
 }
 
   // Genera un arreglo de los meses a mostrar, simulando una cuadrícula de 4 meses.
@@ -38,26 +41,27 @@ export interface Appointment {
 
 
 // Formulario de la agenda
-const Agenda = () => {
+const Agenda: React.FC = () => {
   const { authUser } = useAuthContext(); // Desestructurar para obtener el usuario
+  const { getAppointments, createAppointmentRequest } = useAgenda(); // Desestructurar para obtener la función getCitas
   const [searchTerm, setSearchTerm] = useState('');
-  const { getAppointments } = useAgenda(); // Desestructurar para obtener la función getCitas
   const [professionalRut, setProfessionalRut] = useState('');
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // Mes actual
+  const [appointments, setAppointments] = useState<Appointment[]>([]); // Estado para almacenar las citas
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Año actual
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // Mes actual
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [displayedMonths, setDisplayedMonths] = useState(getMonthsToDisplay(selectedYear, selectedMonth)); // Meses a mostrar
   const [month, setMonth] = useState((selectedMonth + 1).toString());
   const [year, setYear] = useState(selectedYear.toString());
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   // Obtener el rut del usuario aut
   useEffect(() => {
     if (authUser !== null) {
       setProfessionalRut(authUser.rut);
     }
   }, [authUser]);
+
   //Realizar la petición de las citas al cargar el componente
   useEffect(() => {
     if (professionalRut) {
@@ -80,15 +84,6 @@ const Agenda = () => {
       setAppointments([]); // En caso de error, establecer appointments como un arreglo vacío
       toast.error('Error al obtener las citas');
     }
-  };
-
-  const handleDetailsClick = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
-  };
-
-  const handleCancelClick = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
-    toast('Cita cancelada');
   };
 
   const handleMonthChange = (newYear: number, newMonth: number) => {
@@ -119,6 +114,31 @@ const Agenda = () => {
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleDetailsClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+  };
+
+  const handleCancelClick = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setIsModalOpen(true);
+  };
+
+  const handleModalSubmit = async (cancelReason: string) => {
+    if (!selectedAppointment) return;
+
+    try {
+      await createAppointmentRequest({
+        appointmentId: selectedAppointment.id,
+        cancelReason,
+      });
+      toast.success('Cancellation request sent');
+      fetchAppointments();
+    } catch (error) {
+      console.error('Error creating appointment request:', error);
+      toast.error('Error creating appointment request');
+    }
   };
 
   return (
@@ -176,7 +196,7 @@ const Agenda = () => {
         {selectedYear}
       </div>
 
-      {/* Lista de citas */}
+      {/* Lista de appointments */}
       <div className="w-full max-w-4xl mx-auto space-y-4">
         {appointments.map((appointment) => (
           <div
@@ -233,7 +253,7 @@ const Agenda = () => {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold">Date:</label>
-              <p className="text-gray-900">{selectedAppointment.date}</p>
+              <p className="text-gray-900">{new Date(selectedAppointment.date).toLocaleString()}</p>
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold">Observations:</label>
@@ -251,6 +271,10 @@ const Agenda = () => {
               <label className="block text-gray-700 font-bold">Attended:</label>
               <p className="text-gray-900">{selectedAppointment.attended ? 'Yes' : 'No'}</p>
             </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold">Canceled:</label>
+              <p className="text-gray-900">{selectedAppointment.canceled ? 'Yes' : 'No'}</p>
+            </div>
             <button
               onClick={() => setSelectedAppointment(null)}
               className="mt-4 bg-red-400 text-white px-4 py-2 rounded-full hover:bg-red-500"
@@ -260,6 +284,14 @@ const Agenda = () => {
           </div>
         </div>
       )}
+  
+        {/* Modal de cancelación */}   
+      <CancelAppointmentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+      />
+
     </div>
   );
 };

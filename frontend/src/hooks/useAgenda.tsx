@@ -15,7 +15,17 @@ const useAgenda = () => {
     }
   };
 
-  return { getAppointments };
+  const createAppointmentRequest = async (data: { appointmentId: string; cancelReason: string }) => {
+    try {
+      const response = await api.post("requests/cancelAppointmentRequest", data);
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response.data);
+      toast.error(error.response.data.error);
+    }
+  };
+
+  return { getAppointments, createAppointmentRequest };
 };
 
 export default useAgenda;

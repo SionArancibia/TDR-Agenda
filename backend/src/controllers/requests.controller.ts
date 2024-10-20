@@ -57,3 +57,29 @@ export const validateRegistrationRequest = async (req: Request, res: Response) =
       res.status(500).json({ error: 'Error em validateRegistrationRequest' });
     }
 };
+
+export const cancelAppointmentRequest = async (req: Request, res: Response) => {
+  const { appointmentId, cancelReason } = req.body;
+
+  try {
+    const newRequest = await prisma.request.create({
+      data: {
+        validated: false,
+        requestType: "APPOINTMENT_REQUEST",
+        CancelAppointmentRequest: {
+          create: {
+            cancelReason,
+            appointment: {
+              connect: { id: appointmentId },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(201).json(newRequest);
+  } catch (error) {
+    console.error('Error en createAppointmentRequest:', error);
+    res.status(500).json({ error: 'Error en createAppointmentRequest' });
+  }
+};
