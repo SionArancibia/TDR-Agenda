@@ -1,29 +1,84 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import Toast from 'react-native-toast-message';
 import Icon from "react-native-vector-icons/FontAwesome";
+import axios from 'axios';
+import { z } from 'zod';
+
+const recoveryPasswordSchema = z.object({
+  rut: z.string().min(1, "Por favor ingrese su RUT.").regex(/^\d{7,8}-[kK0-9]$/, 'El RUT debe estar en el formato xxxxxxxx-x'),
+  email: z.string().email("Por favor ingrese un correo electrónico válido."),
+});
 
 export default function ForgotPasswordScreen() {
-  const [idNumber, setIdNumber] = useState("");
+  const [rut, setRut] = useState("");
   const [email, setEmail] = useState("");
 
-  const handleResetPassword = () => {
-    if (!idNumber) {
-      Alert.alert("Error", "Por favor ingrese su RUT.");
+  const handleResetPassword = async () => {
+    if (!rut) {
+      Toast.show({
+        type: 'error',
+        text1: 'Por favor, ingrese su rut',
+      });
       return;
     }
     if (!email) {
-      Alert.alert("Error", "Por favor ingrese su correo electrónico.");
+      Toast.show({
+        type: 'error',
+        text1: 'Por favor, ingrese su email',
+      });
       return;
     }
 
-    Alert.alert("Solicitud Enviada", `RUT: ${idNumber}\nCorreo: ${email}`);
+    const result = recoveryPasswordSchema.safeParse({ rut, email });
+
+    if (!result.success) {
+      result.error.errors.forEach(err => {
+        Toast.show({
+          type: 'error',
+          text1: err.message,
+        });
+      });
+      return;
+    }
+
+    try {
+      // Llamada a la API
+      const response = await axios.post('http://192.168.1.10:3000/reset-password', {
+        rut,
+        email,
+      });
+
+      //const data = await response.json();
+
+      if (response.status === 200) {
+        Toast.show({
+          type: 'success',
+          text1: 'Correo enviado exitosamente',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Hubo un problema al enviar el correo',
+        });
+      }
+    } catch (error) {
+      //console.log(error);
+      if (error.response && error.response.status === 404) {
+        // Si el RUT no está registrado, mostrar este mensaje:
+        Toast.show({
+          type: 'error',
+          text1: 'Usuario no encontrado',
+          text2: 'El RUT ingresado no está registrado.',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error de conexión',
+          text2: 'Hubo un problema de conexión',
+        });
+      }
+    }
   };
 
   return (
@@ -36,8 +91,8 @@ export default function ForgotPasswordScreen() {
         <TextInput
           style={styles.input}
           placeholder="Ingrese su RUT"
-          value={idNumber}
-          onChangeText={setIdNumber}
+          value={rut}
+          onChangeText={setRut}
           keyboardType="default"
         />
       </View>
@@ -58,8 +113,9 @@ export default function ForgotPasswordScreen() {
         onPress={handleResetPassword}
       >
         <Icon name="paper-plane" size={20} color="#fff" style={styles.icon} />
-        <Text style={styles.buttonText}>Enviar Solicitud</Text>
+        <Text style={styles.buttonText}>Enviar Correo</Text>
       </TouchableOpacity>
+      <Toast/>
     </View>
   );
 }

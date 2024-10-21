@@ -1,29 +1,90 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect} from 'react';
+import Toast from 'react-native-toast-message';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { z } from 'zod';
 
-export default function LoginScreen({ navigation }) {
+const loginSchema = z.object({
+  rut: z.string().min(1, 'El RUT es obligatorio').regex(/^\d{7,8}-[kK0-9]$/, 'El RUT debe estar en el formato xxxxxxxx-x'),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+});
+
+export default function LoginScreen({ navigation, route }) {
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    // Verificar si se pasó un mensaje desde RegisterScreen
+    if (route.params?.showToast) {
+      Toast.show({
+        type: route.params.messageType, // 'success' o 'error'
+        text1: route.params.text1,
+        text2: route.params.text2,
+      });
+    }
+  }, [route.params]);
+
   const handleLogin = async () => {
+
+    if (!rut) {
+      Toast.show({
+        type: 'error',
+        text1: 'Por favor, ingrese su rut',
+      });
+      return;
+    }
+    if (!password) {
+      Toast.show({
+        type: 'error',
+        text1: 'Por favor, ingrese una contraseña',
+      });
+      return;
+    }
+
+    const validationResult = loginSchema.safeParse({ rut, password });
+
+    if (!validationResult.success) {
+      validationResult.error.errors.forEach(err => {
+        Toast.show({
+          type: 'error',
+          text1: err.message,
+        });
+      });
+      return;
+    }
+
     try {
-      const response = await axios.post('http://192.168.0.8:3000/login', {
+      const response = await axios.post('http://172.16.167.175:3000/login', {
         rut,
         password,
       });
 
       const { token } = response.data;
-      console.log('Token recibido:', token);
+      //console.log('Token recibido:', token);
 
       AsyncStorage.setItem('token', token);
 
-      navigation.navigate('Principal');
+      Toast.show({
+        type: 'success',
+        text1: 'Inicio de sesión exitoso',
+        text2: 'Bienvenido',
+      });
+
+      navigation.navigate('Principal', { showToast: true, text1: 'Inicio de sesión exitoso', text2: 'Bienvenido', messageType: 'success' });
     } catch (error) {
-      console.log('Error de inicio de sesión:', error);
-      Alert.alert('Error', 'RUT o contraseña incorrectos');
+      if (error.response && error.response.status === 401) {
+        Toast.show({
+          type: 'error',
+          text1: 'RUT o contraseña incorrectos',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error al iniciar sesión',
+        });
+      }
     }
   };
 
@@ -69,6 +130,7 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.recoverButtonText}>Recuperar Contraseña</Text>
         </TouchableOpacity>
       </View>
+      <Toast/>
     </View>
   );
 }
@@ -140,9 +202,10 @@ const styles = StyleSheet.create({
   },
   recoverButton: {
     backgroundColor: '#FF6347',
-    paddingVertical: 10,
+    paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',
+    marginBottom: 20,
   },
   recoverButtonText: {
     color: '#fff',

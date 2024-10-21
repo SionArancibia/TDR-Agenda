@@ -1,6 +1,8 @@
+require('dotenv').config(); // Cargar variables de entorno desde el archivo .env
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-//script para generar datos a sql
+
+// Script para generar datos en la base de datos
 async function main() {
   await prisma.hora.createMany({
     data: [
