@@ -56,7 +56,7 @@ export default function LoginScreen({ navigation, route }) {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.10:3000/login', {
+      const response = await axios.post('http://172.16.167.175:3000/login', {
         rut,
         password,
       });

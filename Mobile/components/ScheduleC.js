@@ -14,7 +14,7 @@ export default function ScheduledHours({ route }) {
   const [selectedHour, setSelectedHour] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://192.168.1.10:3000/fechas?seccion=${section}`) // Cambiar por su ip para que funcione en expogo etc
+    axios.get(`http://172.16.167.175:3000/fechas?seccion=${section}`) // Cambiar por su ip para que funcione en expogo etc
       .then(response => {
         setDates(response.data);
         setSelectedDate(response.data[0]); // Selecciona la primera fecha por defecto
@@ -26,7 +26,7 @@ export default function ScheduledHours({ route }) {
 
   useEffect(() => {
     if (selectedDate) {
-      axios.get(`http://192.168.1.10:3000/horas?seccion=${section}`) // Cambiar por su ip para que funcione en expogo etc
+      axios.get(`http://172.16.167.175:3000/horas?seccion=${section}`) // Cambiar por su ip para que funcione en expogo etc
         .then(response => {
           setHours(response.data);
         })
@@ -44,7 +44,7 @@ export default function ScheduledHours({ route }) {
   const confirmBooking = () => {
     const user = 'usuario_demo'; 
 
-    axios.post('http://192.168.1.10:3000/agendar', {
+    axios.post('http://172.16.167.175:3000/agendar', {
       fecha: new Date(selectedHour.fecha).toISOString(), // Convertir la fecha a ISO-8601
       hora: selectedHour.hora,
       profesional: selectedHour.nombre,

@@ -50,7 +50,7 @@ export default function RegisterScreen( {navigation} ) {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.10:3000/register', {
+      const response = await axios.post('http://172.16.167.175:3000/register', {
         rut,
         password,
       });
