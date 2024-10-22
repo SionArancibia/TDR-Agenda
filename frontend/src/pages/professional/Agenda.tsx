@@ -17,7 +17,7 @@ export interface Appointment {
   homeCare: boolean;
   communityCenter: {
     id: string;
-    communityCenter: string;
+    name: string;
   };
   date: string; // You can use Date if you prefer to handle dates as Date objects
   observations: string;
@@ -205,7 +205,7 @@ const Agenda: React.FC = () => {
           >
             <div>
               <h3 className="text-lg font-bold">{appointment.attended ? 'Attended' : 'Not Attended'}</h3>
-              <p>{new Date(appointment.date).toLocaleString()} - {appointment.communityCenter.communityCenter}</p>
+              <p>{new Date(appointment.date).toLocaleString()} - {appointment.communityCenter?.name}</p>
             </div>
             <div className="space-x-4">
               <button
@@ -265,7 +265,7 @@ const Agenda: React.FC = () => {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold">Community Center:</label>
-              <p className="text-gray-900">{selectedAppointment.communityCenter.communityCenter}</p>
+              <p className="text-gray-900">{selectedAppointment.communityCenter?.name}</p>
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold">Attended:</label>
