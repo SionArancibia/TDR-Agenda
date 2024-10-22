@@ -5,19 +5,7 @@ import UpdateUsers from "./pages/admin/UpdateUsers.tsx";
 import PasswordRecovery from "./pages/auth/PasswordRecovery.tsx";
 import ResetPassword from "./pages/auth/ResetPassword.tsx";
 import { Toaster } from "sonner";
-<<<<<<< HEAD
-import Usuarios from "./pages/Usuarios";
-import CreateUsers from "./pages/CreateUsers";
-import AdminDashboard from './pages/AdminDashboard';
-import Historial from './pages/historial.tsx'; 
-import RegistroAsistencia from './pages/asistencia.tsx';
-import Home from './pages/home.tsx';
-import Navbar from './components/nabvar.tsx'; 
-import Footer  from './components/footer.tsx'; 
-import AgendaForm from './pages/agenda.tsx';
-import Mensajes from './pages/mensajes.tsx';
- 
-=======
+
 import Users from "./pages/admin/Users.tsx";
 import CreateUsers from "./pages/admin/CreateUsers.tsx";
 import AdminDashboard from './pages/admin/Dashboard.tsx';
@@ -44,7 +32,6 @@ import ProfessionalAgenda from "./pages/admin/ProfessionalAgenda.tsx";
 import ManageSchedule from "./components/forms/ManageSchedule.tsx";
 import GenerateAppointments from "./components/forms/GenerateAppointments.tsx";
 
->>>>>>> origin/Profesional
 function App() {
   const {authUser} = useAuthContext();
   console.log("authuser: ", authUser);
@@ -64,20 +51,6 @@ function App() {
       <div>
         <Toaster />
         <Routes>
-<<<<<<< HEAD
-          <Route path="/dashboardAdmin" element={<AdminDashboard/>}/>
-          <Route path="/dashboardProfessional" element={authUser?.role === "professional" ? <Dashboard/> : <Navigate to={"/login"} />}/>
-          <Route path="/login" element={!authUser ? <Login/> : <Navigate to={"/dashboard"}/>}/>
-          <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
-          <Route path="/signup" element={<Signup/>}/>
-          <Route path="/" element={<Home />} />
-          <Route path="/createUsers" element={<CreateUsers/>}/>
-          <Route path="/updateUsers/:id" element={authUser?.role === "admin" ? <UpdateUsers/> : <Navigate to={"/login"} />} />
-          <Route path="/usuarios" element={authUser?.role === "admin" ? <Usuarios /> : <Navigate to="/login" />} /> 
-          <Route path="/historial" element={<Historial />} />
-          <Route path="/agenda" element={<AgendaForm />} />
-          <Route path="/mensajes" element={<Mensajes />} />
-=======
           {/* General */}
           <Route element={<SimpleLayout />}>
             <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
@@ -246,7 +219,6 @@ function App() {
                 </ProtectedRoute>} 
             />
             </Route>
->>>>>>> origin/Profesional
         </Routes>
       </div>
     </>
