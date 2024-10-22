@@ -200,4 +200,98 @@ export const getAvailableAppointments = async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Error al obtener citas disponibles' });
     }
 };
+
+// Obtener todas las citas de un profesional
+export const getAllAppointments = async (req: Request, res: Response) => {
+  const { professionalId } = req.query;
+  const timeZone = 'America/Santiago';
+
+  try {
+    // Obtener bloques de tiempo del profesional
+    const blocks = await prisma.professionalBlock.findMany({
+      where: { professionalId: String(professionalId) },
+      select: { startDate: true, endDate: true },
+    });
+
+    // Obtener todas las citas del profesional
+    const allAppointments = await prisma.appointment.findMany({
+      where: {
+        professionalId: String(professionalId),
+      },
+      include: { professional: true, service: true, patient: true },
+    });
+
+    // Filtrar citas que no están dentro de los bloques de tiempo
+    const filteredAppointments = allAppointments.filter(appointment => 
+      !blocks.some(block => 
+        appointment.date >= block.startDate && appointment.date <= block.endDate
+      )
+    );
+
+    // Mapear citas para formatear la fecha
+    const appointmentsToSend = filteredAppointments.map(appointment => ({
+      ...appointment,
+      date: toLocalTime(appointment.date, timeZone).toISOString(),
+    }));
+
+    res.status(200).json(appointmentsToSend);
+  } catch (error) {
+    console.error('Error al obtener todas las citas:', error);
+    res.status(500).json({ error: 'Error al obtener todas las citas' });
+  }
+};
   
+export const getAppointmentsByDate = async (req: Request, res: Response) => {
+  const { professionalRut, month, year } = req.query;
+
+  if (!professionalRut || !month || !year) {
+    return res.status(400).json({ error: "Faltan parámetros de consulta" });
+  }
+
+  try {
+    // Buscar al usuario con el RUT proporcionado
+    const user = await prisma.user.findUnique({
+      where: {
+        rut: String(professionalRut),
+      },
+      include: {
+        professional: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    if (!user.professional) {
+      return res.status(404).json({ error: "El usuario no está relacionado con un profesional" });
+    }
+
+    const professionalId = user.professional.id;
+
+    // Calcular las fechas de inicio y fin correctamente
+    const startDate = new Date(Number(year), Number(month) - 1, 1);
+    const endDate = new Date(Number(year), Number(month), 1);
+
+    // Buscar todas las citas del profesional y filtrar por mes y año
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        professionalId: professionalId,
+        date: {
+          gte: startDate,
+          lt: endDate,
+        },
+      },
+      include: {
+        patient: true,
+        service: true,
+        communityCenter: true,
+      },
+    });
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error al obtener citas por fecha:', error);
+    res.status(500).json({ error: 'Error al obtener citas por fecha' });
+  }
+};
