@@ -63,10 +63,6 @@ const Login = () => {
                                     className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                                 />
                             </div>
-                            <p className="text-gray-800 text-sm !mt-8 text-center">
-                                ¿No tienes una cuenta? 
-                                <Link to={"/signup"} className="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Regístrate aquí</Link>
-                            </p>
                         </form>
                     </div>
                 </div>

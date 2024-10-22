@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../utils/axios';
 import { toast } from 'sonner';
 
@@ -19,33 +19,35 @@ interface User {
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [selectedRole, setSelectedRole] = useState<string>(''); // Filtro del rol
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedRole, setSelectedRole] = useState<string>(''); 
   const navigate = useNavigate();
 
-  // Obtener la lista de usuarios al cargar el componente
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await api.get('/users/getUsers');
         setUsers(response.data);
-        setFilteredUsers(response.data); // Inicialmente mostrar todos
+        setFilteredUsers(response.data);
       } catch (error) {
         console.error('Error al obtener los usuarios:', error);
+        toast.error('Error obteniendo usuarios.');
       }
     };
+
     fetchUsers();
   }, []);
 
-  // Función para manejar la eliminación de usuarios
   const handleDelete = async (id: string) => {
     try {
       await api.delete(`/users/deleteUser/${id}`);
       const updatedUsers = users.filter((user) => user.id !== id);
       setUsers(updatedUsers);
-      setFilteredUsers(updatedUsers); // Actualizar lista filtrada también
-      toast('Usuario eliminado con éxito');
+      setFilteredUsers(updatedUsers);
+      toast.success('Usuario eliminado con éxito.');
     } catch (error) {
       console.error('Error al eliminar el usuario:', error);
+      toast.error('No se pudo eliminar el usuario.');
     }
   };
 
@@ -53,113 +55,122 @@ const Users: React.FC = () => {
     navigate(`/updateUser/${id}`);
   };
 
-  const handleRegisterClick = () => {
-    navigate('/createUser');
-  };
-
-  // Función para manejar el cambio en el filtro por rol
   const handleRoleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const role = event.target.value;
     setSelectedRole(role);
 
-    if (role === '') {
-      setFilteredUsers(users); // Si no hay filtro, mostrar todos
-    } else {
-      const filtered = users.filter((user) => user.role === role);
-      setFilteredUsers(filtered);
-    }
+    const filtered = role
+      ? users.filter((user) => user.role === role)
+      : users;
+    setFilteredUsers(filtered);
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Gestión de Usuarios</h1>
-          <button
-            onClick={handleRegisterClick}
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
-          >
-            Registrar Usuario
-          </button>
-          <Link
-            to="/dashboardAdmin"
-            className="flex items-center text-white bg-red-400 px-4 py-2 rounded-full shadow-md hover:bg-pink-200 w-auto"
-          >
-            <svg
-              className="w-6 h-6 mr-2"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            Atrás
-          </Link>
-        </div>
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
 
-        {/* Filtro por tipo de usuario */}
-        <div className="mb-4">
-          <label className="mr-2 font-medium">Filtrar por Rol:</label>
+    const filtered = users.filter(
+      (user) =>
+        user.firstName.toLowerCase().includes(query) ||
+        user.rut.toLowerCase().includes(query)
+    );
+    setFilteredUsers(filtered);
+  };
+
+  // Contar usuarios totales y filtrados
+  const totalUsers = users.length;
+  const totalFiltered = filteredUsers.length;
+
+  return (
+    <>
+    <div className="mt-10 relative overflow-x-auto shadow-md sm:rounded-lg">
+      <h2 className="text-lg font-semibold text-center p-4">Manejo de usuarios</h2> 
+      <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-900">
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="p-2 border rounded-lg w-80 dark:bg-gray-700 dark:text-white"
+            placeholder="Buscar usuario por nombre o RUT"
+          />
+        </div>
+        <div className="flex items-center space-x-4">
           <select
             value={selectedRole}
             onChange={handleRoleChange}
-            className="border px-2 py-1 rounded"
+            className="p-2 border rounded-lg dark:bg-gray-700 dark:text-white"
           >
-            <option value="">Todos</option>
+            <option value="">Todos los Roles</option>
             <option value="admin">Admin</option>
-            <option value="professional">Professional</option>
+            <option value="professional">Profesional</option>
             <option value="patient">Paciente</option>
           </select>
+          <button
+            onClick={() => navigate('/createUser')}
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+          >
+            Registrar Usuario
+          </button>
         </div>
+      </div>
 
-        <table className="min-w-full bg-white border-collapse">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border">Rut</th>
-              <th className="py-2 px-4 border">Nombres</th>
-              <th className="py-2 px-4 border">Apellidos</th>
-              <th className="py-2 px-4 border">Dirección</th>
-              <th className="py-2 px-4 border">Edad</th>
-              <th className="py-2 px-4 border">Correo</th>
-              <th className="py-2 px-4 border">Rol</th>
-              <th className="py-2 px-4 border">Teléfono</th>
-              <th className="py-2 px-4 border">Género</th>
-              <th className="py-2 px-4 border">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id}>
-                <td className="py-2 px-4 border">{user.rut}</td>
-                <td className="py-2 px-4 border">{user.firstName}</td>
-                <td className="py-2 px-4 border">{user.lastName}</td>
-                <td className="py-2 px-4 border">{user.address}</td>
-                <td className="py-2 px-4 border">{user.age}</td>
-                <td className="py-2 px-4 border">{user.email}</td>
-                <td className="py-2 px-4 border">{user.role}</td>
-                <td className="py-2 px-4 border">{user.phoneNumber}</td>
-                <td className="py-2 px-4 border">{user.gender}</td>
-                <td className="py-2 px-4 border">
+      <div className="p-4 bg-gray-50">
+        <span className="font-bold">Total de Usuarios:</span> {totalUsers} &nbsp; | &nbsp;
+        <span className="font-bold">Usuarios Filtrados:</span> {totalFiltered}
+      </div>
+
+      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            {['RUT', 'Nombre', 'Apellidos', 'Correo', 'Rol', 'Teléfono', 'Género', 'Acciones'].map((header) => (
+              <th key={header} className="px-6 py-3">
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user) => (
+              <tr
+                key={user.id}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              >
+                <td className="px-6 py-4">{user.rut}</td>
+                <td className="px-6 py-4">{user.firstName}</td>
+                <td className="px-6 py-4">{user.lastName}</td>
+                <td className="px-6 py-4">{user.email}</td>
+                <td className="px-6 py-4 capitalize">{user.role}</td>
+                <td className="px-6 py-4">{user.phoneNumber}</td>
+                <td className="px-6 py-4">{user.gender}</td>
+                <td className="px-6 py-4 space-x-2">
                   <button
                     onClick={() => handleDelete(user.id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
                   >
                     Eliminar
                   </button>
                   <button
                     onClick={() => handleUpdate(user.id)}
-                    className="bg-blue-500 text-white px-2 py-1 rounded ml-2"
+                    className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition"
                   >
                     Actualizar
                   </button>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={8} className="text-center py-4 text-gray-500">
+                No se encontraron usuarios.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
+    </>
   );
 };
 

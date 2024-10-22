@@ -36,32 +36,43 @@ model Administrator {
 }
 
 model Professional {
-  id           String        @id @default(cuid())
-  area         String
-  specialty    String
-  userId       String        @unique
-  user         User          @relation(fields: [userId], references: [id])
-  appointments Appointment[] // Relación con las citas.
-  requests     Request[] // Relación opcional con solicitudes. Un profesional puede tener 0 o muchas solicitudes.
+  id                 String              @id @default(cuid())
+  area               String?
+  specialty          String?
+  userId             String              @unique
+  user               User                @relation(fields: [userId], references: [id])
+  appointments       Appointment[] // Relación con las citas.
+  schedules          Schedule[]
+  requests           Request[] // Relación opcional con solicitudes. Un profesional puede tener 0 o muchas solicitudes.
   ProfessionalBlocks ProfessionalBlock[]
 }
 
+// Modelo de "calendario de profesional" donde se especifica el horario de trabajo cada dia de la semana del profesional
+model Schedule {
+  id             String       @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  day            String
+  startTime      String
+  endTime        String
+}
+
 model ProfessionalBlock {
-  id             String   @id @default(uuid())
+  id             String       @id @default(uuid())
   startDate      DateTime
   endDate        DateTime
   professional   Professional @relation(fields: [professionalId], references: [id])
   professionalId String
   reason         String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Patient {
   id               String        @id @default(cuid())
-  attendanceRecord String
-  reducedMobility  Boolean
-  medicalRecord    String
+  attendanceRecord String?
+  reducedMobility  Boolean?
+  medicalRecord    String?
   userId           String        @unique
   user             User          @relation(fields: [userId], references: [id])
   appointments     Appointment[] // Relación con las citas.
@@ -69,23 +80,24 @@ model Patient {
 }
 
 model Appointment {
-  id                 String          @id @default(cuid())
-  date               DateTime
-  attended           Boolean
-  observations       String?
-  homeCare           Boolean
-  available          Boolean
-  canceled           Boolean         @default(false)
-  cancellationReason String?
-  patientId          String
-  patient            Patient         @relation(fields: [patientId], references: [id])
-  professionalId     String
-  professional       Professional    @relation(fields: [professionalId], references: [id])
-  serviceTypeId      String
-  serviceType        ServiceType     @relation(fields: [serviceTypeId], references: [id])
-  communityCenterId  String
-  communityCenter    CommunityCenter @relation(fields: [communityCenterId], references: [id])
-  log                Log?
+  id                       String                     @id @default(cuid())
+  date                     DateTime
+  attended                 Boolean
+  observations             String?
+  homeCare                 Boolean
+  available                Boolean
+  canceled                 Boolean                    @default(false)
+  cancellationReason       String?
+  patientId                String? // Paciente opcional, en caso de generar el calendario del profesional con horas disponibles.
+  patient                  Patient?                   @relation(fields: [patientId], references: [id])
+  professionalId           String
+  professional             Professional               @relation(fields: [professionalId], references: [id])
+  serviceId                String?
+  service                  Service?                   @relation(fields: [serviceId], references: [id])
+  communityCenterId        String?
+  communityCenter          CommunityCenter?           @relation(fields: [communityCenterId], references: [id])
+  log                      Log?
+  CancelAppointmentRequest CancelAppointmentRequest[]
 }
 
 model Log {
@@ -97,39 +109,66 @@ model Log {
 }
 
 model Request {
-  id                 String         @id @default(cuid())
-  requestType        RequestType    // Tipo de solicitud definido por el enum
-  validated          Boolean        @default(false) // El campo `validated` ahora es Boolean y no referencia a `Administrator`.
-  patientId          String?
-  patient            Patient?       @relation(fields: [patientId], references: [id])
-  professionalId     String?
-  professional       Professional?  @relation(fields: [professionalId], references: [id])
-  validatedByAdminId String? // Campo para identificar el administrador que validó la solicitud.
-  validatedByAdmin   Administrator? @relation(fields: [validatedByAdminId], references: [id]) // Relación opcional con `Administrator`.
-  RegistrationRequest RegistrationRequest[]
+  id                       String                     @id @default(cuid())
+  requestType              RequestType // Tipo de solicitud definido por el enum
+  validated                Boolean                    @default(false) // El campo `validated` ahora es Boolean y no referencia a `Administrator`.
+  patientId                String?
+  patient                  Patient?                   @relation(fields: [patientId], references: [id])
+  professionalId           String?
+  professional             Professional?              @relation(fields: [professionalId], references: [id])
+  validatedByAdminId       String? // Campo para identificar el administrador que validó la solicitud.
+  validatedByAdmin         Administrator?             @relation(fields: [validatedByAdminId], references: [id]) // Relación opcional con `Administrator`.
+  RegistrationRequest      RegistrationRequest[]
+  CancelAppointmentRequest CancelAppointmentRequest[] // Relación con `AppointmentRequest`
 }
 
 model RegistrationRequest {
-  id        String  @id @default(cuid())
-  rut       String  // RUT del usuario que se desea registrar
-  password  String  // Contraseña del usuario
-  document  String  // URL del PDF con el documento de respaldo
-  requestId String  @unique
-  request   Request @relation(fields: [requestId], references: [id])
-
+  id        String   @id @default(cuid())
+  rut       String // RUT del usuario que se desea registrar
+  password  String // Contraseña del usuario
+  document  String // URL del PDF con el documento de respaldo
+  requestId String   @unique
+  request   Request  @relation(fields: [requestId], references: [id])
   createdAt DateTime @default(now())
 }
 
-model CommunityCenter {
-  id              String        @id @default(cuid())
-  communityCenter String
-  appointments    Appointment[] // Relación con las citas.
+model CancelAppointmentRequest {
+  id            String      @id @default(cuid())
+  cancelReason  String // Motivo de la cancelación
+  requestId     String      @unique
+  request       Request     @relation(fields: [requestId], references: [id])
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  createdAt     DateTime    @default(now())
 }
 
-model ServiceType {
+model CommunityCenter {
   id           String        @id @default(cuid())
-  serviceType  String
+  name         String
+  address      String
+  phoneNumber  String
+  managerName  String
   appointments Appointment[] // Relación con las citas.
+}
+
+model Service {
+  id           String          @id @default(cuid())
+  name         String
+  description  String
+  isActive     Boolean         @default(true)
+  categoryId   String
+  category     ServiceCategory @relation(fields: [categoryId], references: [id]) // Relación con la categoría
+  createdAt    DateTime        @default(now()) // Fecha de creación
+  updatedAt    DateTime        @updatedAt // Fecha de última actualización
+  appointments Appointment[] // Relación con las citas
+}
+
+model ServiceCategory {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  services  Service[] // Relación uno a muchos con los servicios
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Message {
@@ -156,4 +195,5 @@ enum Role {
 enum RequestType {
   REGISTRATION_REQUEST
   BLOCK_SCHEDULE_REQUEST
+  APPOINTMENT_REQUEST // Añadir el nuevo tipo de solicitud
 }

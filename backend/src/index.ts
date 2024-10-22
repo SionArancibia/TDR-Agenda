@@ -6,9 +6,14 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import usersRoutes from "./routes/users"
-import passwordRecoveryRoutes from './routes/passwordRecovery'; // Importar la nueva ruta
+import passwordRecoveryRoutes from './routes/passwordRecovery';
 import patientRoutes  from './routes/patients';
-import professionalRoutes from './routes/professionals';
+import communityCenters from './routes/communityCenters';
+import services from './routes/services';
+import serviceCategories from './routes/serviceCategories';
+import professionals from './routes/professionals';
+import schedules from './routes/schedules';
+import blocks from './routes/blocks';
 
 dotenv.config();
 
@@ -25,9 +30,15 @@ app.use("/api/users", usersRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use('/api/passwordRecovery', passwordRecoveryRoutes);
 app.use('/api', patientRoutes); 
-app.use('/api/requests', requestsRoutes)
-app.use('/api/professionals', professionalRoutes);
+app.use('/api/professionals', professionals);
   
+app.use('/api/requests', requestsRoutes);
+app.use('/api/communityCenters', communityCenters);
+app.use('/api/services', services);
+app.use('/api/serviceCategories', serviceCategories);
+app.use('/api/schedules', schedules);
+app.use('/api/blocks', blocks);
+
 app.listen(PORT, () => {
   console.log('Server running on port:', PORT);
 });

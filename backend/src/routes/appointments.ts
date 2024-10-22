@@ -6,10 +6,10 @@ import authorizeRole from "../middleware/authorizeRole";
 
 const router = express.Router();
 
-router.get("/appointments", protectRoute, authorizeRole(['admin', 'professional']), getAppointments);
-router.get('/appointments/:id', protectRoute, authorizeRole(['admin', 'professional']), getAppointmentById);
-router.post('/appointments', protectRoute, authorizeRole(['admin', 'professional']), createAppointment);
-router.put('/appointments/:id', protectRoute, authorizeRole(['admin', 'professional']), updateAppointment);
-router.delete('/appointments/:id', protectRoute, authorizeRole(['admin', 'professional']), deleteAppointment);
+router.get("/", protectRoute, authorizeRole(['admin', 'professional']), getAppointments);
+router.get('/:id', protectRoute, authorizeRole(['admin', 'professional']), getAppointmentById);
+router.post('/', protectRoute, authorizeRole(['admin', 'professional']), createAppointment);
+router.put('/:id', protectRoute, authorizeRole(['admin', 'professional']), updateAppointment);
+router.delete('/:id', protectRoute, authorizeRole(['admin', 'professional']), deleteAppointment);
 
 export default router;
