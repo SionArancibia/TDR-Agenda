@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 
-interface Paciente {
+interface Patient {
   id: string;
-  nombre: string;
+  firstName: string;
+  lastName: string;
   rut: string;
   patientId:string;
-  
 }
 
 const Attendance: React.FC = () => {
 
-  const [pacientes, setPacientes] = useState<Paciente[]>([]);
+  const [pacientes, setPacientes] = useState<Patient[]>([]);
 
 
   useEffect(() => {

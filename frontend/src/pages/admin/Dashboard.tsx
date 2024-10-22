@@ -38,6 +38,22 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
           </Link>
+          <Link to="/communityCenters" className="transform transition-transform duration-300 hover:scale-105">
+            <div className="bg-white shadow-md rounded-lg overflow-hidden w-64 h-40 mx-auto">
+              <div className="bg-yellow-500 h-8"></div>
+              <div className="p-6 text-center">
+                <h2 className="text-xl font-semibold text-black">Centros comunitarios</h2>
+              </div>
+            </div>
+          </Link>
+          <Link to="/services" className="transform transition-transform duration-300 hover:scale-105">
+            <div className="bg-white shadow-md rounded-lg overflow-hidden w-64 h-40 mx-auto">
+              <div className="bg-green-500 h-8"></div>
+              <div className="p-6 text-center">
+                <h2 className="text-xl font-semibold text-black">Servicios</h2>
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
     </>

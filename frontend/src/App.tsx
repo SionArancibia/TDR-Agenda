@@ -21,7 +21,15 @@ import RegistroAsistencia from './pages/professional/appointment_register.tsx';
 import AdminProfile from "./pages/admin/AdminProfile.tsx";
 import ProfessionalProfile from "./pages/professional/ProfessionalProfile.tsx";
 import AdminStats from "./pages/admin/AdminStats.tsx";
-
+import CommunityCenters from "./pages/admin/CommunityCenters.tsx";
+import Services from "./pages/admin/Services.tsx";
+import CreateCommunityCenter from "./components/forms/CreateCommunityCenter.tsx";
+import CreateService from "./components/forms/CreateService.tsx";
+import ManageCategories from "./components/forms/ManageCategories.tsx";
+import AgendaAdmin from "./pages/admin/AgendaAdmin.tsx";
+import ProfessionalAgenda from "./pages/admin/ProfessionalAgenda.tsx";
+import ManageSchedule from "./components/forms/ManageSchedule.tsx";
+import GenerateAppointments from "./components/forms/GenerateAppointments.tsx";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -102,6 +110,75 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route 
+              path="/communityCenters" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CommunityCenters />
+                </ProtectedRoute>} 
+            />
+            <Route 
+              path="/services" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Services />
+                </ProtectedRoute>} 
+            />
+            <Route 
+              path="/createCommunityCenter" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CreateCommunityCenter />
+                </ProtectedRoute>} 
+            />
+            <Route 
+              path="/createService" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CreateService />
+                </ProtectedRoute>} 
+            />
+
+            <Route 
+              path="/manageCategories" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageCategories />
+                </ProtectedRoute>} 
+            />
+            
+            <Route 
+              path="/agendaAdmin" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AgendaAdmin />
+                </ProtectedRoute>} 
+            />
+            {/* admin y profesional quí ojo */}
+            <Route 
+              path="/professionalAgenda/:professionalId"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ProfessionalAgenda />
+                </ProtectedRoute>} 
+            />
+
+            <Route 
+              path="/manageSchedule/:professionalId"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageSchedule />
+                </ProtectedRoute>} 
+            />
+            
+            <Route 
+              path="/generateAppointments/:professionalId"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <GenerateAppointments />
+                </ProtectedRoute>} 
+            />
+
             {/* Professional */}
             <Route
               path="/dashboardProfessional"
