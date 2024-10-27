@@ -5,42 +5,42 @@ import { Role } from '@prisma/client';  // Importa el enum Role desde Prisma
 
 export const createUser = async (req: Request, res: Response) => {
 	try {
-		const {
-			rut,
-			firstName,
-			lastName,
-			address,
-			age,
-			email,
-			phoneNumber,
-			password,
-			confirmPassword,
-			gender,
-			role,
-			// Campos adicionales para roles específicos
-			area,       // Para profesionales
-			specialty,  // Para profesionales
-			attendanceRecord, // Para pacientes
-			reducedMobility,   // Para pacientes
-			medicalRecord      // Para pacientes
-		} = req.body;
-
-		// Validaciones de entrada
-		if (
-			!rut ||
-			!email ||
-			!firstName ||
-			!lastName ||
-			!address ||
-			!age ||
-			!phoneNumber ||
-			!password ||
-			!confirmPassword ||
-			!gender ||
-			!role
-		) {
-			return res.status(400).json({ error: "Por favor completa todos los campos" });
-		}
+	  const {
+		rut,
+		firstName,
+		lastName,
+		address,
+		age,
+		email,
+		phoneNumber,
+		password,
+		confirmPassword,
+		gender,
+		role,
+		// Campos adicionales para roles específicos
+		area,       // Para profesionales
+		specialty,  // Para profesionales
+		attendanceRecord, // Para pacientes
+		reducedMobility,   // Para pacientes
+		medicalRecord      // Para pacientes
+	  } = req.body;
+  
+	  // Validaciones de entrada
+	  if (!rut || !email || !firstName || !lastName || !password || !confirmPassword) {
+		return res.status(400).json({ error: "Todos los campos son obligatorios" });
+	  }
+  
+	  // Verificar si el correo electrónico ya está registrado
+	  const existingEmail = await prisma.user.findUnique({
+		where: { email },
+	  });
+  
+	  if (existingEmail) {
+		return res.status(400).json({ error: "El correo electrónico ya está registrado" });
+	  }
+  
+	  // Hashear la contraseña
+	  const hashedPassword = await bcryptjs.hash(password, 10);
 
 		if (password !== confirmPassword) {
 			return res.status(400).json({ error: "Las contraseñas no coinciden" });
@@ -51,9 +51,6 @@ export const createUser = async (req: Request, res: Response) => {
 		if (existingUser) {
 			return res.status(400).json({ error: "El RUT ya está registrado" });
 		}
-
-		const salt = await bcryptjs.genSalt(10);
-		const hashedPassword = await bcryptjs.hash(password, salt);
 
 		// Crear el nuevo usuario
 		const newUser = await prisma.user.create({

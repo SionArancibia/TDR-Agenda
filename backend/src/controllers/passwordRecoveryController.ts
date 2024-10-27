@@ -61,6 +61,7 @@ export const resetPassword = async (req: Request, res: Response) => {
   const { token, newPassword } = req.body;
 
   try {
+    // Buscar al usuario por el token de recuperación
     const user = await prisma.user.findFirst({
       where: {
         passwordResetToken: token,
@@ -71,10 +72,16 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: 'Token inválido o expirado' });
+      return res.status(400).json({ error: 'Token inválido o expirado' });
     }
 
-    // Cifrar la nueva contraseña
+    // Verificar que la nueva contraseña no sea igual a la anterior
+    const isSamePassword = await bcryptjs.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({ error: 'La nueva contraseña no puede ser la misma que la anterior' });
+    }
+
+    // Hashear la nueva contraseña
     const hashedPassword = await bcryptjs.hash(newPassword, 10);
 
     // Actualizar la contraseña del usuario y eliminar el token de recuperación
@@ -87,9 +94,9 @@ export const resetPassword = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(200).json({ message: 'Contraseña restablecida con éxito' });
+    res.status(200).json({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {
     console.error('Error al restablecer la contraseña:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error al restablecer la contraseña' });
   }
 };

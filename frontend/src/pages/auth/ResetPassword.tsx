@@ -1,25 +1,36 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import useResetPassword from '../../hooks/useResetPassword'; // Importa el hook personalizado
+
+// Definir el esquema de validación
+const ResetPasswordSchema = z.object({
+  newPassword: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  confirmPassword: z.string().min(6, 'Confirme su contraseña'),
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: "Las contraseñas no coinciden",
+  path: ["confirmPassword"],
+});
+
+type ResetPasswordSchemaType = z.infer<typeof ResetPasswordSchema>;
 
 const ResetPassword: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const { resetPassword, error, message } = useResetPassword(); // Usa el hook personalizado
+  const { resetPassword, error } = useResetPassword(); // Usa el hook personalizado
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<ResetPasswordSchemaType>({
+    resolver: zodResolver(ResetPasswordSchema),
+  });
 
-    if (newPassword !== confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
-    }
-
-    await resetPassword({ token: token!, newPassword }); // Llama a la función del hook
-
-    if (!error) {
+  const onSubmit: SubmitHandler<ResetPasswordSchemaType> = async (data) => {
+    await resetPassword({ token: token!, newPassword: data.newPassword }); // Llama a la función del hook
+    
+    if (error === 'La nueva contraseña no puede ser la misma que la anterior') {
+      setError('newPassword', { type: 'manual', message: error });
+    } else if (!error) {
       navigate('/login'); // Redirigir al usuario a la página de inicio de sesión
     }
   };
@@ -29,35 +40,39 @@ const ResetPassword: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="p-8 rounded-2xl bg-white shadow">
           <h2 className="text-gray-800 text-center text-2xl font-bold">Restablecer Contraseña</h2>
-          <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+          <form className="mt-8 space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="text-gray-800 text-sm mb-2 block" htmlFor="newPassword">Nueva Contraseña</label>
               <input
                 type="password"
                 id="newPassword"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                {...register("newPassword")}
                 required
                 className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
               />
+              {errors.newPassword && <span className="text-red-600">{errors.newPassword.message}</span>}
             </div>
             <div>
               <label className="text-gray-800 text-sm mb-2 block" htmlFor="confirmPassword">Confirmar Contraseña</label>
               <input
                 type="password"
                 id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                {...register("confirmPassword")}
                 required
                 className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
               />
+              {errors.confirmPassword && <span className="text-red-600">{errors.confirmPassword.message}</span>}
             </div>
-            <button type="submit" className="w-full text-white bg-blue-600 px-4 py-3 rounded-md hover:bg-blue-700">
+            <button
+              type="submit"
+              className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+            >
               Restablecer Contraseña
             </button>
-            {message && <p className="text-green-600 text-sm mt-4">{message}</p>}
-            {error && <p className="text-red-600 text-sm mt-4">{error}</p>}
           </form>
+          {error && error !== 'La nueva contraseña no puede ser la misma que la anterior' && (
+            <div className="mt-4 text-red-600 text-center">{error}</div>
+          )}
         </div>
       </div>
     </div>

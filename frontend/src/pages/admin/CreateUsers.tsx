@@ -42,7 +42,8 @@ const CreateUsers: React.FC<CreateUsersProps> = ({ initialRut, initialPassword }
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: { errors }, 
+        setError,
     } = useForm<SignupSchemaType>({ 
         resolver: zodResolver(SignupSchema),
         defaultValues: {
@@ -51,10 +52,17 @@ const CreateUsers: React.FC<CreateUsersProps> = ({ initialRut, initialPassword }
             confirmPassword: initialPassword || '',
       } });
 
-    const onSubmit: SubmitHandler<SignupSchemaType> = (data) => {
-        //console.log(data);
-        createUser(data);
-    };
+      const onSubmit: SubmitHandler<SignupSchemaType> = async (data) => {
+        try {
+          await createUser(data);
+        } catch (error: any) {
+          if (error.response?.data?.error === "El correo electrónico ya está registrado") {
+            setError("email", { type: "manual", message: "El correo electrónico ya está registrado" });
+          } else {
+            console.error("Error al crear el usuario:", error);
+          }
+        }
+      };
 
     return (
         <div className="bg-gray-50 font-[sans-serif]">
