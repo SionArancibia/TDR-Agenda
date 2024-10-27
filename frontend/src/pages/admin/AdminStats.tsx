@@ -1,41 +1,15 @@
-// src/pages/admin/AdminStats.tsx
-import React, { useEffect, useState } from 'react';
-import { api } from '../../utils/axios';
+import React from 'react';
+import useAdminStats from '../../hooks/useAdminStats';
 
 const AdminStats: React.FC = () => {
-  const [stats, setStats] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await api.get('/api/admin/stats');
-        setStats(response.data);
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
+  const { stats, loading, error } = useAdminStats();
 
   if (loading) {
-    return (
-      <div className="min-h-screen pt-20 flex flex-col items-center justify-center bg-gray-50">
-        <div className="loader"></div>
-        <p className="text-lg font-semibold">Loading...</p>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
-  if (!stats) {
-    return (
-      <div className="min-h-screen pt-20 flex flex-col items-center justify-center bg-gray-50">
-        <p className="text-lg font-semibold">No data available</p>
-      </div>
-    );
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -44,18 +18,37 @@ const AdminStats: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4">Admin Statistics</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="p-4 bg-gray-100 rounded shadow">
-            <h3 className="text-lg font-semibold">Total Users</h3>
-            <p className="text-2xl">{stats.totalUsers}</p>
+            <h3 className="text-lg font-semibold">Total Reservations</h3>
+            <p className="text-2xl">{stats?.totalReservations}</p>
           </div>
           <div className="p-4 bg-gray-100 rounded shadow">
-            <h3 className="text-lg font-semibold">Total Appointments</h3>
-            <p className="text-2xl">{stats.totalAppointments}</p>
+            <h3 className="text-lg font-semibold">Total Attendances</h3>
+            <p className="text-2xl">{stats?.totalAttendances}</p>
           </div>
           <div className="p-4 bg-gray-100 rounded shadow">
-            <h3 className="text-lg font-semibold">Total Cancellations</h3>
-            <p className="text-2xl">{stats.totalCancellations}</p>
+            <h3 className="text-lg font-semibold">Community Centers</h3>
+            <ul>
+              {stats?.communityCenterStats?.map((center: any) => (
+                <li key={center.id}>{center.name}: {center._count.appointments}</li>
+              ))}
+            </ul>
           </div>
-          {/* Añadir más estadísticas según sea necesario */}
+          <div className="p-4 bg-gray-100 rounded shadow">
+            <h3 className="text-lg font-semibold">Most Visited Services</h3>
+            <ul>
+              {stats?.serviceStats?.map((service: any) => (
+                <li key={service.id}>{service.name}: {service._count.appointments}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-4 bg-gray-100 rounded shadow">
+            <h3 className="text-lg font-semibold">Busiest Schedules</h3>
+            <ul>
+              {stats?.scheduleStats?.map((schedule: any) => (
+                <li key={schedule.date}>{new Date(schedule.date).toLocaleString()}: {schedule._count.date}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>

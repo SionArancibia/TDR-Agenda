@@ -14,11 +14,11 @@ import serviceCategories from './routes/serviceCategories';
 import professionals from './routes/professionals';
 import schedules from './routes/schedules';
 import blocks from './routes/blocks';
+import adminRoutes from './routes/admin';
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-
 const app = express();
 
 app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
@@ -31,13 +31,14 @@ app.use("/api/appointments", appointmentsRoutes);
 app.use('/api/passwordRecovery', passwordRecoveryRoutes);
 app.use('/api', patientRoutes); 
 app.use('/api/professionals', professionals);
-  
 app.use('/api/requests', requestsRoutes);
 app.use('/api/communityCenters', communityCenters);
 app.use('/api/services', services);
 app.use('/api/serviceCategories', serviceCategories);
 app.use('/api/schedules', schedules);
 app.use('/api/blocks', blocks);
+app.use('/api/admin', adminRoutes); 
+
 
 app.listen(PORT, () => {
   console.log('Server running on port:', PORT);
