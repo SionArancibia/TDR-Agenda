@@ -65,8 +65,6 @@ export default function MainScreen({ navigation, route }) {
                 onCancel={cancelExit}
                 onExit={exitApplication}
             />
-
-            <Toast />
         </View>
     );
 }

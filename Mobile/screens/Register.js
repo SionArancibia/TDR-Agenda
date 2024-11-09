@@ -50,7 +50,7 @@ export default function RegisterScreen( {navigation} ) {
     }
 
     try {
-      const response = await axios.post('http://172.16.167.175:3000/register', {
+      const response = await axios.post('http://192.168.1.20:3000/register', {
         rut,
         password,
       });
@@ -123,7 +123,6 @@ export default function RegisterScreen( {navigation} ) {
         <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Registrarse</Text>
       </TouchableOpacity>
-      <Toast />
     </View>
   );
 }

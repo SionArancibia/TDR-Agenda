@@ -44,7 +44,7 @@ export default function ForgotPasswordScreen() {
 
     try {
       // Llamada a la API
-      const response = await axios.post('http://192.168.1.10:3000/reset-password', {
+      const response = await axios.post('http://192.168.1.20:3000/reset-password', {
         rut,
         email,
       });
@@ -115,7 +115,6 @@ export default function ForgotPasswordScreen() {
         <Icon name="paper-plane" size={20} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Enviar Correo</Text>
       </TouchableOpacity>
-      <Toast/>
     </View>
   );
 }
