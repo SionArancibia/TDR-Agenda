@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ExitModal from '../components/ExitModal';
+import ButtonLogOut from '../components/ButtonLogOut';
 
 export default function MainScreen({ navigation, route }) {
     const [modalVisible, setModalVisible] = useState(false); // Estado para mostrar el modal
@@ -65,6 +66,10 @@ export default function MainScreen({ navigation, route }) {
                 onCancel={cancelExit}
                 onExit={exitApplication}
             />
+
+            <TouchableOpacity style={styles.logoutContainer}>
+                <ButtonLogOut navigation={navigation} /> 
+            </TouchableOpacity>
         </View>
     );
 }
@@ -102,4 +107,10 @@ const styles = StyleSheet.create({
         fontSize: 28, // Tamaño grande para texto
         fontWeight: 'bold',
     },
+    logoutContainer: {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginBottom: 30,
+        flex: 1,
+    }
 });
