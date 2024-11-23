@@ -147,7 +147,7 @@ app.post('/reset-password', async (req, res) => {
   });
 
   // Crea el enlace con el token
-  const resetLink = `http://192.168.1.10:3000/change-password?token=${token}`;
+  const resetLink = `http://192.168.1.20:3000/change-password?token=${token}`;
 
   // Configura los detalles del correo
   const mailOptions = {
@@ -168,52 +168,20 @@ app.post('/reset-password', async (req, res) => {
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 
+const path = require('path');
+
 app.get('/change-password', (req, res) => {
   const { token } = req.query;
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    res.send(`
-      <form id="changePasswordForm">
-        <input type="hidden" name="token" value="${token}" />
-        <label for="newPassword">Nueva Contraseña:</label>
-        <input type="password" name="newPassword" required />
-        <button type="submit">Cambiar Contraseña</button>
-      </form>
-
-      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-      <script>
-        const form = document.getElementById('changePasswordForm');
-        form.addEventListener('submit', async (event) => {
-          event.preventDefault(); // Evitar envío por defecto del formulario
-
-          const token = form.token.value; // Extraer el valor del token
-          const newPassword = form.newPassword.value;
-
-          try {
-            const response = await axios.post('http://192.168.1.10:3000/change-password', {
-              token,
-              newPassword,
-            });
-
-            if (response.status === 200) {
-              alert('Contraseña actualizada correctamente.');
-            } else {
-              alert(data.message || 'Error al cambiar la contraseña.');
-            }
-          } catch (error) {
-            console.error(error);
-            alert('Hubo un problema al cambiar la contraseña.');
-          }
-        });
-      </script>
-    `);
+    jwt.verify(token, process.env.JWT_SECRET);
+    res.sendFile(path.join(__dirname, 'components', 'ChangePassword.html'));
   } catch (error) {
     console.error(error);
     res.status(400).send("Token inválido o expirado");
   }
 });
+
 
 // ----------------------------------------------------------------------------------------------------------------------------------------
 
