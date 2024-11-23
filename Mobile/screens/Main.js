@@ -82,11 +82,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#f2f2f2',
     },
     title: {
-        fontSize: 32,
+        fontSize: 36, // Increased font size
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 30,
         color: '#333', 
+        fontFamily: 'Arial', // Changed font family
     },
     button: {
         backgroundColor: '#49BA98', // Color verde para los botones
@@ -104,8 +105,9 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 28, // Tamaño grande para texto
+        fontSize: 32, // Increased font size
         fontWeight: 'bold',
+        fontFamily: 'Arial', // Changed font family
     },
     logoutContainer: {
         justifyContent: 'flex-end',

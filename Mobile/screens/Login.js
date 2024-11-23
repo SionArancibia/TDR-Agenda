@@ -151,11 +151,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 26,
+    fontSize: 30, // Increased font size
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
     marginBottom: 30,
+    fontFamily: 'Arial', // Changed font family
   },
   inputContainer: {
     flexDirection: 'row',
@@ -190,7 +191,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22, // Increased font size
+    fontFamily: 'Arial', // Changed font family
   },
   registerButton: {
     backgroundColor: '#28a745',
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
   },
   recoverButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 20, // Increased font size
+    fontFamily: 'Arial', // Changed font family
   },
 });
-  

@@ -131,11 +131,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 30, // Increased font size
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
     marginBottom: 30,
+    fontFamily: 'Arial', // Changed font family
   },
   inputContainer: {
     flexDirection: 'row',
@@ -173,7 +174,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22, // Increased font size
     marginLeft: 10,
+    fontFamily: 'Arial', // Changed font family
   },
 });
