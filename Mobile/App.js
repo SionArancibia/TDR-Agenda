@@ -1,6 +1,9 @@
 import React from 'react';
 import Toast from 'react-native-toast-message';
+import customToastConfig from './components/ToastConfig';
 import { NavigationContainer } from '@react-navigation/native';
+import { Image, Button, Alert, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Asegúrate de que esté correctamente importado
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { Image } from 'react-native';
 import LoginScreen from './screens/Login';
@@ -18,7 +21,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Principal"
+        initialRouteName="Login"
         screenOptions={{
           ...TransitionPresets.SlideFromRightIOS, // Transición personalizada
         }}
@@ -118,7 +121,7 @@ export default function App() {
         <Stack.Screen name="MyHours" component={MyHours} />
 
       </Stack.Navigator>
-      <Toast/>
+      <Toast config={customToastConfig} />
     </NavigationContainer>
   );
 }
