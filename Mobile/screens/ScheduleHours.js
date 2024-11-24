@@ -55,11 +55,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#f2f2f2', 
     },
     header: {
-        fontSize: 32,
+        fontSize: 36, // Increased font size
         fontWeight: 'bold',
         color: '#333',
         textAlign: 'center',
         marginBottom: 20,
+        fontFamily: 'Arial', // Changed font family
     },
     row: {
         flexDirection: 'row',
@@ -84,9 +85,10 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 20, 
+        fontSize: 24, // Increased font size
         fontWeight: 'bold',
         marginTop: 5, 
         textAlign: 'center',
+        fontFamily: 'Arial', // Changed font family
     },
 });

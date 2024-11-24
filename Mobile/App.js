@@ -2,6 +2,8 @@ import React from 'react';
 import Toast from 'react-native-toast-message';
 import customToastConfig from './components/ToastConfig';
 import { NavigationContainer } from '@react-navigation/native';
+import { Image, Button, Alert, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Asegúrate de que esté correctamente importado
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { Image } from 'react-native';
 import LoginScreen from './screens/Login';
@@ -14,6 +16,10 @@ import MyHours from './screens/MyHours';
 import HelpScreen from './screens/Help';
 
 const Stack = createStackNavigator();
+
+
+
+
 
 export default function App() {
   return (

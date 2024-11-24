@@ -14,7 +14,7 @@ export default function ScheduledHours({ route }) {
   const [selectedHour, setSelectedHour] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://172.16.167.175:3000/fechas?seccion=${section}`) // Cambiar por su ip para que funcione en expogo etc
+    axios.get(`http://172.16.167.175:3000/fechas?seccion=${section}`)// Cambiar por su ip para que funcione en expogo etc
       .then(response => {
         setDates(response.data);
         setSelectedDate(response.data[0]); // Selecciona la primera fecha por defecto
