@@ -44,7 +44,7 @@ export default function ForgotPasswordScreen() {
 
     try {
       // Llamada a la API
-      const response = await axios.post('http://192.168.1.10:3000/reset-password', {
+      const response = await axios.post('http://192.168.1.20:3000/reset-password', {
         rut,
         email,
       });
@@ -115,7 +115,6 @@ export default function ForgotPasswordScreen() {
         <Icon name="paper-plane" size={20} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Enviar Correo</Text>
       </TouchableOpacity>
-      <Toast/>
     </View>
   );
 }
@@ -132,11 +131,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 30, // Increased font size
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
     marginBottom: 30,
+    fontFamily: 'Arial', // Changed font family
   },
   inputContainer: {
     flexDirection: 'row',
@@ -174,7 +174,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22, // Increased font size
     marginLeft: 10,
+    fontFamily: 'Arial', // Changed font family
   },
 });

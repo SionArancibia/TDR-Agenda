@@ -4,9 +4,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ExitModal from '../components/ExitModal';
-    import ButtonLogOut from '../components/buttonLogOut';
+import ButtonLogOut from '../components/ButtonLogOut';
 
-    export default function MainScreen({ navigation }) {
+export default function MainScreen({ navigation }) {
         const [modalVisible, setModalVisible] = useState(false); // Estado para mostrar el modal
 
         useEffect(() => {
@@ -68,51 +68,52 @@ import ExitModal from '../components/ExitModal';
                 onExit={exitApplication}
             />
 
-            <Toast />
-            </View>
-        );
-    }   
+            <TouchableOpacity style={styles.logoutContainer}>
+                <ButtonLogOut navigation={navigation} /> 
+            </TouchableOpacity>
+        </View>
+    );
+}
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            justifyContent: 'center',
-            padding: 20,
-            backgroundColor: '#f2f2f2',
-        },
-        title: {
-            fontSize: 32,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginBottom: 30,
-            color: '#333', 
-        },
-        button: {
-            backgroundColor: '#49BA98', // Color verde para los botones
-            paddingVertical: 18,
-            paddingHorizontal: 40,
-            borderRadius: 12,
-            marginVertical: 20,
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.2,
-            shadowRadius: 3,
-            elevation: 5, // Sombra
-        },
-        logoutButton: {
-            position: 'absolute',
-            top: 10, // Distancia desde la parte superior de la pantalla
-            right: 10, // Distancia desde la parte derecha de la pantalla
-            backgroundColor: '#ff5c5c',
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-            borderRadius: 5,
-        },
-        buttonText: {
-            color: '#fff',
-            fontSize: 28, // Tamaño grande para texto
-            fontWeight: 'bold',
-        },
-    });
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 20,
+        backgroundColor: '#f2f2f2',
+    },
+    title: {
+        fontSize: 36, // Increased font size
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 30,
+        color: '#333', 
+        fontFamily: 'Arial', // Changed font family
+    },
+    button: {
+        backgroundColor: '#49BA98', // Color verde para los botones
+        paddingVertical: 18,
+        paddingHorizontal: 40,
+        borderRadius: 12,
+        marginVertical: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 5, // Sombra
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 32, // Increased font size
+        fontWeight: 'bold',
+        fontFamily: 'Arial', // Changed font family
+    },
+    logoutContainer: {
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        marginBottom: 30,
+        flex: 1,
+    }
+});

@@ -44,7 +44,7 @@ export default function ScheduledHours({ route }) {
   const confirmBooking = () => {
     const user = 'usuario_demo'; 
 
-    axios.post('http://172.16.167.175:3000/agendar', {
+    axios.post('http://192.168.1.20:3000/agendar', {
       fecha: new Date(selectedHour.fecha).toISOString(), // Convertir la fecha a ISO-8601
       hora: selectedHour.hora,
       profesional: selectedHour.nombre,
