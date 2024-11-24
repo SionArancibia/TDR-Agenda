@@ -17,6 +17,10 @@ import HelpScreen from './screens/Help';
 
 const Stack = createStackNavigator();
 
+
+
+
+
 export default function App() {
   return (
     <NavigationContainer>
