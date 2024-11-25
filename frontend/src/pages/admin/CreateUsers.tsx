@@ -56,9 +56,9 @@ const CreateUsers: React.FC<CreateUsersProps> = ({ initialRut, initialPassword, 
             confirmPassword: initialPassword || '',
       } });
 
-      const validateRequest = async (id: string) => {
+      const validateRequest = async (requestId: string) => {
         try {
-          await api.post('requests/validateRegistrationRequest', { requestId: id });
+          await api.post('/requests/validateRegistrationRequest', { requestId: requestId });
           console.log('Validación de solicitud completada exitosamente.');
         } catch (error: any) {
           console.error('Error al validar la solicitud:', error);

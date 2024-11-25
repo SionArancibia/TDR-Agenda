@@ -31,6 +31,7 @@ import AgendaAdmin from "./pages/admin/AgendaAdmin.tsx";
 import ProfessionalAgenda from "./pages/admin/ProfessionalAgenda.tsx";
 import ManageSchedule from "./components/forms/ManageSchedule.tsx";
 import GenerateAppointments from "./components/forms/GenerateAppointments.tsx";
+import MobilePasswordRecovery from "./pages/auth/mobilePasswordRecovery.tsx";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -55,7 +56,8 @@ function App() {
           <Route element={<SimpleLayout />}>
             <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
             <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
-            <Route path="/resetPassword/:token" element={<ResetPassword />} /> 
+            <Route path="/resetPassword/:token" element={<ResetPassword />} />
+            <Route path="/change-password-mobile/:token" element={<MobilePasswordRecovery/>} />  
             <Route path="/" element={<DashboardRedirect />} />
             <Route path="/unauthorized" element={<Unauthorized />} />  
           </Route>

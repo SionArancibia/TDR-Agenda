@@ -4,6 +4,8 @@ import Toast from 'react-native-toast-message';
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios from 'axios';
 import { z } from 'zod';
+import API_BASE_URL from "../utils/api";
+
 
 const recoveryPasswordSchema = z.object({
   rut: z.string().min(1, "Por favor ingrese su RUT.").regex(/^\d{7,8}-[kK0-9]$/, 'El RUT debe estar en el formato xxxxxxxx-x'),
@@ -44,7 +46,7 @@ export default function ForgotPasswordScreen() {
 
     try {
       // Llamada a la API
-      const response = await axios.post('http://192.168.1.20:3000/reset-password', {
+      const response = await axios.post(`${API_BASE_URL}/passwordRecovery/reset-password-mobile`, {
         rut,
         email,
       });
