@@ -4,20 +4,36 @@ import { RequestType } from '@prisma/client';  // Importa el enum Role desde Pri
 
 // Crear una nueva solicitud de registro
 export const createRegistrationRequest = async (req: Request, res: Response) => {
-    const {RegistrationRequest} = req.body;
-  
-    try {
-      const newRequest = await prisma.request.create({
-        data: {
-          validated: false, // Una solicitud nunca parte validada, esto cambia cuando un admin lo admite.
-          requestType: RequestType.REGISTRATION_REQUEST,
-          RegistrationRequest: {
-            create: RegistrationRequest, // seguir el modelo de RegistrationRequest en prisma
-          },
-        },
-      });
-  
-      res.status(201).json(newRequest);
+  const { rut, password, document } = req.body;
+
+  // Validar que los datos necesarios estén presentes
+  if (!rut || !password || !document) {
+    return res.status(400).json({ error: 'Faltan datos: rut, password, o document.' });
+  }
+
+  try {
+    // Crear primero la solicitud (Request) para obtener un id
+    const newRequest = await prisma.request.create({
+      data: {
+        validated: false, // La solicitud no está validada al principio
+        requestType: RequestType.REGISTRATION_REQUEST, // Se asigna el tipo de solicitud
+      },
+    });
+
+    // Crear la entrada en RegistrationRequest usando el requestId obtenido
+    const newRegistrationRequest = await prisma.registrationRequest.create({
+      data: {
+        rut,
+        password,
+        document, // Almacena el documento como base64
+        requestId: newRequest.id, // Relacionamos el requestId de la solicitud creada
+      },
+    });
+
+    // Responder con éxito y devolver los detalles de la nueva solicitud
+    res.status(201).json({
+      message: 'Solicitud de registro enviada exitosamente'
+    });
     } catch (error) {
       console.error('Error al crear la solicitud de registro:', error);
       res.status(500).json({ error: 'Error al crear la solicitud de registro' });

@@ -4,13 +4,14 @@ import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ExitModal from '../components/ExitModal';
-import ButtonLogOut from '../components/ButtonLogOut';
+import ButtonLogOut from '../components/buttonLogOut';
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ navigation, route}) {
         const [modalVisible, setModalVisible] = useState(false); // Estado para mostrar el modal
 
         useEffect(() => {
             // Verificar si se pasó un mensaje desde LoginScreen
+            console.log(route.params)
             if (route.params?.showToast) {
                 Toast.show({
                     type: route.params.messageType, // 'success' o 'error'

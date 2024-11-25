@@ -56,7 +56,7 @@ function App() {
             <Route path="/login" element={!authUser ? <Login/> : <DashboardRedirect />}/>
             <Route path="/passwordRecovery" element={<PasswordRecovery/>}/>
             <Route path="/resetPassword/:token" element={<ResetPassword />} /> 
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<DashboardRedirect />} />
             <Route path="/unauthorized" element={<Unauthorized />} />  
           </Route>
           {/* Admin */}

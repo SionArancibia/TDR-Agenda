@@ -6,6 +6,8 @@ const generateToken = (userId: string, role: string, res: Response) => {
 		expiresIn: "10d",
 	});
 
+	console.log("login token", token)
+
 	res.cookie("jwt", token, {
 		maxAge: 10 * 24 * 60 * 60 * 1000, // MS,
 		httpOnly: true, // prevent XSS cross site scripting

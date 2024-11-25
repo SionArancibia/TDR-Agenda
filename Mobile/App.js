@@ -5,7 +5,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Image, Button, Alert, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Asegúrate de que esté correctamente importado
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { Image } from 'react-native';
 import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
 import ForgotPasswordScreen from './screens/Rpassword';

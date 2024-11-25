@@ -156,7 +156,7 @@ const Requests: React.FC = () => {
                     <CreateUsers initialRut={selectedRequest.RegistrationRequest[0].rut} initialPassword={selectedRequest.RegistrationRequest[0].password} />
                 </div>
                 <div className="w-full md:w-1/2 p-4">
-                    <PDFViewer fileUrl={'https://s28.q4cdn.com/392171258/files/doc_downloads/test.pdf'} />
+                    <PDFViewer base64String={selectedRequest.RegistrationRequest[0].document} />
                 </div>
             </div>
         </>

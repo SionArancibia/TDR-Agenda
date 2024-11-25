@@ -126,7 +126,7 @@ model RegistrationRequest {
   id        String   @id @default(cuid())
   rut       String // RUT del usuario que se desea registrar
   password  String // Contraseña del usuario
-  document  String // URL del PDF con el documento de respaldo
+  document  String // URL del PDF con el documento de respaldo base64
   requestId String   @unique
   request   Request  @relation(fields: [requestId], references: [id])
   createdAt DateTime @default(now())
