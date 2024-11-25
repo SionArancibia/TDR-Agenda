@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { api } from "../utils/axios";
 
 const useAdminStats = () => {
   const [stats, setStats] = useState<any>(null);
@@ -9,11 +9,12 @@ const useAdminStats = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get('/admin/stats');
-        console.log(response.data);
+        const response = await api.get('/admin/stats'); // Asegúrate de que esta URL sea correcta
+        console.log('Response Data:', response.data);
         setStats(response.data);
         setLoading(false);
       } catch (err: any) {
+        console.error('Error fetching stats:', err);
         setError(err.response?.data?.error || 'Error fetching stats');
         setLoading(false);
       }

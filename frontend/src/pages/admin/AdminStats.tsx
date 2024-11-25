@@ -3,6 +3,7 @@ import useAdminStats from '../../hooks/useAdminStats';
 
 const AdminStats: React.FC = () => {
   const { stats, loading, error } = useAdminStats();
+  console.log('Stats in Component:', stats);
 
   if (loading) {
     return <div>Loading...</div>;

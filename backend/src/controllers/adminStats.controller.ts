@@ -3,11 +3,15 @@ import prisma from '../db/prisma';
 
 export const getAdminStats = async (req: Request, res: Response) => {
   try {
+    // Total de reservas
     const totalReservations = await prisma.appointment.count();
+
+    // Total de asistencias
     const totalAttendances = await prisma.appointment.count({
       where: { attended: true },
     });
 
+    // Estadísticas de centros comunitarios
     const communityCenterStats = await prisma.communityCenter.findMany({
       include: {
         _count: {
@@ -16,6 +20,7 @@ export const getAdminStats = async (req: Request, res: Response) => {
       },
     });
 
+    // Estadísticas de servicios más visitados
     const serviceStats = await prisma.service.findMany({
       include: {
         _count: {
@@ -24,6 +29,7 @@ export const getAdminStats = async (req: Request, res: Response) => {
       },
     });
 
+    // Horarios más concurridos
     const scheduleStats = await prisma.appointment.groupBy({
       by: ['date'],
       _count: {
