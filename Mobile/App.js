@@ -25,7 +25,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
+        initialRouteName="Principal"
         screenOptions={{
           ...TransitionPresets.SlideFromRightIOS, // Transición personalizada
         }}

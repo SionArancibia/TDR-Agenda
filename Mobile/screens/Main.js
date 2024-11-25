@@ -53,7 +53,7 @@ export default function MainScreen({ navigation }) {
                     <Text style={styles.buttonText}>Agendar Hora</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Horas')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MyHours')}>
                 <Ionicons name="time-outline" size={28} color="#fff" style={styles.icon} />
                     <Text style={styles.buttonText}>Mis Horas</Text>
                 </TouchableOpacity>
