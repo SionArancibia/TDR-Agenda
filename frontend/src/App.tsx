@@ -200,9 +200,9 @@ function App() {
           <Route
               path="/history"
               element={   
-                <ProtectedRoute requiredRole="professional">
+                
                   <History />
-                </ProtectedRoute>}
+                }
             />
             <Route 
               path="/agendaProfessional"
@@ -211,6 +211,7 @@ function App() {
                   <Agenda />
                 </ProtectedRoute>}
             />
+            
             <Route
               path="/attendance"
               element={

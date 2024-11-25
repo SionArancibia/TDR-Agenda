@@ -13,6 +13,9 @@ interface Patient {
 const Attendance: React.FC = () => {
 
   const [pacientes, setPacientes] = useState<Patient[]>([]);
+  const [searchText, setSearchText] = useState<string>(''); // Estado para el texto de búsqueda
+
+  const [filteredPacientes, setFilteredPacientes] = useState<Patient[]>([]); // Lista filtrada
 
 
   useEffect(() => {
@@ -20,6 +23,8 @@ const Attendance: React.FC = () => {
       try {
         const response = await fetch('http://localhost:3000/api/patients');
         const data = await response.json();
+        
+        setFilteredPacientes(data);
         setPacientes(data);
       } catch (error) {
         console.error('Error al obtener pacientes:', error);
@@ -28,7 +33,13 @@ const Attendance: React.FC = () => {
     fetchPacientes();
   }, []);
 
-
+  useEffect(() => {
+    const filtered = pacientes.filter((paciente) =>
+      paciente.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+      paciente.rut.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredPacientes(filtered);
+  }, [searchText, pacientes]); 
   
   return (
     <div className="min-h-screen w-screen flex flex-col items-center justify-center bg-gray-100 p-4">
