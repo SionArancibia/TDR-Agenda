@@ -20,6 +20,17 @@ const MesesAgenda = () => {
     }
   };
 
+
+
+
+
+
+
+
+
+
+  
+
   useEffect(() => {
     // Convierte el índice del mes seleccionado a un formato válido (por ejemplo, '01' para enero)
     const mesNumerico = (mesSeleccionado + 1).toString().padStart(2, '0');

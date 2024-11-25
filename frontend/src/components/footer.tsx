@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
 
         <div className="flex flex-col w-32 items-center">
           <img
-            src="src\assets\logo2.webp" 
+            src="src\assets\logo2.jpg" 
          
 
           />
