@@ -10,22 +10,29 @@ import * as FileSystem from 'expo-file-system';
 import API_BASE_URL from '../utils/api';
 
 const registerSchema = z.object({
-  rut: z.string().min(1, { message: 'El RUT es requerido' }).refine(value => validateRut(value), {
-    message: 'RUT inválido',
-  }).refine(value => /^\d{7,8}-[kK0-9]$/.test(value), {
-    message: 'El RUT debe estar en el formato xxxxxxxx-x',
+  rut: z
+    .string()
+    .min(1, { message: 'El RUT es requerido' })
+    .refine(value => validateRut(value), { message: 'RUT inválido' })
+    .refine(value => /^\d{7,8}-[kK0-9]$/.test(value), {
+      message: 'El RUT debe estar en el formato xxxxxxxx-x',
+    }),
+  email: z.string().min(1, { message: 'El correo electrónico es requerido' }).email({
+    message: 'Debe ser un correo electrónico válido',
   }),
   password: z.string().min(6, { message: 'La contraseña debe tener al menos 6 caracteres' }),
 });
 
+
 export default function RegisterScreen({ navigation }) {
   const [rut, setRut] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [document, setDocument] = useState(null); // Archivo en Base64
 
   const handleRegister = async () => {
-    // Validar RUT y contraseña
-    const validationResult = registerSchema.safeParse({ rut, password });
+    // Validar RUT , email y contraseña
+    const validationResult = registerSchema.safeParse({ rut, email, password });
 
     if (!validationResult.success) {
       validationResult.error.errors.forEach(err => {
@@ -50,28 +57,26 @@ export default function RegisterScreen({ navigation }) {
 
     await axios.post(`${API_BASE_URL}/requests/createRegistrationRequest`, {
       rut,
+      email,
       password,
       document,
     })
     .then(response => {        
       navigation.navigate('Login', {
         showToast: true,
-        text1: 'Registro exitoso',
-        text2: 'Te has registrado correctamente.',
+        text1: 'Se ha enviado la solicitud de registro.',
+        text2: 'Te llegará un correo una vez validada.',
         messageType: 'success',
       });
     })
     .catch(error => {
       Toast.show({
         type: 'error',
-        text1: 'Error de registro',
-        text2: 'Hubo un problema con el registro. Inténtalo de nuevo.',
+        text1: 'Error de solicitud registro',
+        text2: 'Hubo un problema con la solicitud de registro. Inténtalo de nuevo.',
       });
       console.log(error);
-    });
-    
-
-    
+    });    
   };
 
   const handleFilePicker = async () => {
@@ -129,6 +134,17 @@ export default function RegisterScreen({ navigation }) {
           value={rut}
           onChangeText={setRut}
           keyboardType="default"
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <Icon name="envelope" size={20} color="#333" style={styles.icon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Ingrese su Correo Electrónico"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
         />
       </View>
 

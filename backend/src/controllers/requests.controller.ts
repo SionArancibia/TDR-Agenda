@@ -4,11 +4,11 @@ import { RequestType } from '@prisma/client';  // Importa el enum Role desde Pri
 
 // Crear una nueva solicitud de registro
 export const createRegistrationRequest = async (req: Request, res: Response) => {
-  const { rut, password, document } = req.body;
+  const { rut, email, password, document } = req.body;
 
   // Validar que los datos necesarios estén presentes
-  if (!rut || !password || !document) {
-    return res.status(400).json({ error: 'Faltan datos: rut, password, o document.' });
+  if (!rut || !password || !email || !document) {
+    return res.status(400).json({ error: 'Faltan datos: rut, email, password, o document.' });
   }
 
   try {
@@ -24,6 +24,7 @@ export const createRegistrationRequest = async (req: Request, res: Response) => 
     const newRegistrationRequest = await prisma.registrationRequest.create({
       data: {
         rut,
+        email,
         password,
         document, // Almacena el documento como base64
         requestId: newRequest.id, // Relacionamos el requestId de la solicitud creada
@@ -58,7 +59,9 @@ export const getRegistrationRequests = async (req: Request, res: Response) => {
   
   // Validar una solicitud de registro
 export const validateRegistrationRequest = async (req: Request, res: Response) => {
-    const { requestId } = req.params;
+    const { requestId } = req.body;
+
+    console.log("rquestid validated?, ", requestId)
   
     try {
       // Actualizar la solicitud para marcarla como validada

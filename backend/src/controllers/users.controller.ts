@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../db/prisma";
 import bcryptjs from "bcryptjs";
 import { Role } from '@prisma/client';  // Importa el enum Role desde Prisma
+import nodemailer from 'nodemailer';
 
 export const createUser = async (req: Request, res: Response) => {
 	try {
@@ -94,6 +95,26 @@ export const createUser = async (req: Request, res: Response) => {
 				});
 			}
 
+			// Configurar el transporte de nodemailer, para envió de confirmación.
+			const transporter = nodemailer.createTransport({
+				service: 'Gmail',
+				auth: {
+					user: process.env.EMAIL_USER,
+					pass: process.env.EMAIL_PASS,
+				},
+			});
+			
+			// Configurar el correo electrónico
+			const mailOptions = {
+				from: process.env.EMAIL_USER,
+				to: email,
+				subject: 'Un administrador validó tu solicitud de registro.',
+				text: `Felicidades, ahora puedes acceder a todos los servicios que entrega la Dirección De Adulto Mayor De Temuco, solo debes abrir la aplicación e iniciar sesión.`,
+			};
+		
+			// Enviar el correo electrónico
+			await transporter.sendMail(mailOptions);
+		
 			return res.status(201).json({
 				id: newUser.id,
 				rut: newUser.rut,
