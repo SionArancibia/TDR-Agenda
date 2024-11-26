@@ -4,6 +4,8 @@ import Toast from 'react-native-toast-message';
 import Icon from "react-native-vector-icons/FontAwesome";
 import axios from 'axios';
 import { z } from 'zod';
+import API_BASE_URL from "../utils/api";
+
 
 const recoveryPasswordSchema = z.object({
   rut: z.string().min(1, "Por favor ingrese su RUT.").regex(/^\d{7,8}-[kK0-9]$/, 'El RUT debe estar en el formato xxxxxxxx-x'),
@@ -44,7 +46,7 @@ export default function ForgotPasswordScreen() {
 
     try {
       // Llamada a la API
-      const response = await axios.post('http://192.168.1.10:3000/reset-password', {
+      const response = await axios.post(`${API_BASE_URL}/passwordRecovery/reset-password-mobile`, {
         rut,
         email,
       });
@@ -115,7 +117,6 @@ export default function ForgotPasswordScreen() {
         <Icon name="paper-plane" size={20} color="#fff" style={styles.icon} />
         <Text style={styles.buttonText}>Enviar Correo</Text>
       </TouchableOpacity>
-      <Toast/>
     </View>
   );
 }
@@ -132,11 +133,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 30, // Increased font size
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
     marginBottom: 30,
+    fontFamily: 'Arial', // Changed font family
   },
   inputContainer: {
     flexDirection: 'row',
@@ -174,7 +176,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22, // Increased font size
     marginLeft: 10,
+    fontFamily: 'Arial', // Changed font family
   },
 });

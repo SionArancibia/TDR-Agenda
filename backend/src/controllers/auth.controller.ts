@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import prisma from "../db/prisma";
 import bcryptjs from "bcryptjs";
 import generateToken from "../utils/generateToken";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -71,3 +73,39 @@ export const getMe = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
+
+
+
+
+////////////////////////////////////////////////
+
+export const loginMobile = async (req: Request, res: Response) => {
+  const { rut, password } = req.body;
+  console.log(rut)
+  if (!rut || !password) {
+    return res.status(400).json({ message: 'RUT y contraseña son requeridos' });
+  }
+
+  try {  const user = await prisma.user.findUnique({
+    where: { rut },
+  });
+
+  if (!user) {
+    return res.status(401).json({ error: 'RUT o contraseña incorrectos' });
+  }
+
+  const isMatch = await bcryptjs.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({ error: 'RUT o contraseña incorrectos' });
+  }
+
+  const token = jwt.sign({ rut: user.rut, id: user.id }, process.env.JWT_SECRET!, {
+    expiresIn: '1h',
+  });
+
+  res.json({ token });
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
+}

@@ -21,7 +21,13 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
+app.use(
+  cors({
+    credentials: true, // Permitir cookies y encabezados con credenciales
+    origin: true,
+  })
+);
+
 app.use(cookieParser());
 app.use(express.json());
 
@@ -40,6 +46,6 @@ app.use('/api/blocks', blocks);
 app.use('/api/admin', adminRoutes); 
 
 
-app.listen(PORT, () => {
-  console.log('Server running on port:', PORT);
+app.listen(3000, () => {
+  console.log('Server running on port:', 3000);
 });

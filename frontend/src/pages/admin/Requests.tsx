@@ -7,6 +7,7 @@ import CreateUsers from './CreateUsers';
 interface RegistrationRequest {
   id: string;
   rut: string;
+  email: string;
   password: string;
   document: string;
   createdAt: string;
@@ -29,6 +30,7 @@ const Requests: React.FC = () => {
     const fetchRequests = async () => {
       try {
         const response = await api.get('requests/getRegistrationRequests');
+        console.log("responseeee", response.data)
         setRequests(response.data);
         setFilteredRequests(response.data);
       } catch (error: any) {
@@ -95,6 +97,7 @@ const Requests: React.FC = () => {
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
                 <th className="px-6 py-3">RUT</th>
+                <th className="px-6 py-3">Email</th>
                 <th className="px-6 py-3">Fecha de Solicitud</th>
                 <th className="px-6 py-3">Validado</th>
                 <th className="px-6 py-3">Acciones</th>
@@ -110,6 +113,7 @@ const Requests: React.FC = () => {
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                     >
                       <td className="px-6 py-4">{registration.rut}</td>
+                      <td className="px-6 py-4">{registration.email}</td>
                       <td className="px-6 py-4">
                         {new Date(registration.createdAt).toLocaleString()}
                       </td>
@@ -153,10 +157,10 @@ const Requests: React.FC = () => {
             </div>
             <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-1/2 p-4">
-                    <CreateUsers initialRut={selectedRequest.RegistrationRequest[0].rut} initialPassword={selectedRequest.RegistrationRequest[0].password} />
+                    <CreateUsers initialRut={selectedRequest.RegistrationRequest[0].rut} initialPassword={selectedRequest.RegistrationRequest[0].password} initialEmail={selectedRequest.RegistrationRequest[0].email} requestId={selectedRequest.id} />
                 </div>
                 <div className="w-full md:w-1/2 p-4">
-                    <PDFViewer fileUrl={'https://s28.q4cdn.com/392171258/files/doc_downloads/test.pdf'} />
+                    <PDFViewer base64String={selectedRequest.RegistrationRequest[0].document} />
                 </div>
             </div>
         </>

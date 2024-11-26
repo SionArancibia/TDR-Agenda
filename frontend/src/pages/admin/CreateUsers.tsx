@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { validateRut} from '@fdograph/rut-utilities'; // Librería utilizada para validar el RUT: https://github.com/fdograph/rut-utilities/blob/master/README-es.md
 import useCreateUsers from '../../hooks/useCreateUsers';
+import { api } from '../../utils/axios';
 
 const SignupSchema = z.object({
     rut: z.string()
@@ -34,9 +35,11 @@ type SignupSchemaType = z.infer<typeof SignupSchema>;
 interface CreateUsersProps {
     initialRut?: string;
     initialPassword?: string;
+    initialEmail?: string;
+    requestId?: string;
   }
 
-const CreateUsers: React.FC<CreateUsersProps> = ({ initialRut, initialPassword }) => {
+const CreateUsers: React.FC<CreateUsersProps> = ({ initialRut, initialPassword, initialEmail, requestId }) => {
     const createUser = useCreateUsers(); 
 
     const {
@@ -48,19 +51,37 @@ const CreateUsers: React.FC<CreateUsersProps> = ({ initialRut, initialPassword }
         resolver: zodResolver(SignupSchema),
         defaultValues: {
             rut: initialRut || '',
+            email: initialEmail || '',
             password: initialPassword || '',
             confirmPassword: initialPassword || '',
       } });
 
+      const validateRequest = async (requestId: string) => {
+        try {
+          await api.post('/requests/validateRegistrationRequest', { requestId: requestId });
+          console.log('Validación de solicitud completada exitosamente.');
+        } catch (error: any) {
+          console.error('Error al validar la solicitud:', error);
+          throw new Error('No se pudo validar la solicitud. Inténtalo más tarde.');
+        }
+      };
+
       const onSubmit: SubmitHandler<SignupSchemaType> = async (data) => {
         try {
-          await createUser(data);
+            await createUser(data);
+            console.log("requestid", requestId)
+            if (requestId) {
+                await validateRequest(requestId);
+                alert('Registro completado y validado exitosamente.');
+            } else {
+                alert('Registro completado.');
+            }
         } catch (error: any) {
-          if (error.response?.data?.error === "El correo electrónico ya está registrado") {
-            setError("email", { type: "manual", message: "El correo electrónico ya está registrado" });
-          } else {
-            console.error("Error al crear el usuario:", error);
-          }
+            if (error.response?.data?.error === "El correo electrónico ya está registrado") {
+                setError("email", { type: "manual", message: "El correo electrónico ya está registrado" });
+            } else {
+                console.error("Error al crear el usuario:", error);
+            }
         }
       };
 

@@ -1,22 +1,21 @@
-import express from 'express';
-import { upload } from '../middleware/fileUpload';
-
+const express = require('express');
+const multer = require('multer');
 const router = express.Router();
+const { saveFileMetadata } = require('../controllers/fileController');
 
+// Configure Multer for file storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
 
-router.post('/upload', upload.single('file'), (req, res) => {
-    try {
-      console.log(req.file);
-      res.status(200).json({
-        message: 'Archivo subido exitosamente',
-        file: req.file
-      });
-    } catch (err: any) { 
-      res.status(500).json({
-        message: 'Error al subir archivo',
-        error: err.message  
-      });
-    }
-  });
-  
-export default router;
+const upload = multer({ storage });
+
+// POST route for file upload
+router.post('/', upload.single('file'), saveFileMetadata);
+
+module.exports = router;
