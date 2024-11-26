@@ -42,7 +42,7 @@ const Login = () => {
         <div className="relative min-h-screen">
             <Slider {...settings} className="absolute inset-0 z-0">
                 <div>
-                    <img src="./src/assets/p5.jpg" alt="Image 1" className="w-screen h-screen object-cover" />
+                    <img src="./src/assets/p5.webp" alt="Image 1" className="w-screen h-screen object-cover" />
                 </div>
                 <div>
                     <img src="./src/assets/p6.jpg" alt="Image 2" className="w-screen h-screen object-cover" />
@@ -54,7 +54,7 @@ const Login = () => {
                     <img src="./src/assets/p7.jpg" alt="Image 4" className="w-screen h-screen object-cover" />
                 </div>
                 <div>
-                    <img src="./src/assets/p2.jpg" alt="Image 5" className="w-screen h-screen object-cover" />
+                    <img src="./src/assets/p2.webp" alt="Image 5" className="w-screen h-screen object-cover" />
                 </div>
             </Slider>
             <div className="relative z-10 bg-gray-50 bg-opacity-5 font-[sans-serif]">
