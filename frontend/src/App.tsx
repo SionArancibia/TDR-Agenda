@@ -31,7 +31,7 @@ import AgendaAdmin from "./pages/admin/AgendaAdmin.tsx";
 import ProfessionalAgenda from "./pages/admin/ProfessionalAgenda.tsx";
 import ManageSchedule from "./components/forms/ManageSchedule.tsx";
 import GenerateAppointments from "./components/forms/GenerateAppointments.tsx";
-import MobilePasswordRecovery from "./pages/auth/mobilePasswordRecovery.tsx";
+import MobilePasswordRecovery from "./pages/auth/MobilePasswordRecovery.tsx";
 
 function App() {
   const {authUser} = useAuthContext();
@@ -166,6 +166,7 @@ function App() {
                 </ProtectedRoute>} 
             />
 
+
             <Route 
               path="/manageSchedule/:professionalId"
               element={
@@ -207,10 +208,10 @@ function App() {
                 </ProtectedRoute>}
             />
             <Route 
-              path="/agendaProfessional"
+              path="/agendaProfessional/:professionalId"
               element={
                 <ProtectedRoute requiredRole="professional">
-                  <Agenda />
+                  <ProfessionalAgenda />
                 </ProtectedRoute>}
             />
             <Route

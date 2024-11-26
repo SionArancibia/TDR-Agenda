@@ -166,3 +166,78 @@ export const deleteAppointment = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error al eliminar la cita' });
   }
 };
+
+// Actualizar una cita asignando un patientId
+export const assignPatientToAppointment = async (req: Request, res: Response) => {
+  const { id } = req.params; // ID de la cita
+  const { patientId } = req.body; // ID del paciente a asignar
+
+  try {
+    const appointment = await prisma.appointment.update({
+      where: { id },
+      data: { 
+        patientId, 
+        available: false // Cambiar el estado de la cita a no disponible
+      },
+    });
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    console.error('Error al asignar paciente a la cita:', error);
+    res.status(500).json({ error: 'Error al asignar paciente a la cita' });
+  }
+};
+
+
+// Obtener citas disponibles por communityCenterId para mostrar al usuario
+export const getAvailableAppointmentsByCommunityCenter = async (req: Request, res: Response) => {
+  const { communityCenterId } = req.params;
+
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        available: true,
+        communityCenterId: String(communityCenterId),
+        canceled: false,
+      },
+      include: {
+        patient: true,
+        professional: true,
+        service: true,
+        communityCenter: true,
+      },
+    });
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error al obtener citas disponibles:', error);
+    res.status(500).json({ error: 'Error al obtener citas disponibles' });
+  }
+};
+
+
+// Obtener citas disponibles por serviceId para mostrar al usuario
+export const getAvailableAppointmentsByService = async (req: Request, res: Response) => {
+  const { serviceId } = req.params;
+
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        available: true,
+        serviceId: String(serviceId),
+        canceled: false,
+      },
+      include: {
+        patient: true,
+        professional: true,
+        service: true,
+        communityCenter: true,
+      },
+    });
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error al obtener citas disponibles:', error);
+    res.status(500).json({ error: 'Error al obtener citas disponibles' });
+  }
+};
