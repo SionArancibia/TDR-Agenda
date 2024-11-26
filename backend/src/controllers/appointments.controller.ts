@@ -243,3 +243,34 @@ export const getAvailableAppointmentsByService = async (req: Request, res: Respo
     res.status(500).json({ error: 'Error al obtener citas disponibles' });
   }
 };
+
+// Obtener todas las citas de un paciente por patientId
+export const getAppointmentsByPatient = async (req: Request, res: Response) => {
+  const { patientId } = req.params; // ID del paciente
+
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: { patientId: patientId },
+      include: {
+        patient: true,
+        professional: true,
+        service: true,
+        communityCenter: true,
+      },
+    });
+
+    if (!appointments.length) {
+      return res.status(404).json({ message: 'No se encontraron citas para este paciente.' });
+    }
+
+    // const formattedAppointments = appointments.map((appointment) => ({
+    //   ...appointment,
+    //   date: toZonedTime(appointment.date, 'America/Santiago'), // Convertir fecha UTC a zona horaria local
+    // }));
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error al obtener citas del paciente:', error);
+    res.status(500).json({ error: 'Error al obtener citas del paciente.' });
+  }
+};

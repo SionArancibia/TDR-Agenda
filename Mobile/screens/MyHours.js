@@ -1,20 +1,61 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import API_BASE_URL from '../utils/api';
 
-export default function MyHours({ route }) {
+export default function MyHours() {
   const [horas, setHoras] = useState([]);
-  const usuario = 'usuario_demo'; // Puedes reemplazar esto con el usuario actual
+  const [loading, setLoading] = useState(true); // Estado para manejar carga
 
   useEffect(() => {
-    axios.get(`http://192.168.1.20:3000/mis-horas?usuario=${usuario}`)
-      .then(response => {
-        setHoras(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    const fetchAppointmentsAndProfessionals = async () => {
+      try {
+        const storedPatientId = await AsyncStorage.getItem('patientId');
+        if (!storedPatientId) {
+          console.error('No se encontró patientId en el almacenamiento.');
+          return;
+        }
+
+        // Obtener citas del paciente
+        const response = await axios.get(`${API_BASE_URL}/appointments/patient/${storedPatientId}`);
+
+        // Obtener los nombres de los profesionales para cada cita
+        const updatedAppointments = await Promise.all(
+          response.data.map(async (appointment) => {
+            try {
+              const professionalResponse = await axios.get(
+                `${API_BASE_URL}/users/getUser/${appointment.professional.userId}`
+              );
+              return {
+                ...appointment,
+                professionalName: `${professionalResponse.data.firstName} ${professionalResponse.data.lastName}`,
+              };
+            } catch (error) {
+              console.error('Error al obtener datos del profesional:', error);
+              return { ...appointment, professionalName: 'Desconocido' };
+            }
+          })
+        );
+
+        setHoras(updatedAppointments);
+      } catch (error) {
+        console.error('Error al obtener citas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointmentsAndProfessionals();
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loading}>Cargando...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -24,10 +65,11 @@ export default function MyHours({ route }) {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Image source={{ uri: item.imagen }} style={styles.image} />
             <View style={styles.infoContainer}>
-              <Text style={styles.name}>{item.profesional}</Text>
-              <Text style={styles.time}>{item.fecha} - {item.hora}</Text>
+              <Text style={styles.name}>Profesional: {item.professionalName}</Text>
+              <Text style={styles.time}>
+                {new Date(item.date).toLocaleDateString()} - {new Date(item.date).toLocaleTimeString()}
+              </Text>
             </View>
           </View>
         )}
@@ -43,12 +85,17 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    fontSize: 32, // Increased font size
+    fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
     color: '#49BA98',
-    fontFamily: 'Arial', // Changed font family
+    fontFamily: 'Arial',
+  },
+  loading: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#666',
   },
   card: {
     flexDirection: 'row',
@@ -73,14 +120,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 22, // Increased font size
+    fontSize: 22,
     fontWeight: '600',
     color: '#333',
-    fontFamily: 'Arial', // Changed font family
+    fontFamily: 'Arial',
   },
   time: {
-    fontSize: 20, // Increased font size
+    fontSize: 20,
     color: '#666',
-    fontFamily: 'Arial', // Changed font family
+    fontFamily: 'Arial',
   },
 });
