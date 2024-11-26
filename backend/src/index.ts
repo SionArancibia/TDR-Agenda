@@ -15,6 +15,7 @@ import professionals from './routes/professionals';
 import schedules from './routes/schedules';
 import blocks from './routes/blocks';
 import adminRoutes from './routes/admin';
+import patients from "./routes/patients"
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/patients", patients);
 app.use("/api/users", usersRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use('/api/passwordRecovery', passwordRecoveryRoutes);

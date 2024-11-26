@@ -9,16 +9,12 @@ import LoginScreen from './screens/Login';
 import RegisterScreen from './screens/Register';
 import ForgotPasswordScreen from './screens/Rpassword';
 import MainScreen from './screens/Main';
-import MainScreen2 from './screens/ScheduleHours';
-import ScheduledHours from './components/ScheduleC';
+import ServiceSelection from './screens/ServiceSelection';
+import AppointmentsByService from './components/AppointmentsByService';
 import MyHours from './screens/MyHours';
 import HelpScreen from './screens/Help';
 
 const Stack = createStackNavigator();
-
-
-
-
 
 export default function App() {
   return (
@@ -92,7 +88,7 @@ export default function App() {
         />
         <Stack.Screen 
           name="GenericScreen"  
-          component={MainScreen2}  
+          component={ServiceSelection}  
           options={{
             headerTitle: () => (
               <Image
@@ -120,7 +116,7 @@ export default function App() {
           }}
         />
 
-        <Stack.Screen name="Horas" component={ScheduledHours} />
+        <Stack.Screen name="Horas" component={AppointmentsByService} />
         <Stack.Screen name="MyHours" component={MyHours} />
 
       </Stack.Navigator>

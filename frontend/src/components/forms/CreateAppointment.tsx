@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '../../utils/axios';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 
 const AppointmentSchema = z.object({
     date: z.string().min(1, 'La fecha es obligatoria'),
@@ -21,7 +22,13 @@ interface CreateAppointmentProps {
     professionalId?: string;
 }
 
+interface Service {
+    id: string;
+    name: string;
+}
+
 const CreateAppointment: React.FC<CreateAppointmentProps> = ({ onClose, professionalId }) => {
+    const [services, setServices] = useState<Service[]>([]);
     const {
         register,
         handleSubmit,
@@ -37,6 +44,21 @@ const CreateAppointment: React.FC<CreateAppointmentProps> = ({ onClose, professi
             homecare: false,
         }
     });
+
+    // Obtener servicios disponibles
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await api.get('/services'); // Ajusta el endpoint según tu API
+                setServices(response.data);
+            } catch (error) {
+                console.error('Error al obtener servicios:', error);
+                toast.error('Error al cargar los servicios.');
+            }
+        };
+
+        fetchServices();
+    }, []);
 
     const onSubmit: SubmitHandler<AppointmentSchemaType> = async (data) => {
         try {
@@ -78,8 +100,19 @@ const CreateAppointment: React.FC<CreateAppointmentProps> = ({ onClose, professi
                         </div>
 
                         <div>
-                            <label className="text-gray-800 text-sm mb-2 block">ID del Servicio (opcional)</label>
-                            <input {...register("serviceId")} className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" />
+                            <label className="text-gray-800 text-sm mb-2 block">Servicio</label>
+                            <select 
+                                {...register("serviceId")} 
+                                className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
+                            >
+                                <option value="">Selecciona un servicio</option>
+                                {services.map((service) => (
+                                    <option key={service.id} value={service.id}>
+                                        {service.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.serviceId && <span className="text-red-600">{errors.serviceId.message}</span>}
                         </div>
 
                         <div>

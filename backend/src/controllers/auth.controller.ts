@@ -103,7 +103,25 @@ export const loginMobile = async (req: Request, res: Response) => {
     expiresIn: '1h',
   });
 
-  res.json({ token });
+  const patient = await prisma.patient.findUnique({
+    where: {
+      userId: String(user.id), // Aseguramos que el userId sea un string
+    },
+    include: {
+      user: true, // Incluye información del usuario asociado
+      appointments: true, // Incluye citas asociadas
+      requests: true, // Incluye solicitudes asociadas (si las tienes configuradas)
+    },
+  });
+
+  // Verificar si se encontró el paciente
+  if (!patient) {
+    return res.status(404).json({ error: 'Paciente no encontrado' });
+  }
+
+  const patientId = patient.id
+
+  res.json({ token, patientId });
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
     res.status(500).json({ message: 'Error en el servidor' });

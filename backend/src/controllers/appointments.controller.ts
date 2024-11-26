@@ -172,6 +172,8 @@ export const assignPatientToAppointment = async (req: Request, res: Response) =>
   const { id } = req.params; // ID de la cita
   const { patientId } = req.body; // ID del paciente a asignar
 
+  console.log("asignando cita")
+
   try {
     const appointment = await prisma.appointment.update({
       where: { id },
@@ -224,7 +226,7 @@ export const getAvailableAppointmentsByService = async (req: Request, res: Respo
     const appointments = await prisma.appointment.findMany({
       where: {
         available: true,
-        serviceId: String(serviceId),
+        serviceId: serviceId,
         canceled: false,
       },
       include: {

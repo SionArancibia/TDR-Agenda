@@ -62,10 +62,14 @@ export default function LoginScreen({ navigation, route }) {
         password,
       });
 
-      const { token } = response.data;
+      const { token, patientId } = response.data;
       console.log('Token recibido:', token);
 
       AsyncStorage.setItem('token', token);
+
+      console.log("patient id", patientId)
+      
+      AsyncStorage.setItem('patientId', patientId)
 
       Toast.show({
         type: 'success',
